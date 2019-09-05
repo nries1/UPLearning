@@ -190,7 +190,7 @@ function confirmSubmit(response) {
   var badgeType;
   var badgeHtml;
   response.confirmations.forEach(function(resp) {
-    confirmationSubContainer = htmlElement({tag: 'DIV', calssName: 'confirmation-sub-container'});
+    confirmationSubContainer = htmlElement({tag: 'DIV', className: 'confirmation-sub-container'});
     if (resp.success) {
       badgeType = 'success-badge'
       badgeHtml = '<i class="material-icons">check_circle_outline</i>';
@@ -204,8 +204,8 @@ function confirmSubmit(response) {
   }); 
   var eventSummaryContainer = htmlElement({});
   eventSummaryContainer.appendChild(htmlElement({tag: 'DIV', innerHTML: '<b>Event ID: </b>'+response.event_id}));
-  eventSummaryContainer.appendChild(htmlElement({tag: 'DIV', innerHTML: '<b>Event Page: </b>'+response.event_id}));
-  eventSummaryContainer.appendChild(htmlElement({tag: 'DIV', innerHTML: '<b>Registration Link: </b>'+response.reg_form}));
+  eventSummaryContainer.appendChild(htmlElement({tag: 'DIV', innerHTML: '<b>Event Page: </b><a href="'+response.event_page+'" target=_blank>Event Page</a>'}));
+  eventSummaryContainer.appendChild(htmlElement({tag: 'DIV', innerHTML: '<b>Registration Link: </b><a href="'+response.reg_form+'" target=_blank>Registration Link</a>'}));
   confirmationContainer.appendChild(eventSummaryContainer);
   item('event-form').innerHTML = '';
   item('event-form').appendChild(confirmationContainer);
