@@ -28,26 +28,33 @@ function getRequestParameters() {
 function fetchEditData(id,instance) {
   console.log("fetching");
   item('main-spinner-msg').innerHTML = 'Getting your event details...'
-  var withSuccess = google.script.run.withSuccessHandler(populateForm);
+  var withSuccess = google.script.run.withSuccessHandler(function(data) {
+    data = JSON.parse(data);
+    item('main-spinner').style.display = 'none';
+    if (data.form_values.length === 2) {
+      item("event-form").innerHTML='<div class="confirmation-sub-container"><div class="fail-badge"></div><div>Failed to load your event data.</div></div>';
+      return;
+    }
+    eventCreator = data["Event Creator"];
+    creationDate = data["TimeStamp"];
+    populateForm(data.form_values, document.getElementById('event-form').elements);
+  });
   var withFailure = withSuccess.withFailureHandler(function(error) {
     item('main-spinner').innerHTML = ':(\n\n'+error;
   });
   withFailure.getEditData(id,instance); 
 }
 
-function populateForm(data) {
-  debugger;
-  item('main-spinner').style.display = 'none';
-  data = JSON.parse(data);
-  console.log("data to populate form: ",data);
-  eventCreator = data["Event Creator"];
-  creationDate = data["TimeStamp"];
+function populateForm(formValues, formElements) {
+  console.log('data to populate form ',data);
+  if (data.length === 0) return;
+  var thisInput = formElements.getElementsByName(Object.keys(''))
+}
+
+function oldPopulateForm(data)  {
+
   item("event-form").style.display = '';
   var keys = Object.keys(data);
-  if (keys.length === 2) {
-    item("event-form").innerHTML='<div class="confirmation-sub-container"><div class="fail-badge"></div><div>Failed to load your event data.</div></div>';
-    return;
-  }
   if (data.waitlist==="Yes") {
     item("waitlist").style.display="";
     item("wl-size").required=true;
