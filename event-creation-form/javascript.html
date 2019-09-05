@@ -17,12 +17,20 @@ function getRequestParameters() {
     console.log(loc.parameter);
     reqParameters = loc.parameter;
     if (loc.parameter.edit) {
-      fetchEditData(requestParameters.id,requestParameters.instance);    
+      fetchEditData(requestParameters.id, requestParameters.instance);    
     } else {
       item('main-spinner').style.display = 'none';
       item('event-form').style.display = '';
     }
   });
+}
+
+function fetchEditData(id,instance) {
+  console.log("fetching");
+  item('main-spinner-msg').innerHTML = 'Getting your event details...'
+  var withSuccess = google.script.run.withSuccessHandler(populateForm);
+  var withFailure = withSuccess.withFailureHandler(handleFailure);
+  withFailure.getEditData(id,instance); 
 }
 
 function preventFormSubmit() {
