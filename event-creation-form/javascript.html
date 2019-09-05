@@ -65,7 +65,7 @@ function populateForm(data) {
       }
       //hand multi select
       if (inputs[k].type === 'select-multiple') {
-        var options = documment.getElementById(inputs[k].id).getElementsBytagName('OPTION');
+        var options = document.getElementById(inputs[k].id).getElementsBytagName('OPTION');
         for (var o = 0; o < options.length; o++) {
           if (options[o].value === data[keys[i]]) {
             options[o].selected = true;
