@@ -29,7 +29,11 @@ function fetchEditData(id,instance) {
   console.log("fetching");
   item('main-spinner-msg').innerHTML = 'Getting your event details...'
   var withSuccess = google.script.run.withSuccessHandler(populateForm);
-  var withFailure = withSuccess.withFailureHandler(handleFailure);
+  var withFailure = withSuccess.withFailureHandler(function(error) {
+    item('main-spinner').style.display = 'none';
+    item('event-form').innerHTML = ':(\n\n'+error;
+  }
+  );
   withFailure.getEditData(id,instance); 
 }
 
