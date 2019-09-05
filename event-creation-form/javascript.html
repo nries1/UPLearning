@@ -41,7 +41,7 @@ function populateForm(data) {
   console.log("data to populate form: ",data);
   eventCreator = data["Event Creator"];
   creationDate = data["TimeStamp"];
-  item("event-form").style.display = 'flex';
+  item("event-form").style.display = '';
   var keys = Object.keys(data);
   if (keys.length === 1) {
     item("event-form").innerHTML='<div class="confirmation-sub-container"><div class="fail-badge"></div><div>Failed to load your event data.</div></div>';
