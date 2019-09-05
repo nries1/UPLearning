@@ -181,42 +181,29 @@ function clearLocs(textarea) {
   }
 }
 
-function confirmSubmit(msg) {
-  console.log(msg);
+function confirmSubmit(response) {
+  console.log(response);
   item('main-spinner').style.display = 'none';
   var confirmationContainer = htmlElement({tag: 'DIV', id: 'confirmation-container'});
-  if (msg.edit) {
-    confirmationContainer.appendChild(htmlElement({tag: 'DIV', className: 'success-badge', innerHTML: '<i class="material-icons">check_circle_outline</i>'}));
-    confirmationContainer.appendChild(htmlElement({tag: 'SPAN', innerHTML: 'Event Created'}));
-  } else {
-    confirmationContainer.appendChild(htmlElement({tag: 'DIV', className: 'fail-badge', innerHTML: '<i class="material-icons">error_outline</i>'}));
-    confirmationContainer.appendChild(htmlElement({tag: 'SPAN',innerHTML: 'Event Posted'}));
-  }
-  if (msg.confirmation_success) {
-    confirmationContainer.appendChild(htmlElement({tag: 'DIV', className: 'success-badge', innerHTML: '<i class="material-icons">check_circle_outline</i>'}));
-    confirmationContainer.appendChild(htmlElement({tag: 'SPAN',  innerHTML: 'Email Confirmation Sent'}));
-  } else {
-    confirmationContainer.appendChild(htmlElement({tag: 'DIV', className: 'fail-badge', innerHTML: '<i class="material-icons">error_outline</i>'}));
-    confirmationContainer.appendChild(htmlElement({tag: 'SPAN', innerHTML: 'Email Confirmation Failed'}));
-  }
-  if (msg.calendar_success) {
-    confirmationContainer.appendChild(htmlElement({tag: 'DIV', className: 'success-badge', innerHTML: '<i class="material-icons">check_circle_outline</i>'}));
-    confirmationContainer.appendChild(htmlElement({tag: 'SPAN', innerHTML: 'Calendar Event Created'}));
-  } else {
-    confirmationContainer.appendChild(htmlElement({tag: 'DIV', className: 'fail-badge', innerHTML: '<i class="material-icons">error_outline</i>'}));
-    confirmationContainer.appendChild(htmlElement({tag: 'SPAN', innerHTML: 'Failed to Create Calendar Event'}));
-  }
-  if (msg.notification_requested) {
-    if (msg.notification_success) {
-      confirmationContainer.appendChild(htmlElement({tag: 'DIV', className: 'success-badge', innerHTML: '<i class="material-icons">check_circle_outline</i>'}));
-      confirmationContainer.appendChild(htmlElement({tag: 'SPAN',  innerHTML: 'Registrants Notified'}));
+  var confirmationSubContainer;
+  var badgeType;
+  var badgeHtml;
+  response.confirmations.forEach(function(resp) {
+    confirmationSubContainer = htmlElement({tag: 'DIV', calssName: 'confirmation-sub-container'});
+    if (resp.success) {
+      badgeType = 'success-badge'
+      badgeHtml = '<i class="material-icons">check_circle_outline</i>';
     } else {
-      confirmationContainer.appendChild(htmlElement({tag: 'DIV', className: 'fail-badge', innerHTML: '<i class="material-icons">error_outline</i>'}));
-      confirmationContainer.appendChild(htmlElement({tag: 'SPAN', innerHTML: 'Failed to Notify Registrants'}));
+      badgeType = 'fail-badge'
+      badgeHtml = '<i class="material-icons">error_outline</i>';
     }
-  }
+    confirmationSubContainer.appendChild(htmlElement({tag: 'DIV', className: badgeType, innerHTML: badgeHtml}));
+    confirmationContainer.appendChild(confirmationSubContainer);
+  }); 
   var eventSummaryContainer = htmlElement({});
-  eventSummaryContainer.appendChild(htmlElement({tag: 'DIV', innerHTML: 'Event ID: '+msg.event_id}));
+  eventSummaryContainer.appendChild(htmlElement({tag: 'DIV', innerHTML: '<b>Event ID: </b>'+response.event_id}));
+  eventSummaryContainer.appendChild(htmlElement({tag: 'DIV', innerHTML: '<b>Event Page: </b>'+msg.event_id}));
+  eventSummaryContainer.appendChild(htmlElement({tag: 'DIV', innerHTML: '<b>Registration Link: </b>'+msg.reg_form}));
   confirmationContainer.appendChild(eventSummaryContainer);
   item('event-form').innerHTML = '';
   item('event-form').appendChild(confirmationContainer);

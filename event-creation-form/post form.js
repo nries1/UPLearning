@@ -12,6 +12,7 @@ function postForm(form,instance) {
   var ss = SpreadsheetApp.openById(props[prefix+"_database_id"]);
   var s = ss.getSheetByName("event creation form responses");
   var idSheet = ss.getSheetByName("ids");
+  var output = {confirmations: [], event_id: ''};
   Logger.log(form);  
   /* 1) declare all necessary variables */
   var emailError;
@@ -38,11 +39,14 @@ function postForm(form,instance) {
   var endTime = new Date(2019,1, 1, Number(form.sessions[0].end_time.toString().slice(0,2)),Number(form.sessions[0].end_time.toString().slice(3,5)),0,0);
   var duration = ((endTime-startTime)/(1000*60*60)).toFixed(1);
   var id = getId(form.division[0],idSheet,instance);
+  output.event_id = id;
   var times = timeObj[form.sessions[0].start_time]+" - "+timeObj[form.sessions[0].end_time];
   times = times.replace(/:00 AM/g," AM").replace(/:00 PM/g," PM");
   var regForm = "https://script.google.com/a/strongschools.nyc/macros/s/AKfycbz13TA6TRLjXeWWS4UzoZp0Si7VH0DV8Qjhco5ZG2FHe2y7j-Y/exec?"+"id="+id+"&instance="+encodeURIComponent(instance);
   var editLink = "https://script.google.com/a/strongschools.nyc/macros/s/AKfycbyNuZDlNWQ-SOtdwZ3bXGFaLk0cg7WHVC9LCXUbOmOcCPxU1yiV/exec?id="+id+"&edit=facilitatoredit&instance="+encodeURIComponent(instance);
   var eventPage = "https://script.google.com/macros/s/AKfycbz4AthfjpkN8d_pttRsnKfYnsQp_Fal9N5O4tHpQX6Q-Hm58oo/exec?instance="+encodeURIComponent(instance)+"&id="+id
+  output.event_page = eventPage;
+  output.reg_form = regForm;
   var eventDataObj = {"title":form.title,"id":id,"location":location,"dates":allDates.join(", "),
                       "times":times,"start_time": form.sessions[0].start_time,
                       "description":form.description,"ctle":form.ctle,"facilitators":allFacs, "end_time": form.sessions[0].end_time,
@@ -91,44 +95,25 @@ function postForm(form,instance) {
   try {
     var calId = createCalendarEvent(eventDataObj,instance);
     row.push(calId);
-    var calendarEventCreated = true;
+    confirmations.push({msg: 'Calendar Event Created', success: true});
   } catch(error) {
-    calError=error; row.push(error);
-    var calendarEventCreated = false;
+    row.push(error);
+    confirmations.push({msg: 'Failed to create a Calendar Event. '+error, success: false});
   }
   try {
     sendConfirmation(eventDataObj,false,instance);
     row.push("sent");
-    var confirmationSent = true;
+    confirmations.push({msg: 'Email Confirmation Sent. ', success: true});
   } catch(error) {
-    emailError = error;
     row.push(error);
-    var confirmationSent = false;
+    confirmations.push({msg: 'Failed to Send a confirmation email. '+error, success: false});
   }
   try {
-    Logger.log("appending row");
+    // why try to append the row last? Because you need to save the confirmations above to the row.
     s.appendRow(row);
-    if (!emailError && !calError) {
-      return {"msg": "Your event was created successfully.",
-              "reg_link": regForm, "edit_link":editLink, "reg_flyer": flyerObj.url, "event_page": "", "event_id": id,
-              confirmation_success: confirmationSent, calendar_success: calendarEventCreated};
-    } else {
-      if (calError && emailError) {
-        MailApp.sendEmail(props[prefix+"_dm_email"], "Calendar error in event creation", Session.getActiveUser().getEmail()+" experienced the following error: "+calError+" when trying to add the event, "+form.title+" to your PL calendar.", {noReply: true});
-        MailApp.sendEmail(props[prefix+"_dm_email"], "Email confirmation error in event creation", Session.getActiveUser().getEmail()+"experienced the following error: "+emailError+" when trying to add the event, "+form.title, {noReply: true});
-        return {"msg": "Your event was created successfully. But the following errors occured:<br><br>(1) Couldn't create a calendar event. If you need to create one, email your data manager.<br>(2) Couldn't send an email confirmation: "+emailError,
-                "reg_link": regForm, "edit_link":editLink, "reg_flyer": flyerObj.url, "event_page": "", "event_id": id};
-      }
-      if (calError && !emailError) {
-        MailApp.sendEmail(props[prefix+"_dm_email"], "Calendar error in event creation", Session.getActiveUser().getEmail()+" experienced the following error: "+calError+" when trying to add the event, "+form.title+" to your PL calendar.", {noReply: true});
-        return {"msg": "Your event was created successfully. But the following errors occured:<br><br>(1) Couldn't create a calendar event. If you need to create one, email your data manager.",
-              "reg_link": regForm, "edit_link":editLink, "reg_flyer": flyerObj.url, "event_page": "", "event_id": id};
-      }
-      if (emailError && !calError) {
-        MailApp.sendEmail(props[prefix+"_dm_email"], "Email confirmation error in event creation", Session.getActiveUser().getEmail()+" experienced the following error: "+emailError+" when trying to add the event, "+form.title, {noReply: true});
-        return {"msg": "Your event was created successfully. But the following errors occured:<br><br>(1) Couldn't send an email confirmation: "+emailError,
-              "reg_link": regForm, "edit_link":editLink, "reg_flyer": flyerObj.url, "event_page": "", "event_id": id};
-      }
-    }
-  } catch(error) {return error;}
+    confirmations.push({msg: 'Saved Your Event', success: true});
+  } catch(error) {
+    confirmations.push({msg: 'FAILED TO SAVE YOUR EVENT. '+error, success: false});
+  }
+  return confirmations;
 }
