@@ -43,7 +43,7 @@ function populateForm(data) {
   creationDate = data["TimeStamp"];
   item("event-form").style.display = '';
   var keys = Object.keys(data);
-  if (keys.length === 1) {
+  if (keys.length === 2) {
     item("event-form").innerHTML='<div class="confirmation-sub-container"><div class="fail-badge"></div><div>Failed to load your event data.</div></div>';
     return;
   }
@@ -59,8 +59,18 @@ function populateForm(data) {
     for (var k=0;k<inputs.length;k++) {
       if (!inputs[k].type) continue;
       //handle text,email, number, and select fields
-      if (inputs[k].type.toLowerCase()==="number" || inputs[k].type.toLowerCase()==="textarea" || inputs[k].tagName.toLowerCase()==="select" || inputs[k].type.toLowerCase()==="text" || inputs[k].type.toLowerCase()==="email") {
+      var valueFields = ['number', 'textarea', 'select-one', 'text', 'email'];
+      if (valueFields.indexOf(inputs[k].type.toLowerCase())) {
         inputs[k].value=data[keys[i]];
+      }
+      //hand multi select
+      if (inputs[k].type === 'select-multiple') {
+        var options = inputs[k].getElementsBytagName('OPTION');
+        for (var o = 0; o < options.length; o++) {
+          if (options[o].value === data[keys[i]]) {
+            options[o].selected = true;
+          }
+        }
       }
       //handle checkboxes and radio buttons
       if (inputs[k].type.toLowerCase()==="radio") {
