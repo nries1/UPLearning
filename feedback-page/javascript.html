@@ -1,0 +1,197 @@
+<script>
+  window.addEventListener('load',getLoadState);
+
+var parameters;
+
+function getLoadState() {
+  console.log("getting load state");
+  google.script.url.getLocation(function(loc) {
+    if (!loc.parameter.instance) {
+      document.getElementById("main-spinner").innerHTML = "Bad URL";
+      return;
+    } else {
+      parameters=loc.parameter;
+      fetchFeedback(loc.parameter.eventid,loc.parameter.instance);
+    }
+  });
+}
+
+       function showConfirmation(text, complete) {
+        console.log("window scroll"+window.scrollY);
+        var box = document.getElementById("confirmation-box");
+        box.style.display = "flex";
+        box.style.position = "absolute";
+        box.style.marginTop = "25%";
+        if (complete) {
+          document.getElementById("conf-box-resolve-msg").innerHTML = text;
+          document.getElementById("confirmation-box-msg").innerHTML = "";
+        } else {
+          document.getElementById("conf-box-resolve-msg").innerHTML = "";
+          document.getElementById("confirmation-box-msg").innerHTML = text;
+        }
+        document.getElementById("confirmation-focus").focus();
+      }
+
+
+      function hideConfirmation() {
+        document.getElementById("confirmation-box").style.display = "none";
+      }
+      
+      function fetchFeedback(eventId,instance) {
+         document.getElementById("event-details").innerHTML = "";
+        var withSuccess = google.script.run.withSuccessHandler(renderFeedback);
+        var withFailure = withSuccess.withFailureHandler(function(error) {
+          console.log("error handler for fetchFeedback: "+error.message);
+        });
+        withFailure.getFeedback(eventId,instance);
+      }
+      
+      function showProgress(progress,speed,displayElement,baseCaseElement) {
+        if (progress > 9 ||  baseCaseElement.innerHTML !== "") {
+          displayElement.style.display = "none";
+          return;
+        }
+        if (displayElement.id.indexOf("conf")!==-1) {document.getElementById("confirmation-box").style.display="flex"}
+        /*if (displayElement.style.display === "none") {*/displayElement.style.display = "flex"; //}
+        var progressBar = "";
+        for (var i=0; i<progress; i++) {
+          progressBar+="<span class='progress-bit'></span>";
+        }
+        displayElement.innerHTML = progressBar;
+        setTimeout(function() {showProgress(progress+1,speed,displayElement,baseCaseElement)},speed);
+      }
+      
+      function exportFeedback(element) {
+         var eventId = element.dataset.event;
+        var withSuccess = google.script.run.withSuccessHandler(function(url) {
+          document.getElementById("modal-spinner").style.display="none";
+          document.getElementById("modal-body-info").style.display="";
+          document.getElementById("modal-body-info").innerHTML="<div class='alert alert-success' role='alert'><a href='"+url+"' target='_blank'>Here is your feedback in a spreadsheet.</a></div>";
+        });
+        var withFailure = withSuccess.withFailureHandler(function(error) {
+          document.getElementById("modal-spinner").style.display="none";
+          document.getElementById("modal-body-info").style.display="";
+          document.getElementById("modal-body-info").innerHTML="<div class='alert alert-danger' role='alert'>"+error+"</div>";          
+        });
+        withFailure.createFbSs(eventId,parameters.instance);
+        document.getElementById("modal-vertical").style.display="";
+        document.getElementById("modal-spinner").style.display="";
+        document.getElementById("main-spinner-msg").innerHTML="Generating a Spreadsheet.";
+        document.getElementById("modal-body-info").style.diplay="none";
+      }
+      
+      function renderFeedback(feedback) {
+        document.getElementById("main-spinner").style.display="none";
+        feedbackObj = feedback;
+        if (feedback.Q1.length === 0) {document.getElementById("event-details").innerHTML = "Sorry, we don't have any feedback for this event right now."; return;}
+        document.getElementById("event-details").innerHTML = "<div data-event='"+feedback.title.slice(0,7)+"' onclick='exportFeedback(this)' id='export-fb-button' class='btn btn-primary' style='margin-top: 25px;' data-toggle='modal' data-target='#modal-vertical'>Export Feedback</div><br><br><div id='fbSheetConfirmation'></div>";
+        var feedbackDisplay = "<div>Here's what we have for "+feedback.title+"</div><br><br>\
+        <div class='question'>Select one of the items on the survey to view feedback</div>\
+                                 <select id='questions-select' onchange='createFeedbackChart(this.value)'>\
+                                   <option value='blank'>Select an item</option>\
+                                   <option value='Q1'>1. There was ample opportunity for discussion and questions.</option>\
+                                   <option value='Q2'>2. The information presented was relevant to my work.</option>\
+                                   <option value='Q3'>3. I feel empowered and prepared to apply the knowledge gained in this session.</option>\
+                                   <option value='Q4'>4. I  (will) have the materials necessary to apply the skills/knowledge gained in this session.</option>\
+                                   <option value='Q5'>5. This session enhances my school's connection to its families and community.</option>\
+                                   <option value='Q6'>6. How likely are you to recommend this session to a colleague?</option>\
+                                   <option value='Q7'>7. Do you have any suggestions for improvement?</option>\
+                                 </select><br><br>\
+                               <div id='feedback-container'>\
+                                 <div id='feedback-chart-container'>\
+                                 </div>\
+                                   <div id='feedback-chart-and-y-axis'>\
+                                     <div id='feedback-chart'>\
+                                       <div class='feedback-chart-col' id='col1'>\
+                                       </div>\
+                                       <div class='feedback-chart-col' id='col2'>\
+                                       </div>\
+                                       <div class='feedback-chart-col' id='col3'>\
+                                       </div>\
+                                       <div class='feedback-chart-col' id='col4'>\
+                                       </div>\
+                                       <div class='feedback-chart-col' id='col5'>\
+                                       </div>\
+                                       <div class='feedback-chart-col' id='col6'>\
+                                       </div>\
+                                       <div class='feedback-chart-col' id='col7'>\
+                                       </div>\
+                                       <div class='feedback-chart-col' id='col8'>\
+                                       </div>\
+                                       <div class='feedback-chart-col' id='col9'>\
+                                       </div>\
+                                       <div class='feedback-chart-col' id='col10'>\
+                                       </div>\
+                                       <div class='feedback-chart-col' id='col11'>\
+                                       </div>\
+                                     </div>\
+                                     <div id='feedback-chart-y-axis'>\
+                                       <div id='y-axis-scale'>\
+                                       </div>\
+                                         <div id='y-axis-label'>num responses</div>\
+                                     </div>\
+                                   </div>\
+                                   <div id='feedback-chart-x-axis'>\
+                                     <div id='feedback-scale'>\
+                                       <span>0</span>\
+                                       <span>1</span>\
+                                       <span>2</span>\
+                                       <span>3</span>\
+                                       <span>4</span>\
+                                       <span>5</span>\
+                                       <span>6</span>\
+                                       <span>7</span>\
+                                       <span>8</span>\
+                                       <span>9</span>\
+                                       <span>10</span>\
+                                     </div>\
+                                     <div id='feedback-scale-legend'>\
+                                       <span class='legend-span'>Strongly Disagree</span><span class='legend-span'>Strongly Agree</span>\
+                                     </div>\
+                                 </div>\
+                               </div>";
+           document.getElementById("event-details").innerHTML = document.getElementById("event-details").innerHTML+feedbackDisplay;
+      }
+      
+      function createFeedbackChart(feedbackItem) {
+        if (feedbackItem === "Q7") {document.getElementById("feedback-container").style.display = "none"; showSuggestions(); return;}
+        else {document.getElementById("feedback-container").style.display = "flex"; document.getElementById("suggestions-container").innerHTML = ""}
+        var yAxis = document.getElementById("y-axis-scale").innerHTML = "";
+        var cols = document.getElementsByClassName("feedback-chart-col");
+        for (var i=0; i<cols.length; i++) {
+          cols[i].innerHTML = "";
+        }
+        if (feedbackItem === "blank") {document.getElementById("suggestions-container").innerHTML = ""; return;}
+        var feedbackMap = {0:"col1",1:"col2",2:"col3",3:"col4",4:"col5",5:"col6",6:"col7",7:"col8",8:"col9",9:"col10",10:"col11"};
+        var feedbackArray = feedbackObj[document.getElementById("questions-select").value];
+        console.log("feedbackArray: ",feedbackArray);
+        var countObj = {};
+        feedbackArray.forEach(function(response,index,array) {
+           document.getElementById(feedbackMap[response]).innerHTML+="<span class='col-span'></span>";
+           return array.indexOf(response) === index ? countObj[response] = 1 : ++countObj[response];
+         });
+        console.log("countObj: ",countObj);
+        var modeFeedback = Object.values(countObj).reduce(function(accum,value) {
+          return value > accum ? value : accum;
+        },0);
+        console.log("modeFeedback: ",modeFeedback);
+        for (var n = modeFeedback;n >= 1; n--) {
+          document.getElementById("y-axis-scale").innerHTML = document.getElementById("y-axis-scale").innerHTML+"<span style='height: "+100/Number(modeFeedback)+"%; text-align: center;'>"+n+"</span>";
+        }
+        var colBars = document.getElementsByClassName("col-span");
+        for (var x = 0; x < colBars.length; x++) {
+          colBars[x].style.height = 100/Number(modeFeedback)+"%";
+        }
+      }
+      
+      function showSuggestions() {
+        document.getElementById("suggestions-container").innerHTML = "";
+        if (feedbackObj.Q7.length === 0) {document.getElementById("suggestions-container").innerHTML = "Sorry, you don't have any suggestions right now."}
+        else {
+          for (var i=0; i<feedbackObj.Q7.length; i++) {
+            document.getElementById("suggestions-container").innerHTML+="<div class='suggestion-box'>"+feedbackObj.Q7[i]+"</div>";
+          }
+        }
+      }
+      
+</script>

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <?!= include('stylesheet') ?>
+  </head>
+  <body>
+    <div id='progress-box' style='display: none;'>
+      <div id='progress-msg'></div>
+      <canvas id="spinner" width="75" height="75"></canvas>
+    </div>
+    <div id="title-container">
+      <img id="logo" src="http://i65.tinypic.com/10pwwoy.png">
+      <div id="title"></div>
+      <div id="register-container-mobile">
+        <a id="reg-link-mobile" class="btn btn-primary btn-sm" target=_blank href="https://www.google.com">Register Now</a>
+      </div>
+      <div id="register-container-desktop">
+        <div>Current Registrants: <span id="regs">...</span></div>
+        <a id="reg-link-desktop" class="btn btn-primary btn-lg" target=_blank href="https://www.google.com">Register Now</a>
+        <div>CTLE eligibility: <span id="ctle" style="font-size: 0.8em">...</span></div>
+      </div>
+    </div>
+    <div id="time-space-container-mobile">
+      <div id="basic-time-space">
+        <div id="location" onclick="expandTimeSpace(document.getElementById('expander'),'mobile')" class="time-space-element"><i class="material-icons">place</i><span id="display-location-mobile"></span></div>
+        <div id="times" onclick="expandTimeSpace(document.getElementById('expander'),'mobile')" class="time-space-element"><i class="material-icons">access_time</i><span id="display-times-mobile"></span></div>
+        <div id="dates" onclick="expandTimeSpace(document.getElementById('expander'),'mobile')" class="time-space-element"><div style="display: flex; align-items: center;"><i class="material-icons">calendar_today</i><span id="num_sessions-mobile"></span><span id="display-dates-mobile"></span></div></div>
+        <div id="expand" onclick="expandTimeSpace(document.getElementById('expander'),'mobile')" class="time-space-element" ><canvas id="expander-mobile" class="expand" data-expanded="false"  height='10' width='10' style='border-right:2px solid black; border-bottom:2px solid black; transform: rotate(45deg)'></canvas></div>
+      </div>
+      <div id="more-time-space-mobile">
+        <table id="time-space-table-mobile"><tr><th>Session #</th><th>Date</th><th>Location</th></tr></table>
+      </div>
+    </div>
+    <div id="time-space-container-desktop">
+      <div id="basic-time-space">
+        <div id="location" onclick="expandTimeSpace(document.getElementById('expander'),'desktop')" class="time-space-element"><i class="material-icons">place</i><span id="display-location-desktop"></span></div>
+        <div id="times" onclick="expandTimeSpace(document.getElementById('expander'),'desktop')" class="time-space-element"><i class="material-icons">access_time</i><span id="display-times-desktop"></span></div>
+        <div id="dates" onclick="expandTimeSpace(document.getElementById('expander'),'desktop')" class="time-space-element"><div style="display: flex; align-items: center;"><i class="material-icons">calendar_today</i><span id="num_sessions-desktop"></span><span id="display-dates-desktop"></span></div></div>
+        <div id="expand" onclick="expandTimeSpace(document.getElementById('expander'),'desktop')" class="time-space-element" ><canvas id="expander-desktop" class="expand" data-expanded="false"  height='10' width='10' style='border-right:2px solid black; border-bottom:2px solid black; transform: rotate(45deg)'></canvas></div>
+      </div>
+      <div id="more-time-space-desktop">
+        <table id="time-space-table-desktop"><tr><th>Session #</th><th>Date</th><th>Location</th></tr></table>
+      </div>
+    </div>
+    <div id="about">
+      <div id="target"><strong>Intended for:&nbsp;</strong><span id="display_audience"></span></div>
+      <div style="width: 100%; text-align: left; margin-bottom: 2.5px;"><strong>About this Event</strong></div>
+      <div id="description"><div id="display-description"></div></div>
+      <div id="contact-dekstop"><i class="material-icons">feedback</i><div>This event is facilitated by <span id="facilitators">Blossom, Bubbles, and Buttercup</span><br>Contact <span id="fac1">...</span> at <span id="fac1email">...</span></div></div>
+      <div id="contact-mobile"><i class="material-icons">feedback</i><div style="width: 60%;">Contact <span id="fac1">Nicolas Ries</span> at <span id="fac1email">nries@schools.nyc.gov</span></div></div>
+      <a id="share" href="mailto:nries@schools.nyc.gov?subject=District 18 Assistant Principals Institute-South Cohort&body=I thought you might find this interesting: www.google.com"><i class="material-icons">mail_outline</i><div>Share this Event</div></a>
+      <a id="print" href="" target="_blank"><i class="material-icons">local_printshop</i><div>Create a Flyer</div></a>
+      <br>
+      <div id="meta-app-data">This page was created by the New York City Department of Education. <a target="_blank" href="https://script.google.com/macros/s/AKfycbyR4XnqVxxMK1azl2tjPZuq2SCSzHlTGT5VIRaVaVReiyB8eG8/exec">Report issues here</a></div>
+    </div>
+    <?!= include('javascript') ?>
+  </body>
+</html>

@@ -1,0 +1,889 @@
+<script>
+  window.addEventListener('load',getLoadState);
+  
+  var instance;
+  var parameters;
+  var participantDetails;
+
+function getLoadState() {
+  console.log("getting load state");
+  google.script.url.getLocation(function(loc) {
+    console.log(loc);
+    instance = loc.parameter.instance;
+    if (!instance) {
+      document.getElementById("main-spinner").innerHTML = "Bad URL";
+      return;
+    } else {
+      parameters=loc.parameter;
+      var participantLink = "https://script.google.com/macros/s/AKfycbw-Svb9_fWqYXlW153ST_htOeGLytyjB-tSq8aV66vahu5ETIc7/exec?instance="+encodeURIComponent(parameters.instance)+"&eventid="+parameters.eventid+"&status="+parameters.status+"&sessions="+parameters.sessions+"&duration="+parameters.duration+"&dates="+parameters.dates
+      document.getElementById("session-notes-link").href = "https://script.google.com/macros/s/AKfycbxgfnlryy7ViDEmNqeYyU3EKOsRnSI6qIJ3EIfoghETw8-NnXHn/exec?instance="+encodeURIComponent(parameters.instance)+"&eventid="+parameters.eventid+"&status="+parameters.status+"&pdetails="+encodeURIComponent(participantLink);
+      fetchParticipantDetails(loc.parameter.eventid,loc.parameter.status);
+    }
+  });
+}
+
+
+      function fetchParticipantDetails(eventId,status) {
+        console.log("fetching regs for "+eventId);
+        document.getElementById("main-spinner").style.display = "";
+        document.getElementById("table-body").innerHTML="";
+        document.getElementById("waitlist-table-body").innerHTML="";
+        document.getElementById("pTable").style.display="none";
+        document.getElementById("waitlist-container").style.display="none";
+        document.getElementById("participant-page-link").onclick=function() {
+          document.getElementById('participant-page').style.display='flex';
+          document.getElementById('attendance-page').style.display='none';
+          fetchParticipantDetails(eventId,status);
+        }
+        var withSuccess = google.script.run.withSuccessHandler(renderParticipantDetails);
+        var withFailure = withSuccess.withFailureHandler(function(error) {
+              console.log("error handler for fetchParticipantDetails message: "+error);
+            });
+        withFailure.getRegDetails(eventId,instance,status,Number(parameters.sessions));
+      }
+      
+      function renderAttendanceTable(session,element) {
+        document.getElementById("main-spinner").style.display = "none";
+        document.getElementById("session-date-display").innerHTML="Showing Attendance for "+parameters.dates.split("/")[session-1];
+        console.log("rendering attendance table");
+        var participants = participantDetails.participants;
+        var tbody = document.getElementById("attn-table-body");
+        tbody.innerHTML="";
+        document.getElementById("attn-table").style.display="";
+        if (element) {
+          var sessionTabs = document.getElementsByClassName("session");
+          for (var y=0;y<sessionTabs.length; y++) {
+            if (sessionTabs[y].className==="session nav-link active") {
+              sessionTabs[y].className="session nav-link";
+            }
+            element.className="session nav-link active";            
+          }
+        }
+        if (document.getElementById("session-tabs").dataset.sessionsrendered==="false") {
+          for (var x=2; x<=parameters.sessions;x++) {
+            document.getElementById("session-tabs").appendChild(htmlElement({tag: "LI", className: "nav-item", innerHTML: '<a class="session nav-link" data-number="'+Number(x)+'" id="session-'+Number(x)+'" onclick="renderAttendanceTable('+Number(x)+',this)">Session '+x+'</a>'}));
+          }
+          document.getElementById("session-tabs").dataset.sessionsrendered="true";
+        }
+        for (var i=0; i<participants.length;i++) {
+          var row = htmlElement({tag: "TR"});
+          row.appendChild(htmlElement({tag: "TH", scope: "row", innerHTML: Number(i)+1}));
+          row.appendChild(htmlElement({tag: "TD", innerHTML: participants[i].lName+", "+participants[i].fName}));
+          row.appendChild(htmlElement({tag: "TD", innerHTML: participants[i].dbn}));
+          row.appendChild(htmlElement({tag: "TD", innerHTML: participants[i].email}));
+          if (participants[i].attendanceArray[session-1]==="") {
+            row.appendChild(htmlElement({tag: "TD", innerHTML: "<input class='hours-attended' type='number' data-id='"+participants[i].id+"' placeholder='N/A' value='' min='0' max='"+parameters.duration+"'>"}));
+          } else {
+            row.appendChild(htmlElement({tag: "TD", innerHTML: "<input class='hours-attended' type='number' data-id='"+participants[i].id+"' value='"+participants[i].attendanceArray[session-1]+"' min='0' max='"+parameters.duration+"'>"}));
+          }
+          
+          tbody.appendChild(row);
+        }
+      }
+      
+      function markAllAttended() {
+        var inputs = document.getElementsByClassName("hours-attended");
+        for (var i=0; i<inputs.length; i++) {
+          if (inputs[i].value==="") {
+            inputs[i].value=parameters.duration;
+          }
+        }
+      }
+      
+      function markAllAbsent() {
+        var inputs = document.getElementsByClassName("hours-attended");
+        for (var i=0; i<inputs.length; i++) {
+          if (inputs[i].value==="") {
+            inputs[i].value=0;
+          }
+        }
+      }
+      
+      function saveAttendance() {
+        var out = {session_number: 1, event_id: parameters.eventid}
+        var sessionTabs = document.getElementsByClassName("session");
+        for (var y=0;y<sessionTabs.length; y++) {
+            if (sessionTabs[y].className==="session nav-link active") {
+              out.session_number = Number(sessionTabs[y].dataset.number);
+            }
+          }
+        var inputs = document.getElementsByClassName("hours-attended");
+        for (var i=0; i<inputs.length; i++) {
+          out[inputs[i].dataset.id]=inputs[i].value;
+        }
+        for (var j=0; j<participantDetails.participants.length;j++) {
+          var participant = participantDetails.participants[j];
+          console.log(participant);
+          console.log(out[participant.id]);
+          participantDetails.participants[j].attendanceArray[Number(out.session_number)-1]=out[participant.id];
+        }
+        var withSuccess = google.script.run.withSuccessHandler(function(msg) {
+            document.getElementById("modal-spinner").style.display="none";
+            document.getElementById("modal-success").style.display="";
+            if (msg.attendance_complete) {
+              document.getElementById("modal-success").innerHTML = "Thank you for submitting attendance for all of your registrants.\
+              You can choose to archive the event now. Archving the event will allow you to start sending CTLE certificates immediately if the event is eligible.\
+              Please note that events are archived and CTLE is sent each weekend automatically whether or not you click Archive Now. Once an event is archived, attendance \
+              can be edited but registrants can't be added.";
+              document.getElementById("modal-body-msg").style.display = "";
+              document.getElementById("modal-body-msg").innerHTML = "Do you want to Archive this event now?<br><br><div>\
+              <button class='btn btn-outline-primary btn-sm' onclick='initArchiveEvent(\""+parameters.eventid+"\")'>Archive Now</button>\
+              </div>";
+            } else {
+              document.getElementById("modal-success").innerHTML="Attendance was saved for "+msg.found_regs+" registrants.";
+            }
+            document.getElementById("modal-footer").style.display="";
+        });
+        var withFailure = withSuccess.withFailureHandler(function(error) {
+          console.log(error);
+          document.getElementById("modal-spinner").style.display="none";
+          document.getElementById("modal-failure").style.display="";
+          document.getElementById("modal-failure").innerHTML=error;
+          document.getElementById("modal-footer").style.display="";
+        });
+        withFailure.postAttendance(out,instance,parameters.status);
+        document.getElementById("modal-body-msg").style.display = "none";
+        document.getElementById("modal-success").style.display="none";
+        document.getElementById("modal-failure").style.display="none";
+        document.getElementById("modal-body-info").style.display="none";
+        document.getElementById("modal-title").innerHTML="Saving Data";
+        document.getElementById("modal-loading-msg").innerHTML="Submitting your attendance for session "+out.session_number+".";
+        document.getElementById("modal-spinner").style.display="";
+        document.getElementById("modal-footer").style.display="none";
+      }
+      
+      function displaySys() {
+        var years = document.getElementById("sy-select").getElementsByTagName("OPTION");
+        var today = new Date();
+        var curYear = today.getFullYear();
+        if ((today.getMonth()>=8 && today.getDate()>=7) || today.getMonth()>=9) curYear++;
+          var yearsSince18 = curYear-2018;
+        for (var i=yearsSince18; i>0; i--) {
+          var curSy = "SY"+Number(curYear-i).toString().slice(2,4)+"-"+Number(curYear-i+1).toString().slice(2,4);
+          if (i===1) {
+            document.getElementById("sy-select").appendChild(htmlElement({tag: "OPTION", value: "current", innerHTML: curSy, selected: true}));
+          } else {
+            document.getElementById("sy-select").appendChild(htmlElement({tag: "OPTION", value: curSy, innerHTML: curSy}));
+          }
+        }
+      }
+      
+function initArchiveEvent(eventid) {
+  document.getElementById("modal-title").innerHTML = "Archiving an Event";
+  document.getElementById("modal-success").style.display = "none";
+  document.getElementById("modal-failure").style.display = "none";
+  document.getElementById("modal-body-msg").style.display = "";
+  document.getElementById("modal-body-msg").innerHTML =
+  '<label for="sy-select">Select the SY that this event belongs to:</label>\
+  <select class="form-control" id="sy-select" name="sy-select"></select>\
+  <div style="width: 100%; display: flex; justify-content: center; margin-top: 25px;">\
+  <button class="btn btn-outline-primary btn-sm" onclick="archive(\''+eventid+'\')">Archive</button>\
+  </div>';
+  displaySys();
+}
+
+function archive(eventid) {
+  console.log("archiving "+eventid);
+  var sy = document.getElementById("sy-select").value;
+  document.getElementById("modal-body-msg").style.display = "none";
+  document.getElementById("modal-spinner").style.display = "";
+  document.getElementById("modal-loading-msg").innerHTML = "Archiving event id "+eventid;
+  var withSuccess = google.script.run.withSuccessHandler(function(msg) {
+    document.getElementById("modal-spinner").style.display = "none";
+    if (msg.success) {
+      document.getElementById("modal-success").style.display = "";
+      document.getElementById("modal-success").innerHTML = msg.msg;
+    } else {
+      document.getElementById("modal-failure").style.display = "";
+      document.getElementById("modal-failure").innerHTML = msg.msg;    
+    }
+  });
+  var withFailure = withSuccess.withFailureHandler(function(error) {
+    document.getElementById("modal-spinner").style.display = "none";
+    document.getElementById("modal-failure").style.display = "";
+    document.getElementById("modal-failure").innerHTML = error;
+  });
+  withFailure.postToArchive(eventid,parameters.instance,sy);
+}
+      
+      
+      function renderParticipantDetails(details) {
+        console.log("rendering participant details")
+        document.getElementById("main-spinner").style.display = "none";
+        document.getElementById("participant-search").style.display="flex";
+        details = JSON.parse(details);
+        participantDetails = details;
+        document.getElementById("export-button").onclick=function() {
+          exportRegDetails(participantDetails);
+        }
+        var participantEmails = [];
+        var attendeeEmails = [];
+        var divContent;
+        var newDiv;
+        if (!details.participants[0]) {
+          document.getElementById("event-details").innerHTML = "It looks like nobody has registered for this event yet...";
+          return;
+        }
+        document.getElementById("title").innerHTML=details.participants[0].eventName;
+        var tBody = document.getElementById("table-body");
+        document.getElementById("pTable").style.display="";
+        var wlCount=0;
+        var regCount=0;
+        for (var i=0; i<details.participants.length; i++) {
+          if (details.participants[i].waitlist) {
+            wlCount++;
+            var wlrow = htmlElement({tag: "TR"});
+            wlrow.appendChild(htmlElement({tag: "TH", scope: "row", innerHTML: wlCount}));
+            wlrow.appendChild(htmlElement({tag: "TD", innerHTML: details.participants[i].lName+", "+details.participants[i].fName}));
+            wlrow.appendChild(htmlElement({tag: "TD", innerHTML: details.participants[i].dbn}));
+            wlrow.appendChild(htmlElement({tag: "TD", innerHTML: details.participants[i].email, href: "mailto:"+details.participants[i].email}));
+            wlrow.appendChild(htmlElement({tag: "TD", "data-id": details.participants[i].id, eventListener: {"event": "click", "function": function(e) {addReg(e.target)}}, "data-toggle": "modal", "data-target":"#modal-vertical", innerHTML:'<button type="button" class="btn btn-outline-primary btn-sm">Register</button>' }));
+            document.getElementById("waitlist-table-body").appendChild(wlrow);
+          } else {
+            regCount++;
+            participantEmails.push(details.participants[i].email);
+            if (details.participants[i].attendance>0) {attendeeEmails.push(details.participants[i].email)}
+            var row = htmlElement({tag: "TR", "data-email": details.participants[i].email});
+            row.appendChild(htmlElement({tag: "TH", scope: "row", innerHTML: regCount}));
+            row.appendChild(htmlElement({tag: "TD", innerHTML: details.participants[i].lName+", "+details.participants[i].fName}));
+            row.appendChild(htmlElement({tag: "TD", innerHTML: details.participants[i].dbn}));
+            row.appendChild(htmlElement({tag: "TD", innerHTML: details.participants[i].email, href: "mailto:"+details.participants[i].email}));
+            row.appendChild(htmlElement({tag: "TD", "data-participantid": details.participants[i].id, eventListener: {"event": "click", "function": function(e) {expandParticipant(e.target)}}, innerHTML:'<button type="button" class="btn btn-default"><i id="arrow-'+details.participants[i].id+'" class="material-icons">keyboard_arrow_down</i></button>' }));
+            var moreInfo = htmlElement({tag: "TR", "data-email":details.participants[i].email, className: "more-info-div", "data-expanded": "false", style: "height: 0px; overflow: hidden; transition-property: height; transition-duration: 1s; transition-timing-function: linear; transition-delay: 0s;"});
+            var moreInfoTd = htmlElement({tag: "TD", colspan: "5", id: "more-info-"+details.participants[i].id, style: "display: none;", "data-email": details.participants[i].email});
+            for (var j=0;j<details.participants[i].more_info.length;j++) {
+              moreInfoTd.appendChild(htmlElement({tag:"P", className: "card-text", innerHTML: "<b>"+details.participants[i].more_info[j].label+": </b>"+details.participants[i].more_info[j].value}));
+            }
+            var moreButtonsDiv = htmlElement({tag: "DIV", style: "width: 100%; display: flex; justify-content: space-around; align-items: center;"});
+            if (parameters.status==="archived" && parameters.ctle!=="ineligible") {
+              moreButtonsDiv.appendChild(htmlElement({tag: "BUTTON", className: "btn btn-primary", "data-toggle": "modal", "data-target":"#modal-vertical", "data-id": details.participants[i].id, eventListener: {"event": "click", "function": function(e) {sendCtle(e.target)}}, innerHTML: "Send CTLE"}))
+            } else if (parameters.status!=="archived") {
+              moreButtonsDiv.appendChild(htmlElement({tag: "BUTTON", className: "btn btn-primary", "data-toggle": "modal", "data-target":"#modal-vertical", "data-id": details.participants[i].id, eventListener: {"event": "click", "function": function(e) {signin(e.target)}}, innerHTML: "Sign In"}))
+            }
+            moreButtonsDiv.appendChild(htmlElement({tag: "A", target: "_blank", href: details.participants[i].edit_link, className: "btn btn-primary", innerHTML: "Edit Registration"}))
+            moreButtonsDiv.appendChild(htmlElement({tag: "BUTTON", "data-toggle": "modal", "data-target":"#modal-vertical", "data-id": details.participants[i].id , eventListener: {"event": "click", "function": function(e) {deReg(e.target)}}, className: "btn btn-secondary", innerHTML: "Remove Registrant"}));
+            moreInfoTd.appendChild(moreButtonsDiv);
+            moreInfo.appendChild(moreInfoTd);
+            tBody.appendChild(row);
+            tBody.appendChild(moreInfo);
+          }
+        }
+        document.getElementById("p-summary").style.display="flex";
+        document.getElementById("participant-search").style.display="flex";
+        document.getElementById("num-participants").innerHTML=regCount;
+        document.getElementById("avg-comfort").innerHTML=Number(details.participants.reduce(function(acum,p) {if (p.comforLevel!=="") { acum+=Number(p.comfortLevel)} return acum},0)/regCount).toPrecision(1);
+        var exp = Number(details.participants.reduce(function(acum,p) {if (p.experience!=="") {acum+=Number(p.experience)} return acum},0)/regCount).toFixed(1);
+        document.getElementById("avg-experience").innerHTML=exp
+        console.log(regCount)
+        document.getElementById("num-waitlisted").innerHTML=details.waitlist;
+        if (details.waitlist>0) {
+          document.getElementById("waitlist-container").style.display="flex";
+          document.getElementById("waitlist-table").style.display="";
+        }
+        document.getElementById("mail-participants").setAttribute("href","mailto:"+participantEmails.join(";"));
+        document.getElementById("mail-attendees").setAttribute("href","mailto:"+attendeeEmails.join(";"));
+        document.getElementById("walkin-link").setAttribute("href", "https://script.google.com/a/strongschools.nyc/macros/s/AKfycbz13TA6TRLjXeWWS4UzoZp0Si7VH0DV8Qjhco5ZG2FHe2y7j-Y/exec?instance="+encodeURIComponent(instance)+"&id="+parameters.eventid+"&walkin=walkin")
+      }
+      
+      function sortRegTable(element,table,field) {
+        if (element.dataset.order==="ascending") {
+          var order = "descending";
+          element.dataset.order="descending"
+        } else {
+          var order = "ascending";
+          element.dataset.order="ascending"
+        }
+        if (element.style.transform==="rotate(180deg)") {
+          element.style.transform="rotate(0deg)";
+        } else {
+          element.style.transform="rotate(180deg)"
+        }
+        participantDetails.participants = participantDetails.participants.sort(function(person1,person2) {
+           var name1 = person1.lName.toUpperCase();
+           var name2 = person2.lName.toUpperCase();
+           var dbn1 = person1.dbn.slice(0,2);
+           var dbn2 = person2.dbn.slice(0,2);
+          if (field==="dbn") {
+            if (order==="ascending") {
+              if (dbn1 < dbn2) {
+                return -1;
+              }
+              if (dbn1 > dbn2) {
+                return 1;
+              }
+              if (document.getElementById("name-sorter").dataset.order==="ascending") {
+                 if (name1 < name2) {
+                  return -1;
+                }
+                if (name1 > name2) {
+                  return 1;
+                }             
+              } else if (document.getElementById("name-sorter").dataset.order==="descending") {
+                if (name1 > name2) {
+                  return -1;
+                }
+                if (name1 < name2) {
+                  return 1;
+                }                
+              }
+              return 0;
+              } else if (order==="descending") {
+                if (dbn1 > dbn2) {
+                  return -1;
+                }
+                if (dbn1 < dbn2) {
+                  return 1;
+                }
+              if (document.getElementById("name-sorter").dataset.order==="ascending") {
+                 if (name1 < name2) {
+                  return -1;
+                }
+                if (name1 > name2) {
+                  return 1;
+                }             
+              } else if (document.getElementById("name-sorter").dataset.order==="descending") {
+                if (name1 > name2) {
+                  return -1;
+                }
+                if (name1 < name2) {
+                  return 1;
+                }                
+              }
+                return 0;                
+              }
+          } else if (field==="name") {
+              if (order==="ascending") {
+                if (name1 < name2) {
+                  return -1;
+                }
+                if (name1 > name2) {
+                  return 1;
+                }
+                if (document.getElementById("dbn-sorter").dataset.order==="descending") {
+                  if (dbn1 > dbn2) {
+                    return -1;
+                  }
+                  if (dbn1 < dbn2) {
+                    return 1;
+                  }                
+                } else if (document.getElementById("dbn-sorter").dataset.order==="ascending") {
+                  if (name1 < name2) {
+                    return -1;
+                  }
+                  if (name1 > name2) {
+                    return 1;
+                  }                   
+                }
+                return 0;
+              } else if (order==="descending") {
+                if (name1 > name2) {
+                  return -1;
+                }
+                if (name1 < name2) {
+                  return 1;
+                }
+                if (document.getElementById("dbn-sorter").dataset.order==="descending") {
+                  if (dbn1 > dbn2) {
+                    return -1;
+                  }
+                  if (dbn1 < dbn2) {
+                    return 1;
+                  }                
+                } else if (document.getElementById("dbn-sorter").dataset.order==="ascending") {
+                  if (name1 < name2) {
+                    return -1;
+                  }
+                  if (name1 > name2) {
+                    return 1;
+                  }                   
+                }                
+                return 0;                
+              }
+          }
+        });
+        if (table==="attendance") {
+          var session=document.getElementsByClassName("session nav-link active")[0].dataset.number;
+          renderAttendanceTable(session);
+        }
+      }
+      
+      function sendCtle(button) {
+        var participant = participantDetails.participants.filter(function(p) {return p.id===button.dataset.id})[0];
+        console.log(participant);
+        if (participant.ssnum==="" || participant.byear === "" || participant.bmonth === "" || participant.bday===""){
+          document.getElementById("modal-body-info").style.display="none";
+          document.getElementById("modal-failure").style.display="";
+          document.getElementById("modal-failure").innerHTML="This participant is missing information that NYSED requires in order for theme to receive a CTLE certificate. You can edit provid"
+        }
+        document.getElementById("modal-success").style.display="none";
+        document.getElementById("modal-failure").style.display="none";
+        document.getElementById("modal-body-info").style.display="";
+        document.getElementById("modal-body-info").innerHTML="\
+        <form style='transition: height 1s; height: auto; overflow: hidden;' id='ctle-form-"+participant.id+"' onsubmit='initSendCtle(\""+participant.id+"\")'>\
+          <h5>Please verify this participant's information before sending.</h5>\
+          <div class='form-group'>\
+            <label for='fname'>First Name:<span style='color: red;'>*</span></label><input class='form-control' type='text' name='fname' id='fname' value='"+participant.fName+"' readonly required>\
+          </div>\
+          <div class='form-group'>\
+            <label for='lname'>Last Name:<span style='color: red;'>*</span> </label><input class='form-control' type='text' name='lname' id='lname' value='"+participant.lName+"' readonly required>\
+          </div>\
+          <div class='form-group'>\
+            <label for='email'>Email:<span style='color: red;'>*</span> </label><input class='form-control' type='email' name='email' id='email' value='"+participant.email+"' readonly required>\
+          </div>\
+          <div class='form-group'>\
+            <label for='dbn'>DBN:<span style='color: red;'>*</span> </label><input class='form-control' type='text' name='dbn' id='dbn' value='"+participant.dbn+"' readonly required>\
+          </div>\
+          <div class='form-group'>\
+            <label for='bday'>Birth Day:<span style='color: red;'>*</span> </label><input class='form-control' type='number' name='bday' id='bday' value='"+participant.bday+"' readonly required>\
+          </div>\
+          <div class='form-group'>\
+            <label for='bmonth'>Birth Month:<span style='color: red;'>*</span> </label><input class='form-control' type='text' name='bmonth' id='bmonth' value='"+participant.bmonth+"' readonly required>\
+          </div>\
+          <div class='form-group'>\
+            <label for='byear'>Birth Year:<span style='color: red;'>*</span> </label><input class='form-control' type='number' name='byear' id='byear' value='"+participant.byear+"' readonly required>\
+          </div>\
+          <div class='form-group'>\
+            <label for='ssnum'>Last 4 Digits of SS#:<span style='color: red;'>*</span> </label><input class='form-control' type='text' maxlength='4' pattern='[0-9][0-9][0-9][0-9]' title='Social Security # must be 4 digits' name='ssnum' id='ssnum' value='"+participant.ssnum+"' readonly required>\
+          </div>\
+          <div class='form-group'>\
+            <label for='hours_attended'>Hours Attended:<span style='color: red;'>*</span> (edit this on the attendance page)</label><input class='form-control' type='number' name='hours_attended' id='hours_attended' value='"+participant.hours_attended+"' readonly required>\
+          </div>\
+          <div class='form-group'>\
+            <label for='pid'>Participant ID:<span style='color: red;'>*</span> </label><input class='form-control' type='text' name='pid' id='pid' value='"+participant.id+"' readonly required>\
+          </div>\
+          <div id='ctle-buttons-"+participant.id+"' style='width: 100%; display: flex; justify-content: space-around;'>\
+            <button type='button' id='edit-button-"+participant.id+"' class='btn btn-outline-primary' onclick='editCtleForm(\""+participant.id+"\",this)'>Edit Info</button>\
+            <button type='button' id='save-ctle-form-"+participant.id+"' class='btn btn-outline-primary' style='display: none;' onclick='saveCtleForm(\""+participant.id+"\")'>Save Changes</button>\
+            <input type='submit' class='btn btn-primary' value='Send'>\
+          </div>\
+        </form>";
+        document.getElementById("modal-body-msg").style.display = "none";
+        document.getElementById("ctle-form-"+participant.id).addEventListener('submit', function(event) {event.preventDefault();});
+        document.getElementById("modal-title").innerHTML="Send CTLE";
+        document.getElementById("modal-loading-msg").innerHTML="Adding Registrant";
+        document.getElementById("modal-spinner").style.display="none";
+        document.getElementById("modal-footer").style.display="";        
+      }
+      
+      function initSendCtle(participantId) {
+        var form = document.getElementById("ctle-form-"+participantId);
+        var elements = form.elements;
+        if (form.hours_attended===0 || !form.hours_attended || form.hours_attended==="") {
+              alert("Hours attended must be greater than 0.");
+              return;
+         }
+        var formObj = {};
+        console.log(form.bday.value);
+        formObj.fName = form.fname.value;
+        formObj.lName = form.lname.value;
+        formObj.dob = form.bmonth.value+" "+form.bday.value+", "+form.byear.value;
+        formObj.event_id = parameters.eventid;
+        formObj.participant_id = form.pid.value;
+        formObj.eventName = parameters.title;
+        formObj.eventCtleType = parameters.ctle;
+        formObj.eventDivision = parameters.division;
+        formObj.eventGradeBand = parameters.gradeband;
+        formObj.eventStart = parameters.eventstart;
+        formObj.eventLocation = parameters.location;
+        formObj.hoursAttended = form.hours_attended.value;
+        formObj.email = form.email.value;
+        formObj.ssnum=form.ssnum.value;
+        formObj.ctleId = form.pid.value+"-"+parameters.eventid;
+        form.setAttribute('style', 'transition: height 1s; height: 0px; overflow: hidden');
+        document.getElementById("ctle-buttons-"+participantId).style.display = "none";
+        document.getElementById("modal-spinner").style.display="";
+        document.getElementById("modal-body-msg").style.display = "none";
+        document.getElementById("modal-loading-msg").innerHTML="Creating and Sending a Certificate...";
+        document.getElementById("modal-footer").style.display="none";
+        var withSuccess = google.script.run.withSuccessHandler(function(msg) {
+          document.getElementById("modal-spinner").style.display="none";
+            document.getElementById("modal-success").style.display="";
+            document.getElementById("modal-success").innerHTML=msg;
+          setTimeout(function() {
+            form.setAttribute('style', 'transition: height 1s; height: auto; overflow: hidden');
+            document.getElementById("ctle-buttons-"+participantId).style.display = "flex";
+            document.getElementById("modal-success").style.display="none";
+            document.getElementById("modal-failure").style.display="none";
+            for (var i=0; i<elements.length; i++) {
+               if (elements[i].id!=="hours_attended") {
+                elements[i].readonly=true;
+                elements[i].readOnly=true;
+              }
+            }
+            document.getElementById("modal-footer").style.display="";
+            document.getElementById("ctle-buttons-"+participantId).style.display = "flex";
+            document.getElementById("save-ctle-form-"+participantId).style.display="none";
+            document.getElementById("edit-button-"+participantId).className = "btn btn-outline-primary";
+            document.getElementById("edit-button-"+participantId).innerHTML = "Edit";
+            document.getElementById("edit-button-"+participantId).onclick=function(e) {editCtleForm(participantId,e.target)}
+          },3500);
+        });
+        var withFailure = withSuccess.withFailureHandler(function(error) {
+          document.getElementById("modal-spinner").style.display="none";
+          document.getElementById("modal-failure").style.display="";
+          document.getElementById("modal-failure").innerHTML=error;
+          setTimeout(function() {
+            form.setAttribute('style', 'transition: height 1s; height: auto; overflow: hidden');
+            document.getElementById("ctle-buttons-"+participantId).style.display = "flex";
+            document.getElementById("modal-failure").style.display="none";
+            for (var i=0; i<elements.length; i++) {
+              if (elements[i].id!=="hours_attended") {
+                elements[i].readonly=true;
+                elements[i].readOnly=true;
+              }
+            }
+            document.getElementById("modal-footer").style.display="";
+            document.getElementById("ctle-buttons-"+participantId).style.display = "flex";
+            document.getElementById("save-ctle-form-"+participantId).style.display="none";
+            document.getElementById("edit-button-"+participantId).className = "btn btn-outline-primary";
+            document.getElementById("edit-button-"+participantId).innerHTML = "Edit";
+            document.getElementById("edit-button-"+participantId).onclick=function(e) {editCtleForm(participantId,e.target)}
+          },3500);
+        });
+        withFailure.createCtleDoc(formObj,parameters.instance);       
+      }
+      
+      function editCtleForm(participantId,button) {
+        button.innerHTML= "Editing";
+        button.onclick=function() {return}
+        button.className = "btn btn-outline-secondary";
+        var form = document.getElementById("ctle-form-"+participantId);
+        console.log(form.elements);
+        var elements = form.elements;
+        for (var i=0; i<elements.length; i++) {
+          if (elements[i].id!=="hours_attended") {
+            elements[i].readonly=false;
+            elements[i].readOnly=false;
+          }
+        }
+        document.getElementById("save-ctle-form-"+participantId).style.display = "";
+      }
+      
+      function saveCtleForm(participantId) {
+        var form = document.getElementById("ctle-form-"+participantId);
+        var elements = form.elements;
+        var formObj = {};
+        for (var i=0; i<elements.length; i++) {
+          formObj[elements[i].name]=elements[i].value;
+        }
+        form.setAttribute('style', 'transition: height 1s; height: 0px; overflow: hidden');
+        document.getElementById("ctle-buttons-"+participantId).style.display = "none";
+        document.getElementById("modal-spinner").style.display="";
+        document.getElementById("modal-body-msg").style.display = "none";
+        document.getElementById("modal-loading-msg").innerHTML="Saving your Changes...";
+        document.getElementById("modal-footer").style.display="none";
+        var withSuccess = google.script.run.withSuccessHandler(function(msg) {
+          document.getElementById("modal-spinner").style.display="none";
+          if (msg.found) {
+            document.getElementById("modal-success").style.display="";
+            document.getElementById("modal-success").innerHTML=msg.msg;
+          } else {
+           document.getElementById("modal-failure").style.display="";
+            document.getElementById("modal-failure").innerHTML=msg.msg;          
+          }
+          setTimeout(function() {
+            form.setAttribute('style', 'transition: height 1s; height: auto; overflow: hidden');
+            document.getElementById("ctle-buttons-"+participantId).style.display = "flex";
+            document.getElementById("modal-success").style.display="none";
+            document.getElementById("modal-failure").style.display="none";
+            for (var i=0; i<elements.length; i++) {
+               if (elements[i].id!=="hours_attended") {
+                elements[i].readonly=true;
+                elements[i].readOnly=true;
+              }
+            }
+            document.getElementById("modal-footer").style.display="";
+            document.getElementById("ctle-buttons-"+participantId).style.display = "flex";
+            document.getElementById("save-ctle-form-"+participantId).style.display="none";
+            document.getElementById("edit-button-"+participantId).className = "btn btn-outline-primary";
+            document.getElementById("edit-button-"+participantId).innerHTML = "Edit";
+            document.getElementById("edit-button-"+participantId).onclick=function(e) {editCtleForm(participantId,e.target)}
+          },3500);
+        });
+        var withFailure = withSuccess.withFailureHandler(function(error) {
+          document.getElementById("modal-spinner").style.display="none";
+          document.getElementById("modal-failure").style.display="";
+          document.getElementById("modal-failure").innerHTML=error;
+          setTimeout(function() {
+            form.setAttribute('style', 'transition: height 1s; height: auto; overflow: hidden');
+            document.getElementById("ctle-buttons-"+participantId).style.display = "flex";
+            document.getElementById("modal-failure").style.display="none";
+            for (var i=0; i<elements.length; i++) {
+              if (elements[i].id!=="hours_attended") {
+                elements[i].readonly=true;
+                elements[i].readOnly=true;
+              }
+            }
+            document.getElementById("modal-footer").style.display="";
+            document.getElementById("ctle-buttons-"+participantId).style.display = "flex";
+            document.getElementById("save-ctle-form-"+participantId).style.display="none";
+            document.getElementById("edit-button-"+participantId).className = "btn btn-outline-primary";
+            document.getElementById("edit-button-"+participantId).innerHTML = "Edit";
+            document.getElementById("edit-button-"+participantId).onclick=function(e) {editCtleForm(participantId,e.target)}
+          },3500);
+        });
+        withFailure.postCtleForm(formObj,parameters.instance)
+      }
+      
+  function htmlElement(obj,parent) {
+    if (obj.tag) {
+      var element = document.createElement(obj.tag);
+    } else {
+      var element = document.createElement("DIV");
+    }
+    var keys = Object.keys(obj);
+    keys.forEach(function(key) {
+      if (key==="tag") {return}
+      if (key.indexOf("data-")!==-1 || key==="colspan") {
+        element.setAttribute(key,obj[key])
+      } else if (key==="eventListener") {
+        element.addEventListener(obj[key].event, obj[key].function)
+      }
+      else {element[key]=obj[key]}
+    });
+    if (parent) {
+      parent.appendChild(element);
+    } else {
+      return element;
+    }
+  }
+
+      function expandParticipant(element) {
+        console.log(element);
+        console.log(element.closest("TD"));
+        var pid = element.closest("TD").dataset.participantid;
+        var id = "more-info-"+pid;
+        var moreInfoDiv = document.getElementById(id);
+        if (moreInfoDiv.dataset.expanded==="false") {
+          moreInfoDiv.style.display="";
+          moreInfoDiv.parentElement.style.height="auto";
+          document.getElementById("arrow-"+pid).style.transform = "rotate(180deg)";
+          moreInfoDiv.dataset.expanded = "true";
+        } else {
+          moreInfoDiv.style.display="none";
+          moreInfoDiv.parentElement.style.height="0px";
+          document.getElementById("arrow-"+pid).style.transform = "rotate(0deg)";
+          moreInfoDiv.dataset.expanded = "false";          
+        }
+      }
+      
+      function addReg(element) {
+        var id = element.closest("TD").dataset.id;
+        console.log(id);
+        var withSuccess = google.script.run.withSuccessHandler(function(msg) {
+            document.getElementById("modal-spinner").style.display="none";
+            document.getElementById("modal-success").style.display="";
+            document.getElementById("modal-success").innerHTML="Participant was added.";   
+            document.getElementById("modal-footer").style.display="";
+            fetchParticipantDetails(parameters.eventid,parameters.status);
+        });
+        var withFailure = withSuccess.withFailureHandler(function(error) {
+          console.log(error);
+          document.getElementById("modal-spinner").style.display="none";
+          document.getElementById("modal-failure").style.display="";
+          document.getElementById("modal-failure").innerHTML=error;
+          document.getElementById("modal-footer").style.display="";
+        });
+        withFailure.addRegistrant(id,instance);
+        document.getElementById("modal-body-msg").style.display = "none";
+        document.getElementById("modal-success").style.display="none";
+        document.getElementById("modal-failure").style.display="none";
+        document.getElementById("modal-body-info").style.display="none";
+        document.getElementById("modal-title").innerHTML="Add Registrant";
+        document.getElementById("modal-loading-msg").innerHTML="Adding Registrant";
+        document.getElementById("modal-spinner").style.display="";
+        document.getElementById("modal-footer").style.display="none";
+      }      
+      
+      function deReg(element) {
+        console.log(element.closest("TR"));
+        var id = element.dataset.id;
+        var withSuccess = google.script.run.withSuccessHandler(function(msg) {
+            document.getElementById("modal-spinner").style.display="none";
+            document.getElementById("modal-success").style.display="";
+            document.getElementById("modal-success").innerHTML="Participant was removed from roster.";   
+            document.getElementById("modal-footer").style.display="";
+            fetchParticipantDetails(parameters.eventid,parameters.status);
+        });
+        var withFailure = withSuccess.withFailureHandler(function(error) {
+          console.log(error);
+          document.getElementById("modal-spinner").style.display="none";
+          document.getElementById("modal-failure").style.display="";
+          document.getElementById("modal-failure").innerHTML=error;
+          document.getElementById("modal-footer").style.display="";
+        });
+        withFailure.removeRegistrant(id,instance);
+        document.getElementById("modal-body-msg").style.display = "none";
+        document.getElementById("modal-success").style.display="none";
+        document.getElementById("modal-failure").style.display="none";
+        document.getElementById("modal-body-info").style.display="none";
+        document.getElementById("modal-title").innerHTML="Remove Registrant";
+        document.getElementById("modal-loading-msg").innerHTML="Canceling this registration...";
+        document.getElementById("modal-spinner").style.display="";
+        document.getElementById("modal-footer").style.display="none";
+      }
+      
+      function signin(element) {
+        var pid = element.dataset.id;
+        if (element.dataset.signout === "require_sign_out") {
+          var signout = true;
+          var waitMsg = "Signing you out. Hang on."
+          var titlemsg = "Sign Out";
+        } else {
+          var signout = false;
+          var waitMsg = "Signing you in. Hang on."
+          var titlemsg = "Sign In";
+        }
+        var withSuccess = google.script.run.withSuccessHandler(function(msg) {
+          console.log(msg);
+          document.getElementById("modal-spinner").style.display="none";
+          document.getElementById("modal-footer").style.display="";
+          if (msg.success) {
+            document.getElementById("modal-success").style.display="";
+            document.getElementById("modal-success").innerHTML=msg.msg;
+          } else {
+            document.getElementById("modal-failure").style.display="";
+            document.getElementById("modal-failure").innerHTML=msg.msg;
+          }
+          if (msg.require_sign_out) {
+            element.innerHTML = "Sign Out";
+            element.dataset.signout = "require_sign_out"
+          }
+        });
+        var withFailure = withSuccess.withFailureHandler(function(err) {
+          document.getElementById("modal-failure").style.display="";
+          document.getElementById("modal-failure").innerHTML=err;
+          document.getElementById("modal-footer").style.display="";
+        });
+        document.getElementById("modal-body-msg").style.display = "none";
+        document.getElementById("modal-success").style.display="none";
+        document.getElementById("modal-failure").style.display="none";
+        document.getElementById("modal-body-info").style.display="none";
+        document.getElementById("modal-title").innerHTML=titlemsg;
+        document.getElementById("modal-loading-msg").innerHTML=waitMsg;
+        document.getElementById("modal-spinner").style.display="";
+        document.getElementById("modal-footer").style.display="none";
+        withFailure.participantSignIn(pid,instance,signout);
+      }
+
+      function exportRegDetails(regList) {
+        var withSuccess = google.script.run.withSuccessHandler(function(url) {
+          var confText = "Registrant information was exported <a href="+url+" target='_blank'>here.</a><br>";
+            document.getElementById("modal-spinner").style.display="none";
+            document.getElementById("modal-success").style.display="";
+            document.getElementById("modal-success").innerHTML=confText;   
+            document.getElementById("modal-footer").style.display="";
+        });
+        var withFailure = withSuccess.withFailureHandler(function(error) {
+          console.log(error);
+          document.getElementById("modal-spinner").style.display="none";
+          document.getElementById("modal-failure").style.display="";
+          document.getElementById("modal-failure").innerHTML=error;
+          document.getElementById("modal-footer").style.display="";
+        });
+        withFailure.exportRegData(regList,instance);
+        document.getElementById("modal-body-msg").style.display = "none";
+        document.getElementById("modal-success").style.display="none";
+        document.getElementById("modal-failure").style.display="none";
+        document.getElementById("modal-body-info").style.display="none";
+        document.getElementById("modal-title").innerHTML="Participant Data Report";
+        document.getElementById("modal-loading-msg").innerHTML="Generating a Spreadsheet...";
+        document.getElementById("modal-spinner").style.display="";
+        document.getElementById("modal-footer").style.display="none";
+      }
+      
+      function filterRegs(input) {
+        var container = document.getElementById("pTable");
+        var participants = container.rows;
+        for (var i=1; i<participants.length; i++) {
+          if (participants[i].dataset.email.toLowerCase().indexOf(input.value.toLowerCase())!==-1) {
+            participants[i].style.display = "";
+          } else {
+            participants[i].style.display = "none";
+          }
+        }
+      }
+      
+      function initGetRoster() {
+        var regLink = "https://script.google.com/a/strongschools.nyc/macros/s/AKfycbz13TA6TRLjXeWWS4UzoZp0Si7VH0DV8Qjhco5ZG2FHe2y7j-Y/exec?id="+parameters.eventid+"&instance="+encodeURIComponent(parameters.instance);
+        var withSuccess = google.script.run.withSuccessHandler(function(url) {
+          var confText = "<a href="+url+" target='_blank'>Here is your sign in sheet.</a><br>";
+            document.getElementById("modal-spinner").style.display="none";
+            document.getElementById("modal-success").style.display="";
+            document.getElementById("modal-success").innerHTML=confText;   
+            document.getElementById("modal-footer").style.display="";
+        });
+        var withFailure = withSuccess.withFailureHandler(function(error) {
+          console.log(error);
+          document.getElementById("modal-spinner").style.display="none";
+          document.getElementById("modal-failure").style.display="";
+          document.getElementById("modal-failure").innerHTML=error;
+          document.getElementById("modal-footer").style.display="";
+        });
+        withFailure.createAttendanceList(participantDetails, regLink ,instance);
+        document.getElementById("modal-body-msg").style.display = "none";
+        document.getElementById("modal-success").style.display="none";
+        document.getElementById("modal-failure").style.display="none";
+        document.getElementById("modal-body-info").style.display="none";
+        document.getElementById("modal-title").innerHTML="Sign in Sheet";
+        document.getElementById("modal-loading-msg").innerHTML="Generating a sign in sheet.";
+        document.getElementById("modal-spinner").style.display="";
+        document.getElementById("modal-footer").style.display="none";     
+      }
+      
+      function initUploadSignInSheet(formBlob) {
+        var sessionDates = parameters.dates.split("/");
+        document.getElementById("modal-success").style.display="none";
+        document.getElementById("modal-failure").style.display="none";
+        document.getElementById("modal-body-info").style.display="";
+        document.getElementById("modal-body-info").innerHTML="";
+        var form = htmlElement({tag: "FORM", id: "upload-form"});
+        form.appendChild(htmlElement({tag: "INPUT", type: "file", id: "signInSheet", name: "sign_in_sheet", className: "form-control", accept:".pdf, .doc, .docx"}));
+        var formGroup = htmlElement({tag: "DIV", className: "form-group"});
+        var label = htmlElement({tag: "LABEL", htmlFor: "upload-session-number", innerHTML: "Select the session number for this sheet"});
+        var select = htmlElement({tag: "SELECT", className: "form-control", id: "upload_session_date", name: "upload_session_date"});
+        for (var i=0; i<parameters.sessions; i++) {
+          select.appendChild(htmlElement({tag: "OPTION", value:sessionDates[i], innerHTML: Number(i)+1}));
+        }
+        formGroup.appendChild(label);
+        formGroup.appendChild(select);
+        form.appendChild(formGroup);
+        form.appendChild(htmlElement({tag: "INPUT", type: "text", value: parameters.eventid, name: "event_id", style: "display: none;"}));
+        form.appendChild(htmlElement({tag: "INPUT", type: "text", value: parameters.instance, name: "instance", style: "display: none;"}));
+        document.getElementById("modal-body-msg").style.display = "none";
+        document.getElementById("modal-body-info").appendChild(form);
+        document.getElementById("modal-spinner").style.display="none";
+        document.getElementById("modal-title").innerHTML="Upload Attendance Sheets";
+        document.getElementById("modal-footer").style.display="";
+        document.getElementById("modal-callback-button").style.display="";
+        document.getElementById("modal-callback-button").innerHTML="Upload";
+        document.getElementById("modal-callback-button").onclick=function(e) {e.target.style.display="none"; upload()};
+      }
+      
+      function upload() {
+        //var form = {event_id: parameters.eventid, date: document.getElementById("upload-session-number").value, sign_in_sheet: document.getElementById("signInSheet").value, "instance": instance}
+        var form = document.getElementById("upload-form");
+        form["instance"]=instance;
+        console.log(form);
+        var withSuccess = google.script.run.withSuccessHandler(function(msg) {
+            document.getElementById("modal-spinner").style.display="none";
+            document.getElementById("modal-success").style.display="";
+            document.getElementById("modal-success").innerHTML="<div>Your attendance sheet was uploaded <a href="+msg+" target=_blank>here.</a></div>";   
+            document.getElementById("modal-footer").style.display="";          
+        });
+        var withFailure = withSuccess.withFailureHandler(function(error) {
+          console.log(error);
+          document.getElementById("modal-spinner").style.display="none";
+          document.getElementById("modal-failure").style.display="";
+          document.getElementById("modal-failure").innerHTML=error;
+          document.getElementById("modal-footer").style.display="";
+        });
+        withFailure.uploadToDrive(form);
+        document.getElementById("modal-body-msg").style.display = "none";
+        document.getElementById("modal-footer").style.display="none";
+        document.getElementById("modal-body-info").style.display="none";
+        document.getElementById("modal-spinner").style.display="";   
+        document.getElementById("modal-loading-msg").innerHTML="Uploading your attendance sheet.";
+      }
+      
+</script>

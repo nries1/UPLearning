@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">  
+    <link href="https://fonts.googleapis.com/css?family=Nunito:400,700" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <?!= include('stylesheet'); ?>
+  </head>
+  <body>
+  <div id="modal-vertical" style="display: none;" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="modal-title">Modal Title</h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div id="modal-body" class="modal-body">
+          <div id="modal-success" class="alert alert-success" role="alert" style="display: none;">This is a success alert—check it out!</div>
+          <div id="modal-failure" class="alert alert-danger" role="alert" style="display: none;">This is a danger alert—check it out!</div>
+          <div id="modal-body-msg" style="display: none;">Modal Body</div>
+          <div id="modal-spinner" style="text-align: center; display: none;">
+            <div id="modal-spinner-msg">Spinner Message...</div>
+            <div class="spinner-border" role="status" id="modal-spinner-loader">
+             <span class="sr-only">Loading...</span>
+            </div>
+          </div>          
+        </div>
+        <div id="modal-footer" class="modal-footer">
+          <button id="close-modal-button" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <ul class="nav nav-tabs" style="margin-bottom: 5px;">
+    <li class="nav-item dropdown">
+      <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Menu</a>
+      <div class="dropdown-menu">
+        <div class="dropdown-item" onclick="exportRegDetails()" data-toggle="modal" data-target="#modal-vertical">Export Registrant Details</div>
+        <a class="dropdown-item" href="https://script.google.com/macros/s/AKfycbyR4XnqVxxMK1azl2tjPZuq2SCSzHlTGT5VIRaVaVReiyB8eG8/exec" target="_blank">Report an Issue</a>
+      </div>
+  </ul>
+
+  <div id="body-container">
+      <div class="card" style="width: 85%; margin-bottom: 25px;">
+      <div class="card-body">
+        <div style="display: flex; width: 100%;"><h5 style="font-weight: 700; width: 95%; text-align: center; margin-bottom: 12px;">Filters</h5><canvas onclick="toggleFilters(this)" id="filter-expander" style='width: 20px; height: 20px; border-right:2px solid black; border-bottom:2px solid black; transform: rotate(45deg)' data-expanded='false'></canvas></div>
+        <form id="filters-container" style="display: none;">
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label>Event Title</label>
+              <input type="text" class="form-control" name="title" id="title" placeholder="Event Title" onkeyup="filterTable(this)">
+            </div>
+            <div class="form-group col-md-4">
+              <label for="division">Division</label>
+              <select  class="form-control" name="division" id="division" onchange="filterTable(this)">
+                <option value="">All</option>
+                <option value="APPA">APPA</option>
+                <option value="Data Managers">Data Managers</option>
+                <option value="ELL">ELL</option>
+                <option value="Finance">Finance</option>
+                <option value="Human Resources">Human Resources</option>
+                <option value="Instruction">Instruction</option>
+                <option value="Language Acquisition">Language Acquisition</option>
+                <option value="Operations">Operations</option>
+                <option value="Special Education">Special Education</option>
+                <option value="Student Services">Student Services</option>
+              </select>
+            </div>
+            <div class="form-group col-md-4">
+              <label>Event ID</label>
+              <input type="text" class="form-control" name="id" id="id" placeholder="Event ID" onkeyup="filterTable(this)">              
+            </div>            
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label for="districts">District (target audience)</label>
+              <select data-rendered="false" class="form-control" name="district" id="districts" onchange="filterTable(this)">
+                <option value="">All</option>
+              </select>
+            </div>
+            <div class="form-group col-md-4">
+              <label>Content</label>
+              <input type="text" class="form-control" style="position: relative;" name="content" id="content" placeholder="Content Area" onfocusout="setTimeout(function() {document.getElementById('content-list').style.display='none'},500)" onfocusin="document.getElementById('content-list').style.display=''" onkeyup="filterContentList(this)">  
+              <ul class="list-group" id="content-list" style="display: none; position: absolute; z-index: 5; overflow-y: scroll; height: 350px; background-color: white;">
+                <li class="list-group-item" onclick="setContent(this)">Advanced Literacy:Placing Data at the Core</li>
+                <li class="list-group-item" onclick="setContent(this)">Advanced Literacy:Strengthening the Instructional Core</li>
+                <li class="list-group-item" onclick="setContent(this)">Advanced Literacy:Using Shared Curriculum</li>
+                <li class="list-group-item" onclick="setContent(this)">Advanced Literacy:21st Century Adult Learning</li>
+                <li class="list-group-item" onclick="setContent(this)">Arts:Visual</li>
+                <li class="list-group-item" onclick="setContent(this)">Arts:Other</li>
+                <li class="list-group-item" onclick="setContent(this)">Climate and Wellness:Attendance</li>
+                <li class="list-group-item" onclick="setContent(this)">Climate and Wellness:Crisis and De-escalation</li>
+                <li class="list-group-item" onclick="setContent(this)">Climate and Wellness:Guidance</li>
+                <li class="list-group-item" onclick="setContent(this)">Climate and Wellness:Health</li>
+                <li class="list-group-item" onclick="setContent(this)">Climate and Wellness:Other</li>
+                <li class="list-group-item" onclick="setContent(this)">Climate and Wellness:School Climate</li>
+                <li class="list-group-item" onclick="setContent(this)">Climate and Wellness:Social Emotional Learning</li>
+                <li class="list-group-item" onclick="setContent(this)">Community Empowerment:Family Engagement</li>
+                <li class="list-group-item" onclick="setContent(this)">Community Empowerment:Other</li>
+                <li class="list-group-item" onclick="setContent(this)">Data and Systems:Academic Policy</li>
+                <li class="list-group-item" onclick="setContent(this)">Data and Systems:ATS Support</li>
+                <li class="list-group-item" onclick="setContent(this)">Data and Systems:Data Specialists</li>
+                <li class="list-group-item" onclick="setContent(this)">Data and Systems:Performance and Assessment</li>
+                <li class="list-group-item" onclick="setContent(this)">Data and Systems:STARS Programming</li>
+                <li class="list-group-item" onclick="setContent(this)">Data and Systems:Other</li>
+                <li class="list-group-item" onclick="setContent(this)">ELA:Next Generation Standards</li>
+                <li class="list-group-item" onclick="setContent(this)">ELA:Reading</li>
+                <li class="list-group-item" onclick="setContent(this)">ELA:Writing</li>
+                <li class="list-group-item" onclick="setContent(this)">ELA:Other</li>
+                <li class="list-group-item" onclick="setContent(this)">ELL/MLL:Compliance</li>
+                <li class="list-group-item" onclick="setContent(this)">ELL/MLL:Instruction</li>
+                <li class="list-group-item" onclick="setContent(this)">ELL/MLL:Liaison Meeting</li>
+                <li class="list-group-item" onclick="setContent(this)">ELL/MLL:World Languages</li>
+                <li class="list-group-item" onclick="setContent(this)">ELL/MLL:Other</li>
+                <li class="list-group-item" onclick="setContent(this)">Leadership:Continuous Improvement</li>
+                <li class="list-group-item" onclick="setContent(this)">Leadership:MPPR</li>
+                <li class="list-group-item" onclick="setContent(this)">Leadership:Pedagogical Practice</li>
+                <li class="list-group-item" onclick="setContent(this)">Math:Algebra I</li>
+                <li class="list-group-item" onclick="setContent(this)">Math:Algebra II</li>
+                <li class="list-group-item" onclick="setContent(this)">Math:Geometry</li>
+                <li class="list-group-item" onclick="setContent(this)">Math:Mathematics</li>
+                <li class="list-group-item" onclick="setContent(this)">Math:Next Generation Standards</li>
+                <li class="list-group-item" onclick="setContent(this)">Math:Other</li>
+                <li class="list-group-item" onclick="setContent(this)">Operations:Budget</li>
+                <li class="list-group-item" onclick="setContent(this)">Operations:Grant Writing</li>
+                <li class="list-group-item" onclick="setContent(this)">Operations:Human Resources</li>
+                <li class="list-group-item" onclick="setContent(this)">Operations:Payroll</li>
+                <li class="list-group-item" onclick="setContent(this)">Operations:Procurement</li>
+                <li class="list-group-item" onclick="setContent(this)">Operations:Transportation</li>
+                <li class="list-group-item" onclick="setContent(this)">Operations:Other</li>
+                <li class="list-group-item" onclick="setContent(this)">Pedagogy:Continuous Improvement</li>
+                <li class="list-group-item" onclick="setContent(this)">Pedagogy:Culturally Responsive Curriculum</li>
+                <li class="list-group-item" onclick="setContent(this)">Pedagogy:Danielson</li>
+                <li class="list-group-item" onclick="setContent(this)">Pedagogy:Other</li>
+                <li class="list-group-item" onclick="setContent(this)">Social Science:Economics</li>
+                <li class="list-group-item" onclick="setContent(this)">Social Science:Global History</li>
+                <li class="list-group-item" onclick="setContent(this)">Social Science:Social Studies</li>
+                <li class="list-group-item" onclick="setContent(this)">Social Science:US History</li>
+                <li class="list-group-item" onclick="setContent(this)">Social Science:Other</li>
+                <li class="list-group-item" onclick="setContent(this)">Special Education:Compliance</li>
+                <li class="list-group-item" onclick="setContent(this)">Special Education:ICT</li>
+                <li class="list-group-item" onclick="setContent(this)">Special Education:Instruction</li>
+                <li class="list-group-item" onclick="setContent(this)">Special Education:Liaison Meeting</li>
+                <li class="list-group-item" onclick="setContent(this)">Special Education:Other</li>
+                <li class="list-group-item" onclick="setContent(this)">Science and Technology:Chemistry</li>
+                <li class="list-group-item" onclick="setContent(this)">Science and Technology:Computer Science</li>
+                <li class="list-group-item" onclick="setContent(this)">Science and Technology:Earth Science</li>
+                <li class="list-group-item" onclick="setContent(this)">Science and Technology:Engineering</li>
+                <li class="list-group-item" onclick="setContent(this)">Science and Technology:Instructional Technology</li>
+                <li class="list-group-item" onclick="setContent(this)">Science and Technology:Living Environment</li>
+                <li class="list-group-item" onclick="setContent(this)">Science and Technology:Physics</li>
+                <li class="list-group-item" onclick="setContent(this)">Science and Technology:Science</li>
+                <li class="list-group-item" onclick="setContent(this)">Science and Technology:Other</li>
+              </ul>
+            </div>
+            <div class="form-group col-md-4">
+                <label for="status">Event Status</label>
+                <select class="form-control" name="status" id="status" onchange="filterTable(this)">
+                  <option value="">All</option>
+                  <option value="active">Active</option>
+                  <option value="archived">Archived</option>
+                </select>              
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label for="districts_attending">District (attending)</label>
+              <select data-rendered="false" class="form-control" name="districts_attending" id="districts_attending" onchange="filterTable(this)">
+                <option value="">All</option>
+              </select>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="has_registrants">Has Registrants</label>
+              <select data-rendered="false" class="form-control" name="has_registrants" id="has_registrants" onchange="filterTable(this)">
+                <option value="">All Events</option>
+                <option value="has_registrants">Events with Registrants</option>
+              </select>
+            </div>
+            <div class="form-group col-md-4">
+              <label for="ctle_eligible">CTLE Eligibility</label>
+              <select data-rendered="false" class="form-control" name="ctle_eligible" id="ctle_eligible" onchange="filterTable(this)">
+                <option value="">All Events</option>
+                <option value="eligible">CTLE Eligible</option>
+                <option value="not eligible">Not CTLE Eligible</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-4">
+              <label for="date">Date</label>
+              <input type="date" class="form-control" name="date" id="date" oninput="filterTable(this)">
+            </div>
+          </div>
+          <!--<div class="form-row">
+            <div class="form-group col-md-4">
+              <label for="view">View</label>
+              <select data-rendered="false" class="form-control" name="view" id="view">
+                <option value="event">Event View</option>
+                <option value="dbn">DBN View</option>
+              </select>
+            </div>          
+          </div>-->
+        </form>
+      </div>
+    </div>
+    <div style="width: 100%; display: flex; align-items: center; justify-content: space-around; margin-bottom: 25px;" id="data-summary">
+      <div><span><b>Total Events: </b></span><span id="total-events">0</span></div>
+      <div><span><b>Registered: </b></span><span id="registered">0</span></div>
+      <div><span><b>Attended: </b></span><span id="attended">0</span></div>
+      <div><span><b>Attendance Rate: </b></span><span id="attn-rate">...</span></div>    
+    </div>
+    <div id="main-spinner" style="text-align: center;">
+      <div id="main-spinner-msg">Loading Events...</div>
+      <div class="spinner-border" role="status" id="spinner-loader">
+       <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+    <div id="event-progress-bar" class="progress-bar" style="display: none;"><br></div>
+    <div id="event-details"></div>
+    <div id="suggestions-container"></div>
+    </div>
+    <?!= include('javascript'); ?>
+  </body>
+</html>

@@ -1,0 +1,293 @@
+<script>
+
+window.addEventListener('load', getRequestParameters);
+window.addEventListener('load', preventFormSubmit);
+
+var reqParameters;
+var notifyingRegs = false;
+var notifyObj = {};
+var eventCreator;
+var creationDate;
+var instanceDetails;
+
+function item(item) {return document.getElementById(item)}
+
+function getRequestParameters() {
+  google.script.url.getLocation(function(loc) {
+    console.log(loc.parameter);
+    reqParameters = loc.parameter;
+    if (loc.parameter.edit) {
+      fetchEditData(requestParameters.id,requestParameters.instance);    
+    } else {
+      item('main-spinner').style.display = 'none';
+      item('event-form').style.display = '';
+    }
+  });
+}
+
+function preventFormSubmit() {
+        var forms = document.querySelectorAll('form');
+        for (var i = 0; i < forms.length; i++) {
+          forms[i].addEventListener('submit', function(event) {
+            event.preventDefault();
+          });
+        }
+}
+
+function districtSelect(districts) {
+   var select = htmlElement({tag: 'SELECT', multiple: true, name: 'districts', className: 'form-control', required: true, id: 'districts'})
+   for (var i=0; i < districts.length; i++) {
+     var district = districts[i].replace(/\.0/,'');
+     select.appendChild(htmlElement({tag: 'OPTION', value: district, id: district, name: district, innerHTML: district}));
+   }
+   return select;
+}
+
+function fetchInstanceDetails(instance) {
+  console.log("fetching instance details")
+  var withSuccess = google.script.run.withSuccessHandler(function(msg) {
+    console.log("instance details ",msg);
+    instanceDetails = JSON.parse(msg);
+    item('districts-container').innerHTML = '';
+    item('districts-container').appendChild(districtSelect(instanceDetails.districts));
+   });
+  var withFailure = withSuccess.withFailureHandler(function(msg) {
+    console.log(msg);
+  });
+  withFailure.getInstanceDetails(instance);
+}
+
+function listLocs(textarea) {
+  var input = textarea.value;
+  var locDisplay = textarea.nextElementSibling;
+  if (input === '') {
+    locDisplay.style.display = 'none';
+    return;
+  }
+  locDisplay.style.display = '';
+  locDisplay.innerHTML = '';
+  instanceDetails.locations.forEach(function(loc) {
+    if (loc.toUpperCase().indexOf(input.toUpperCase())!==-1) {
+      locDisplay.appendChild(htmlElement({tag: 'DIV', innerHTML: loc, className: 'loc-select', onclick: function() {textarea.value = loc; clearLocs(textarea);}}));
+    }
+  });
+}
+
+function clearLocs(textarea) {
+  setTimeout(function() {
+    var locDisplay = textarea.nextElementSibling;
+      locDisplay.innerHTML = '';
+    locDisplay.style.display = 'none';
+  }, 150);
+}
+
+    function toggleContent(element) {
+      var children = element.children
+      if (element.dataset.expanded === "false") {
+        document.getElementById(element.dataset.toggle).style.height = "auto";
+        children[1].style.transform="rotate(225deg)";
+        element.dataset.expanded="true";
+      } else {
+        document.getElementById(element.dataset.toggle).style.height = "0px";
+        children[1].style.transform="rotate(45deg)";
+        element.dataset.expanded="false";
+      }
+    }
+    function htmlElement(obj,parent) {
+    if (obj.tag) {
+      var element = document.createElement(obj.tag);
+    } else {
+      var element = document.createElement("DIV");
+    }
+    var keys = Object.keys(obj);
+    keys.forEach(function(key) {
+      if (key==="tag") {return}
+      if (key.indexOf("data-")!==-1) {
+        element.setAttribute(key,obj[key])
+      } else if (key==="eventListener") {
+        element.addEventListener(obj[key].event, obj[key].function)
+      }
+      else {element[key]=obj[key]}
+    });
+    if (parent) {
+      parent.appendChild(element);
+    } else {
+      return element;
+    }
+  }
+  
+    var session = function(number, start, end, location) {
+      var container = htmlElement({tag: 'DIV', className: 'session-container', id:'session-container-'+number});
+      var titleContainer = htmlElement({tag: 'DIV', className: 'session-title-container'});
+      titleContainer.appendChild(htmlElement({tag: 'DIV', className: 'session-number label', innerHTML: 'Session '+number}))
+      titleContainer.appendChild(htmlElement({tag: 'BUTTON', 'data-number': number, role: 'button', className: 'removal-button btn btn-outline-secondary btn-sm', innerHTML: 'Remove',
+        onclick: function(e) {
+                   var oldSessionNumber = e.target.dataset.number;
+                   var allSessionsContainer = document.getElementById('all-sessions-container')
+                   var sessions = allSessionsContainer.getElementsByClassName('session-container');
+                   var sessionLabels = allSessionsContainer.getElementsByClassName('session-number');
+                   allSessionsContainer.removeChild(sessions[Number(oldSessionNumber)-1]);
+                   var sessionRemovalButtons = allSessionsContainer.getElementsByClassName('removal-button');
+                   document.getElementById('count_dates').innerHTML = Number(document.getElementById('count_dates').innerHTML) - 1;
+                   for (var i = 1; i < sessions.length; i++) {
+                     sessionLabels[i].innerHTML = 'Session '+Number(i+1);
+                     if (sessionRemovalButtons[i]) sessionRemovalButtons[i].dataset.number = i+1;
+                   }
+                 }
+      }));
+      container.appendChild(titleContainer);
+      var form = htmlElement({tag: 'FORM', className: 'form-group session-info'});
+        form.appendChild(htmlElement({tag: 'LABEL', for: 'date', htmlFor: 'date-'+number, innerHTML: 'Date:'}))
+        form.appendChild(htmlElement({tag: 'INPUT', type: 'date', name: 'date', className: 'form-control date'}));
+        form.appendChild(htmlElement({tag: 'LABEL', for: 'start_time', htmlFor: 'start_time', innerHTML: 'Start Time:'}));
+        form.appendChild(htmlElement({tag: 'INPUT', type: 'time', name: 'start_time', className: 'form-control', value: start, readOnly: true}));
+        form.appendChild(htmlElement({tag: 'LABEL', for: 'start_time', htmlFor: 'end_time', innerHTML: 'End Time:'}));
+        form.appendChild(htmlElement({tag: 'INPUT', type: 'time', name: 'end_time', className: 'form-control', value: end, readOnly: true}));
+        form.appendChild(htmlElement({tag: 'LABEL', for: 'location', htmlFor: 'location', innerHTML: 'Location:'}));
+        form.appendChild(htmlElement({tag: 'TEXTAREA', name: 'location', value: location, className: 'form-control location', style: 'width: 270px'}));
+      container.appendChild(form);
+      return container;
+    }
+
+    function addSession(parent, numberContainer, start, end, location) {
+      var numSessions = numberContainer.innerHTML;
+      if (Number(numSessions) === 11) return;
+      var number = Number(numSessions)+1;
+      numberContainer.innerHTML = number
+      parent.appendChild(session(number, start, end, location));
+    }
+
+    function removeSession(parent, numberContainer) {
+      var numSessions = Number(numberContainer.innerHTML);
+      if (numSessions === 1) return;
+      var session = document.getElementById('session-container-'+numSessions);
+      parent.removeChild(session);
+      numberContainer.innerHTML = numSessions-1;
+    }
+ 
+ function submitForm(form) {
+  var formObj = new Formobj(form);
+  console.log(formObj);
+  item('event-form').innerHTML = '';
+  item('main-spinner').style.display = '';
+  var withSuccess = google.script.run.withSuccessHandler(confirmSubmit);
+  var withFailure = withSuccess.withFailureHandler(confirmSubmit);
+  if (reqParameters.edit) {
+    withFailure.editEvent(reqParameters.id,formObj,formObj.bco[0]);
+    item('modal-spinner-msg').innerHTML = 'Editing Your event. Please wait for confirmation before closing this page.';
+  } else {
+    withFailure.postForm(formObj,formObj.bco[0]);
+    item('modal-spinner-msg').innerHTML = 'Saving your event. Please wait for confirmation before closing this page.'
+  }
+}
+
+function confirmSubmit(msg) {
+  console.log(msg);
+  item('main-spinner').style.display = 'none';
+  var confirmationContainer = htmlElement({tag: 'DIV', id: 'confirmation-container'});
+  if (msg.edit) {
+    confirmationContainer.appendChild(htmlElement({tag: 'DIV', className: 'success-badge', innerHTML: '<i class="material-icons">check_circle_outline</i>'}));
+    confirmationContainer.appendChild(htmlElement({tag: 'SPAN', innerHTML: 'Event Created'}));
+  } else {
+    confirmationContainer.appendChild(htmlElement({tag: 'DIV', className: 'fail-badge', innerHTML: '<i class="material-icons">error_outline</i>'}));
+    confirmationContainer.appendChild(htmlElement({tag: 'SPAN',innerHTML: 'Event Posted'}));
+  }
+  if (msg.confirmation_success) {
+    confirmationContainer.appendChild(htmlElement({tag: 'DIV', className: 'success-badge', innerHTML: '<i class="material-icons">check_circle_outline</i>'}));
+    confirmationContainer.appendChild(htmlElement({tag: 'SPAN',  innerHTML: 'Email Confirmation Sent'}));
+  } else {
+    confirmationContainer.appendChild(htmlElement({tag: 'DIV', className: 'fail-badge', innerHTML: '<i class="material-icons">error_outline</i>'}));
+    confirmationContainer.appendChild(htmlElement({tag: 'SPAN', innerHTML: 'Email Confirmation Failed'}));
+  }
+  if (msg.calendar_success) {
+    confirmationContainer.appendChild(htmlElement({tag: 'DIV', className: 'success-badge', innerHTML: '<i class="material-icons">check_circle_outline</i>'}));
+    confirmationContainer.appendChild(htmlElement({tag: 'SPAN', innerHTML: 'Calendar Event Created'}));
+  } else {
+    confirmationContainer.appendChild(htmlElement({tag: 'DIV', className: 'fail-badge', innerHTML: '<i class="material-icons">error_outline</i>'}));
+    confirmationContainer.appendChild(htmlElement({tag: 'SPAN', innerHTML: 'Failed to Create Calendar Event'}));
+  }
+  if (msg.notification_requested) {
+    if (msg.notification_success) {
+      confirmationContainer.appendChild(htmlElement({tag: 'DIV', className: 'success-badge', innerHTML: '<i class="material-icons">check_circle_outline</i>'}));
+      confirmationContainer.appendChild(htmlElement({tag: 'SPAN',  innerHTML: 'Registrants Notified'}));
+    } else {
+      confirmationContainer.appendChild(htmlElement({tag: 'DIV', className: 'fail-badge', innerHTML: '<i class="material-icons">error_outline</i>'}));
+      confirmationContainer.appendChild(htmlElement({tag: 'SPAN', innerHTML: 'Failed to Notify Registrants'}));
+    }
+  }
+  var eventSummaryContainer = htmlElement({});
+  eventSummaryContainer.appendChild(htmlElement({tag: 'DIV', innerHTML: 'Event ID: '+msg.event_id}));
+  confirmationContainer.appendChild(eventSummaryContainer);
+  item('event-form').innerHTML = '';
+  item('event-form').appendChild(confirmationContainer);
+}
+
+ function Formobj(formdata,urlData) {
+  var elements = formdata.elements;
+  this.event_creator = eventCreator;
+  this.creation_date = creationDate;
+  this.notifyObj = notifyObj;
+  notifyingRegs ? this.notify = true : this.notify = false;
+  this.facilitators = [];
+  for (var i=0; i<elements.length; i++) {
+    //these are the element types that microsoft browsers can handle
+    if (elements[i].type==="text" || elements[i].type==="textarea" || elements[i].type==="email") {
+      if (elements[i].name.indexOf("-email")!==-1) {
+        if (elements[i].value!=="") {
+          this.facilitators.push({"name": elements[Number(i)-1].value, "email": elements[i].value});
+          this[elements[i].name]=elements[i].value;
+        } else {
+          this.facilitators.push({name: "", email: ""});
+        }
+      } else {
+        this[elements[i].name]=elements[i].value;
+      }
+    } else if (elements[i].type==="checkbox") {
+      this[elements[i].name]=[];
+      var selector = document.getElementsByName(elements[i].name);
+      for (var j=0; j<selector.length;j++) {
+        if (selector[j].checked===true) {
+          this[elements[i].name].push(selector[j].value);
+        }
+      }
+    } else if (elements[i].type==="radio") {
+      var radioButtons = document.getElementsByName(elements[i].name);
+      for (var l=0;l<radioButtons.length;l++) {
+        if (radioButtons[l].checked===true) {
+           this[elements[i].name]=radioButtons[l].value;
+        }
+      }
+    } else if(elements[i].type==="number") {
+      this[elements[i].name] = document.getElementsByName(elements[i].name)[0].value;
+    } else if (elements[i].tagName==="SELECT") {
+      var options = elements[i].getElementsByTagName('OPTION');
+      this[elements[i].id] = [];
+      for (var x = 0; x < options.length; x++) {
+        if (options[x].selected === true) this[elements[i].id].push(options[x].value);
+      }
+    }
+  }
+  //packaged form items that you can't pull from form items on their own (e.g. an array of session times and locations)
+  item("wl-size") ? this["wl-size"] = item("wl-size").value : this["wl-size"]="";
+  this.sessions = [];
+  var sessionContainers = document.getElementsByClassName('session-info');
+  var startTime = item('start_time').value;
+  var endTime = item('end_time').value;
+  for (var j=0;j<11;j++) {
+    if (sessionContainers[j]) {
+    var location = sessionContainers[j].getElementsByClassName('location')[0].value;
+    var date = sessionContainers[j].getElementsByClassName('date')[0].value;
+      this.sessions.push({"location": location, "start_time": startTime, "end_time": endTime, "date": date});
+    } else {
+      this.sessions.push("")
+    }
+  }
+}
+
+function validateTimes() {
+  var endTime = Number(item("end-time1").value.replace(/:/,""));
+  var startTime = Number(item("start-time1").value.replace(/:/,""));
+  if (endTime>2000 || startTime > 1700 || endTime<=startTime || startTime < 700 || endTime < 700) {alert("Check your start and end times."); return;}
+}
+
+</script>

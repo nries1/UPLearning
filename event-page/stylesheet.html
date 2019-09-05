@@ -1,0 +1,340 @@
+<style>
+@media only screen and (max-width: 600px) {
+  #title-container {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 1em;
+    background-color: white;    
+  }
+  #title {
+    width: 100%;
+    font-size: 12px;
+    padding: 20px;
+    font-weight: 700;
+  }
+  #logo {
+    display: none;
+  }
+  #register-container-desktop {
+    display: none;
+  }
+  #time-space-container-desktop {
+    display: none;
+  }
+  #time-space-container-mobile {
+    z-index: 5;
+    width: 100%;
+    height: 4em;
+    display: flex;
+    background-color: white;
+    flex-direction: column;
+    border-top: 0.1px solid grey;
+    border-bottom: 0.1px solid grey;
+    justify-content: center;
+    font-size: 8px;
+  }
+  #num-sessions-desktop, #num-sessions-mobile {
+    display: none;
+  }
+  #more-time-space-mobile {
+    width: 100%;
+    height: 0px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #more-time-space-desktop {
+    display: none;
+  }
+  #about {
+    width: 89%;
+    height: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 14em;
+    border: 1px solid black;
+    box-shadow: 3px 3px 3px;
+    margin-bottom: 50px;
+    padding: 10px;
+    background-color: white;
+  }
+  #contact-mobile {
+    display: flex;
+    text-align: center;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 3%;
+  }
+  #contact-dekstop {
+    display: none;
+  }
+}
+
+@media only screen and (min-width: 600px) {
+  #register-container {
+    height: 100%;
+    width: 43%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+  }
+  #title {
+    padding-left: 2%;
+    width: 40%;
+    height: 100%;
+    font-size: 1.5em;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    /*align-items: center;*/
+    text-align: left;
+  }
+  #register-container-mobile {
+    display: none;
+  }
+  #logo {
+    padding: 1%;
+    width: 12%;
+    height: 85%;
+  }
+  #title-container {
+    width: 100%;
+    height: 9.5em;
+    display: flex;
+    justify-content: space-around;
+    padding-bottom: 1em;
+    background-color: white;
+  }
+  #time-space-container-desktop {
+    z-index: 5;
+    width: 100%;
+    height: 4em;
+    display: flex;
+    background-color: white;
+    flex-direction: column;
+    border-top: 0.1px solid grey;
+    border-bottom: 0.1px solid grey;
+    justify-content: center;
+  }
+  #time-space-container-mobile {
+    display: none;
+  }
+  #more-time-space-desktop {
+    width: 100%;
+    height: 0px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  #more-time-space-mobile {
+    display: none;
+  }
+  #about {
+    width: 69%;
+    height: auto;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: absolute;
+    top: 16em;
+    border: 1px solid black;
+    box-shadow: 3px 3px 3px;
+    margin-bottom: 50px;
+    padding: 10px;
+    background-color: white;
+  }
+  #contact-dekstop {
+    display: flex;
+    align-items: center;
+    margin-bottom: 3%;
+  }
+  #contact-mobile {
+    display: none;
+  }
+}
+
+
+html {
+  /*height: 100%;*/
+  font-family: arial;
+}
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  align-content: center;
+  text-align: center;
+  margin: 0;
+  background-color: rgb(73,139,197);
+  background-repeat: no-repeat;
+  background-image: linear-gradient(to bottom,rgb(73,139,197),white);
+  /*height: 100%;*/
+}
+#progress-box {
+  flex-direction: column;
+  border: 1px solid black;
+  box-shadow: 3px 3px 3px;
+  width: 80%;
+  height: 175px;
+  text-align: center;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 10px 10px 10px;
+  background-color: white;
+  z-index: 20;
+}
+
+
+
+
+
+#time-space-container {
+  transition-property: height;
+  transition-duration: 0.5s;
+  transition-timing-function: linear;
+}
+#basic-time-space {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;  
+}
+#basic-time-space:hover {
+  cursor: pointer;
+  background-color: rgb(247, 247, 247);
+}
+
+
+#location {
+  width: 30%;
+  text-align: left;
+  display: flex;
+  justify-content: center;
+}
+#times {
+  width: 30%;
+  display: flex;
+  justify-content: center;
+}
+#dates {
+  width: 30%;
+  display: flex;
+  justify-content: space-evenly;
+}
+#expand {
+  width: 10%;
+  display: flex;
+  justify-content: space-evenly;
+}
+.time-space-element {
+  display: flex;
+  align-items: center;
+  padding: 1em;
+  font-size: 0.95em;
+}
+.clipart {
+  /*width: 10%;
+  height: 55%;
+  padding: 0.5%;*/
+  width: 1.5em;
+  height: 1.5em;
+  padding-right: 0.5em;
+}
+#calendar {
+  width: 3em;
+  height: 2em;
+}
+.expand {
+  display: flex;
+}
+.expand:hover {
+  cursor: pointer;
+  background-color: rgb(226, 226, 226);
+}
+
+#target {
+  display: flex;
+  align-items: center;
+  margin-bottom: 3%;
+}
+#description {
+  display: flex;
+  text-align: left;
+  margin-bottom: 3%;
+  border-top: 0.75px solid black;
+  border-bottom: 0.75px solid black;
+  width: 100%;
+  height: 13em;
+  overflow-y: scroll;
+}
+#display-description {
+  width: 100%;
+  padding: 5px 0 5px 0;
+}
+#facilitators {
+  margin-bottom: 1.5%;
+}
+#share {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: black;
+  margin-bottom: 1.5%;
+}
+#share:hover {
+  cursor:pointer;
+  color: blue;
+}
+#print {
+  display: flex;
+  align-items: center;
+  text-decoration: none;
+  color: black;
+}
+#print:hover {
+  cursor:pointer;
+  color: blue;
+}
+.custom-button {
+  text-decoration: none;
+  color: white;
+  background-color: black;
+  padding: 1.7em;
+  box-shadow: 3px 3px 3px grey;
+}
+.custom-button:hover {
+  cursor:pointer;
+}
+.custom-button:active {
+  box-shadow: 0px 0px;
+}
+canvas {
+  transition-property: rotate;
+  transition-duration: 0.5s;
+  transition-timing-function: linear;
+ transition-delay: 0s;       
+}
+#time-space-table {
+  width: 50%;
+  font-size: 0.85em;
+}
+th,td {
+  border-bottom: 1px solid #ddd;
+  padding: 5px;
+  text-align: left;
+}
+.expand:hover {
+ cursor: pointer;
+}
+#meta-app-data {
+  padding-bottom: 30px;
+  padding-top: 30px;
+}
+</style>

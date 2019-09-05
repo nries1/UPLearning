@@ -1,0 +1,243 @@
+    <script>
+      window.addEventListener("load", display);
+      window.addEventListener('load', preventFormSubmit);
+      
+      var signInData = {};
+      var requestParameters = {};
+      var participantDetails;
+      
+      function preventFormSubmit() {
+        var forms = document.querySelectorAll('form');
+        for (var i = 0; i < forms.length; i++) {
+          forms[i].addEventListener('submit', function(event) {
+            event.preventDefault();
+          });
+        }
+      }
+      
+      function display() {
+      var today = new Date();
+       google.script.url.getLocation(function(loc) {
+        console.log(loc);
+        requestParameters = loc.parameter;
+        if (loc.parameter.dates.split("/").reduce(function(count,date,index) {
+          if (today.getMonth()+"-"+today.getDate() === date) {count++; requestParameters["dateIndex"]=index; requestParameters["isToday"]=true;} return count;
+        },0) === 0) {
+          document.body.innerHTML = "You can only activate a digital sign in sheet if there is a session happening today."
+        } else {
+          document.getElementById("welcome").innerHTML = "Welcome to "+loc.parameter.title+".<br><br>Enter your confirmation code to sign in and out.<br><br>";
+        }
+        console.log("req params ==> ",requestParameters);
+        });
+      }
+      
+      
+      function startsignin(signin,element) {
+        console.log(element);
+        if (element) {
+          var formObj = {"confirmation": element.dataset.id, "dateIndex": requestParameters.dateIndex, "dates": requestParameters.dates}
+        } else {
+          var formObj = {"confirmation": document.getElementById("conf-input").value, "dateIndex": requestParameters.dateIndex, "dates": requestParameters.dates}
+        }
+        var withSuccess = google.script.run.withSuccessHandler(function(callback) {
+          document.getElementById("modal-spinner").style.display="none";
+          document.getElementById("modal-footer").style.display="";
+          console.log(callback);
+          if (callback) {
+            signInData = callback;
+            if (callback.sign_out) {
+              document.getElementById("modal-success").style.display="";
+              document.getElementById("modal-success").innerHTML="<div>Please verify your information before signing out:</div><br><br><div id='reservation-info'><strong>Name: </strong>"+callback.name+"<br><strong>Email: </strong>"+callback.email+"<br><strong>Event: </strong>"+callback.event+"</div><br><br><div id='certify-reservation' style='width: 80%; margin-left: 10%;'>Do you certify that this is you, and you are signing out of the correct event?</div><br><br>";   
+              document.getElementById("modal-callback-button").style.display = "";
+              document.getElementById("modal-callback-button").innerHTML = "Sign Out";
+              document.getElementById("modal-callback-button").onclick= function() {initSignin(false)};
+            } else {
+              document.getElementById("modal-success").style.display="";
+              document.getElementById("modal-success").innerHTML="<div>Please verify your reservation:</div><br><br><div id='reservation-info'><strong>Name: </strong>"+callback.name+"<br><strong>Email: </strong>"+callback.email+"<br><strong>Event: </strong>"+callback.event+"</div><br><br><div id='certify-reservation' style='width: 80%; margin-left: 10%;'>Do you certify that this is you, and you are signing in for the correct event?</div><br><br>";
+              document.getElementById("modal-callback-button").style.display = "";
+              document.getElementById("modal-callback-button").innerHTML = "Sign In";
+              document.getElementById("modal-callback-button").onclick= function() {initSignin(true)};
+            }
+          } else {
+              document.getElementById("modal-spinner").style.display="none";
+              document.getElementById("modal-failure").style.display="";
+              document.getElementById("modal-failure").innerHTML="Confirmation code not found. Please try again.<br><br>";
+           }
+        });
+        var withFailure = withSuccess.withFailureHandler(function(error) {
+            document.getElementById("modal-spinner").style.display="none";
+            document.getElementById("modal-failure").style.display="";
+            document.getElementById("modal-failure").innerHTML="Something went wrong.";
+            document.getElementById("modal-footer").style.display="";
+            console.log(error);
+        });
+        withFailure.trySignIn(formObj,requestParameters.instance);
+        document.getElementById("modal-success").style.display="none";
+        document.getElementById("modal-failure").style.display="none";
+        signin ? document.getElementById("modal-title").innerHTML="Sign In" : document.getElementById("modal-title").innerHTML="Sign Out"
+        document.getElementById("modal-loading-msg").innerHTML="Retreiving your registration. Hang on...";
+        document.getElementById("modal-spinner").style.display="";
+        document.getElementById("modal-footer").style.display="none";
+      }
+      
+      function initSignin(signin) {
+          var withSuccess = google.script.run.withSuccessHandler(function(callback) {
+          console.log("callback",callback);
+          if (callback) {
+            if (callback.sign_out) {
+              document.getElementById("modal-spinner").style.display="none";
+              document.getElementById("modal-success").style.display="";
+              document.getElementById("modal-success").innerHTML="Thank you "+callback.name+" you have been signed out successfully.<br><br>";
+              if (callback.completed_sign_out) {
+                document.getElementById("button-"+callback.confirmation).innerHTML="Signed Out";
+                document.getElementById("button-"+callback.confirmation).className="btn btn-outline-success";
+              }
+            } else {
+              document.getElementById("modal-spinner").style.display="none";
+              document.getElementById("modal-success").style.display="";
+              if (requestParameters.ctle == "true" && callback.require_sign_out) {
+                console.log("ctle is true and require sign out");
+                document.getElementById("modal-success").innerHTML="Thank you "+callback.name+" you have been signed in successfully.<br>Don't forget to sign out before you leave! :)<br><br>";
+                  if (document.getElementById("button-"+callback.confirmation)) {
+                    document.getElementById("button-"+callback.confirmation).innerHTML="Sign Out";
+                    document.getElementById("button-"+callback.confirmation).className="btn btn-outline-secondary";
+                  }
+              } else {
+                document.getElementById("modal-success").innerHTML="Thank you "+callback.name+" you have been signed in successfully.<br><br>";
+                  console.log("button-"+callback.id);
+                  if (document.getElementById("button-"+callback.confirmation)) {
+                    document.getElementById("button-"+callback.confirmation).innerHTML="Signed In";
+                    document.getElementById("button-"+callback.confirmation).className="btn btn-outline-success";
+                  }
+              } 
+            }
+            document.getElementById("modal-footer").style.display="";
+          } else {
+           document.getElementById("callback-msg").innerHTML = "Sorry. Something went wrong. Please try again."
+           document.getElementById("verify-buttons").style.display = "none";
+           document.getElementById("verify-progress").style.display = "none";
+           document.getElementById("try-again").style.display = "";
+           }
+        });
+        var withFailure = withSuccess.withFailureHandler(function(error) {
+            document.getElementById("modal-spinner").style.display="none";
+            document.getElementById("modal-failure").style.display="";
+            document.getElementById("modal-failure").innerHTML="Something went wrong.";
+            document.getElementById("modal-footer").style.display="";
+          console.log(error);
+        });
+        signInData["ctle"] = requestParameters.ctle;
+        signInData["duration"] = requestParameters.duration;
+        signInData["dateIndex"] = requestParameters.dateIndex;
+        signInData["funding"] = requestParameters.funding;
+        signInData["start_hour"] = requestParameters.starthour;
+        signInData["start_minute"] = requestParameters.startminute;
+        withFailure.signin(signInData,requestParameters.instance);
+        document.getElementById("modal-success").style.display="none";
+        document.getElementById("modal-failure").style.display="none";
+        if (signin) {
+          document.getElementById("modal-title").innerHTML="Sign In";
+          document.getElementById("modal-loading-msg").innerHTML="Signing you in. Hang on...";
+        } else {
+          document.getElementById("modal-title").innerHTML="Sign Out";
+          document.getElementById("modal-loading-msg").innerHTML="Signing you out. Hang on...";
+        }
+        document.getElementById("modal-callback-button").style.display = "none";
+        document.getElementById("modal-spinner").style.display="";
+        document.getElementById("modal-footer").style.display="none";       
+      }
+      
+      
+      function filterRegs(input) {
+        var container = document.getElementById("pTable");
+        var participants = container.rows;
+        for (var i=1; i<participants.length; i++) {
+          if (participants[i].dataset.email.toLowerCase().indexOf(input.value.toLowerCase())!==-1) {
+            participants[i].style.display = "";
+          } else {
+            participants[i].style.display = "none";
+          }
+        }
+      }
+      
+      function fetchParticipantDetails(eventId) {
+        console.log("fetching regs for "+eventId);
+        document.getElementById("table-body").innerHTML="";
+        document.getElementById("pTable").style.display="none";
+        var withSuccess = google.script.run.withSuccessHandler(renderParticipantDetails);
+        var withFailure = withSuccess.withFailureHandler(function(error) {
+              console.log("error handler for fetchParticipantDetails message: "+error);
+              document.getElementById('particpant-spinner-loader').style.display='none';
+              document.getElementById('participant-loading-msg').innerHTML='Something went wrong.';
+            });
+        withFailure.getRegDetails(eventId,requestParameters.instance,requestParameters.dateIndex);
+      }
+      
+      function showParticipantPage() {
+        document.getElementById('confirmation-signin-container').style.display='none';
+        document.getElementById('search-sign-in-container').style.display='flex';
+        document.getElementById('participant-spinner').style.display='';
+        document.getElementById('participant-loading-msg').innerHTML='Fetching Participant Details...';
+        fetchParticipantDetails(requestParameters.id);
+      }
+      
+      function renderParticipantDetails(details) {
+        console.log("rendering participant details")
+        document.getElementById('participant-spinner').style.display='none';
+        details = JSON.parse(details);
+        participantDetails = details;
+        var divContent;
+        var newDiv;
+        if (!details[0]) {
+          document.getElementById("pTable").innerHTML = "It looks like nobody has registered for this event yet...";
+          return;
+        }
+        var tBody = document.getElementById("table-body");
+        document.getElementById("pTable").style.display="";
+        document.getElementById("participant-search").style.display="flex";
+        for (var i=0; i<details.length; i++) {
+            console.log(details[i])
+            var row = htmlElement({tag: "TR", "data-email": details[i].email});
+            row.appendChild(htmlElement({tag: "TH", scope: "row", innerHTML: Number(i)+1}));
+            row.appendChild(htmlElement({tag: "TD", innerHTML: details[i].fName+" "+details[i].lName}));
+            row.appendChild(htmlElement({tag: "TD", innerHTML: details[i].dbn}));
+            row.appendChild(htmlElement({tag: "TD", innerHTML: details[i].email, href: "mailto:"+details[i].email}));
+            if (details[i].signed_in && !details[i].completed_sign_out) {
+              if ((requestParameters.ctle==="true" && details[i].ctle==="Yes") || requestParameters.funding!=="None") {
+                row.appendChild(htmlElement({tag: "TD", eventListener: {"event": "click", "function": function(e) {startsignin(false,e.target)}}, "data-toggle": "modal", "data-target":"#modal-vertical", innerHTML:'<button type="button" id="button-'+details[i].id+'" data-id="'+details[i].id+'" class="btn btn-outline-secondary">Sign Out</button>' }));
+              } else {
+                row.appendChild(htmlElement({tag: "TD", innerHTML:'<button type="button" id="button-'+details[i].id+'" data-id="'+details[i].id+'" class="btn btn-outline-success">Signed In</button>' }));
+              }
+            } else if (!details[i].signed_in && !details[i].completed_sign_out) {
+              row.appendChild(htmlElement({tag: "TD", eventListener: {"event": "click", "function": function(e) {startsignin(true,e.target)}}, "data-toggle": "modal", "data-target":"#modal-vertical", innerHTML:'<button type="button" id="button-'+details[i].id+'" data-id="'+details[i].id+'" class="btn btn-outline-primary btn-sm">Sign In</button>' }));
+            } else if (details[i].signed_in && details[i].completed_sign_out) {
+              row.appendChild(htmlElement({tag: "TD", innerHTML:'<button type="button" id="button-'+details[i].id+'" data-id="'+details[i].id+'" class="btn btn-outline-success">Signed Out</button>' }));
+            }
+            tBody.appendChild(row);
+        }
+      }
+      
+  function htmlElement(obj,parent) {
+    if (obj.tag) {
+      var element = document.createElement(obj.tag);
+    } else {
+      var element = document.createElement("DIV");
+    }
+    var keys = Object.keys(obj);
+    keys.forEach(function(key) {
+      if (key==="tag") {return}
+      if (key.indexOf("data-")!==-1 || key==="colspan") {
+        element.setAttribute(key,obj[key])
+      } else if (key==="eventListener") {
+        element.addEventListener(obj[key].event, obj[key].function)
+      }
+      else {element[key]=obj[key]}
+    });
+    if (parent) {
+      parent.appendChild(element);
+    } else {
+      return element;
+    }
+  }
+      
+    </script>

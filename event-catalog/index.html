@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css" integrity="sha384-HSMxcRTRxnN+Bdg0JdbxYKrThecOKuH5zCYotlSAcp1+c8xmyTe9GYg1l9a69psu" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet">
+    <?!= include('stylesheet'); ?>
+  </head>
+  <body>
+  
+    <div id="filterBar">
+      <div><strong>Filters</strong></div>
+      <div class="filter-sub-bar">
+      <label for='division'>Division: </label> 
+      <select class="filter" onchange='filterTable(this)' id="division">
+        <option value="">All</option>
+        <option value="instruction">Instruction</option>
+        <option value="advance">Advance</option>
+        <option value="academic policy, systems, performance, and assessment">APPA</option>
+        <option value="student services">Student Services</option>
+        <option value="special education">Special Education</option>
+        <option value="english language learners">ELLs</option>
+        <option value="operations">Operations</option>
+        <option value="finance">Finance</option>
+        <option value="human resources">Human Resources</option>
+        <option value="data managers">Data Managers</option>
+        <option value="language acquisition">Language Access</option>
+      </select>
+      <label for='title'>Title: </label> 
+      <input type="text" class="filter" onkeyup="filterTable(this)" id="title" placeholder="title"/>
+      <label for='content'>Content: </label> 
+      <input type="text" class="filter" onkeyup="filterTable(this)" id="content" placeholder="content"/>
+      </div>
+      <div class="filter-sub-bar">
+        <label for='District'>District: </label> 
+        <select class="filter" onchange='filterTable(this)' id="district">
+          <option value="">All</option>             
+        </select>
+        <label for='gradeband'>Grade Level: </label> 
+        <select class="filter" onchange='filterTable(this)' id="gradeband">
+          <option value="">All</option>        
+          <option value="(PK-2)">PK-2</option>
+          <option value="(3-5)">3-5</option>
+          <option value="(K-5)">K-5</option>
+          <option value="(6-8)">6-8</option>
+          <option value="(K-8)">K-8</option>
+          <option value="(6-12)">6-12</option>
+          <option value="(9-12)">9-12</option>
+          <option value="(K-12)">K-12</option>
+        </select>
+        <label for='role'>Role: </label> 
+        <select id='role' name='role' class='filter' onchange='filterTable(this)'>
+          <option value=''>All</option>
+          <option value='APs'>APs</option>
+          <option value='BCO Staff'>BCO Staff</option>
+          <option value='Coaches'>Coaches</option>
+          <option value='Deans'>Deans</option>
+          <option value='District Staff'>District Staff</option>
+          <option value='Paras'>Paras</option>
+          <option value='Parent Coordinators'>Parent Coordinators</option>
+          <option value='Principals'>Principals</option>
+          <option value='School Community'>School Community</option>
+          <option value='School Counselors'>School Counselors</option>
+          <option value='Secretaries'>Secretaries</option>
+          <option value='Teachers'>Teachers</option>
+        </select>
+      </div>
+      <div class='filter-sub-bar'>
+        <label for='date'>Date: </label> <input class='filter' type='date' id='date' onkeyup="filterTable(this)">
+      </div>
+    </div>
+    <div id="progress-bar"></div>
+    <div id="events-container">
+    </div>
+    <?!= include('javascript'); ?>
+  </body>
+</html>
+
+

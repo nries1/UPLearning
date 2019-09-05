@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">  
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <?!= include('stylesheet'); ?>
+  </head>
+  <body style="display: flex; flex-direction: column; align-items: center;">
+    <div class="modal fade" id="modal-vertical" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modal-title">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+             <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div id="modal-body" class="modal-body">
+            <div id="modal-body-info" style="display: none;">Info</div>
+            <div id="modal-failure" class="alert alert-danger" role="alert" style="display: none;">Failed</div>
+            <div id="modal-success" class="alert alert-success" role="alert" style="display: none;">Success</div>
+            <div id="modal-body-msg"></div>
+            <div id="modal-spinner" style="text-align: center;">
+             <div id="modal-loading-msg">...</div>
+              <div class="spinner-border" role="status">
+               <span class="sr-only">Loading...</span>
+              </div>
+            </div>
+          </div>
+          <div id="modal-footer" class="modal-footer">
+            <button type="button" id="modal-callback-button" class="btn btn-primary" style="display: none;">OPTION</button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <ul class="nav nav-tabs" id="myTab" role="tablist" style="width: 100%; margin-bottom: 15px;">
+      <li class="nav-item">
+        <a class="nav-link active" id="participant-page-link" href="#participant-page" role="tab" data-toggle="tab" role="tab" aria-controls="participant-page" aria-selected="true">Participant Page</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" onclick="document.getElementById('participant-page').style.display='none'; document.getElementById('attendance-page').style.display='flex'; renderAttendanceTable(1)" id="attendance-page-link" data-toggle="tab" href="#attendance-page" role="tab" aria-controls="attendance-page" aria-selected="false">Attendance Page</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="session-notes-link" href="#attendance-page">Session Notes</a>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="" role="button" aria-haspopup="true" aria-expanded="false">Menu</a>
+        <div class="dropdown-menu">
+          <a class="dropdown-item" id="walkin-link" target="_blank" href="">Register a Walk In</a>
+          <a class="dropdown-item" href="#" id="mail-participants">Email All Registrants</a>
+          <a class="dropdown-item" href="#" id="mail-attendees">Email All Attendees</a>
+          <div class="dropdown-item" data-toggle= "modal" data-target="#modal-vertical" id="export-button">Export Participant Spreadsheet</div>
+          <div class="dropdown-item" onclick="initGetRoster()" data-toggle="modal" data-target="#modal-vertical" id="export-button">Get a Sign in Sheet</div>
+          <div class="dropdown-item" onclick="initUploadSignInSheet()" data-toggle="modal" data-target="#modal-vertical" id="upload-button">Upload an Attendance Sheet</div>
+        </div>
+      </li>
+    </ul>
+    <div id="main-spinner" style="text-align: center;">
+      <div id="main-spinner-msg">Getting Participant Details...</div>
+      <div class="spinner-border" role="status">
+       <span class="sr-only">Loading...</span>
+      </div>
+    </div>
+    <div class="tab-content" id="myTabContent" style="width: 100%;">
+      <div class="tab-pane fade show active" id="participant-page" role="tabpanel" aria-labelledby="participant-page" style="width:100%; display: flex; flex-direction: column; align-items: center; align-content: center;">
+          <h4 style="text-align: center;" id="title" style="margin-bottom: 35px;"></h4>
+            <div id="p-summary" style="display: none; width: 100%; justify-content: space-around; align-items: center; margin: 25px 15px 30px 15px;">
+              <div><b>Participants: </b><span id="num-participants"></span></div>
+              <div><b>Avg Comfort w. Subject: </b><span id="avg-comfort"></span></div>
+              <div><b>Avg Experience: </b><span id="avg-experience"></span></div>
+              <div><b>Waitlist: </b><span id="num-waitlisted"></span></div>
+            </div>
+            <div id="participant-search" style="background-color: white; display: none; align-items center; border: 1px solid; border-radius: 8px; margin-bottom: 15px;">
+              <input type="text" onkeyup="filterRegs(this)" placeholder="Search By Email" style="border: none; border-radius: 8px;"><i class="material-icons">search</i>
+            </div>
+            <table id="pTable" class="table table-hover" style="width: 85%; display: none; margin-bottom: 35px;">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">DBN</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Expand</th>
+                </tr>
+              </thead>
+              <tbody id="table-body">
+              </tbody>
+            </table>
+            <div style="margin: 45px 0px 0px 25px; width: 100%; display: none; flex-direction: column; align-items: center; align-content: center;" id="waitlist-container">
+            <h5 style="margin: 15px; width: 100%; text-align: center;">Waitlist</h5>
+            <table id="waitlist-table" class="table table-hover" style="width: 85%;">
+              <thead>
+                <tr>
+                  <th scope="col">#</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">DBN</th>
+                  <th scope="col">Email</th>
+                  <th scope="col">Register</th>
+                </tr>
+              </thead>
+              <tbody id="waitlist-table-body">
+              </tbody>
+            </table> 
+            </div>
+            <div id="event-details">
+            </div>        
+      </div>
+      <div class="tab-pane fade" id="attendance-page" role="tabpanel" aria-labelledby="attendance-page" style="width:100%; display: flex; flex-direction: column; align-items: center; align-content: center;">
+            <div style="display: flex; align-items: center; justify-content: center; width: 100%; margin-bottom: 25px;">
+              <h4 style="width: 60%; text-align: right; padding-right: 10%;">Attendance Table</h4>
+              <div style="display: flex; justify-content: space-around; width: 40%; align-items: center;">
+                <button class="btn btn-primary btn-sm" data-toggle="modal" data-target="#modal-vertical" onclick="saveAttendance()">Save Records</button>
+                <button class="btn btn-outline-primary btn-sm" onclick="markAllAttended()">All Attended</button>
+                <button class="btn btn-outline-primary btn-sm" onclick="markAllAbsent()">All Absent</button>
+              </div>
+            </div>
+            <ul class="nav nav-tabs" id="session-tabs" data-sessionsrendered="false" onclick="saveAttendance()" role="tablist" style="width: 85%;">
+              <li class="nav-item">
+                <a class="session nav-link active" data-number="1" id="session-1" onclick="renderAttendanceTable(1,this)">Session 1</a>
+              </li>
+            </ul>
+            <div id="session-date-display" style="width: 85%; text-align: center; margin-top: 12px; margin-bottom: 12px;"></div>
+            <table id="attn-table" class="table table-hover" style="width: 85%; display: none; margin-bottom: 35px; overflow: scroll;">
+              <thead>
+                <tr id="attn-header-row">
+                  <th scope="col">#</th>
+                  <th scope="col"><div class="atn-head">Name<i onclick="sortRegTable(this,'attendance','name')" id="name-sorter" data-order="ascending" class="material-icons attn-sort">arrow_drop_down</i></div></th>
+                  <th scope="col"><div class="atn-head">DBN<i onclick="sortRegTable(this,'attendance','dbn')" id="dbn-sorter" data-order="ascending" class="material-icons attn-sort">arrow_drop_down</i></div></th>
+                  <th scope="col"><div class="atn-head">Email</div></th>
+                  <th scope="col"><div class="atn-head">Hours Attended</div></th>
+                </tr>
+              </thead>
+              <tbody id="attn-table-body">
+              </tbody>
+            </table>    
+      </div>
+      <div class="tab-pane fade" id="contact" role="tabpanel" aria-labelledby="contact-tab">...</div>
+    </div>
+    <?!= include('javascript'); ?>   
+  </body>
+</html>
+
+

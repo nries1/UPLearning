@@ -1,0 +1,336 @@
+<!DOCTYPE html>
+
+<!-- DEPRECATED  -->
+<html>
+  <head>
+    <base target="_top">
+    <?!= include('Stylesheet'); ?>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  </head>
+  <body>
+    <div id="header">
+      <div><br><br>Professional Learning Event Registration</div>
+    </div>
+  <!-- TO DISPLAY IMGS HOSTED ON GDRIVE set the value after id= to the id of google drive file in which your logo is stored 
+    <div id="logos">
+      <!--<img src='https://drive.google.com/uc?id=1Cj-aUBIx3jpPZ2Sp88ImVcnKAftUGPmX' class='logos'>
+      <div id="event-title"></div>
+      <!--<img src='https://drive.google.com/uc?id=1zIYKbm2T3e6P9DgXdRpx8CQOYwNGEiWs' class='logos'>
+    </div>-->
+    <div id='progress-box' style='display: none;'>
+      <div id='progress-msg'></div>
+      <!--<div id='spinner'><span class="progress-bit">hello</span></div>-->
+      <canvas id="spinner" width="75" height="75"></canvas>
+    </div>
+    <div id='content-container' style="display: none;">
+    <div id='event-title'></div>
+    <a href='' target='_blank' id='event-info-link'>Event Info.</a>
+    <div id='display'></div>
+    <div id='reg-callback'></div>
+<form id="reg-form" style="display: none;" onsubmit="submitForm(this)" autocomplete="off">
+<div id="section1" class="section">
+  <fieldset class="field">
+    <div class="sub-section1">
+      <input class="bio-info" id="fn" type="text" name="fName" placeholder="first name" required />
+      <input class="bio-info" id="ln" type="text" name="lName" placeholder="last name" required />
+    </div>
+    <div class="sub-section1">
+      <input class="bio-info" id="email" type="email" name="email" placeholder="email" title="Use a valid schools.nyc.gov account" required />
+      <div style="display: flex; flex-direction: column; position: relative; width: 45.5%;">
+        <input id="dbnin" oninput="listDbns(this.value)" type="text" name="dbn" placeholder="DBN" onfocusout="hideDbns()" required />
+        <div id="dbn-list" style="display: none;"></div>
+      </div>
+    </div>
+  </fieldset>
+</div>
+
+<div class="section">
+  <fieldset class="field">
+  <legend>Select your current role</legend>
+    <select id="role" name="role" style="width: 100%;" required>
+      <option value=""></option>
+      <option value="Assistant Principal">Assistant Principal</option>
+      <option value="Borough office staff">Borough office staff</option>
+      <option value="Data Specialist">Data Specialist</option>
+      <option value="Dean">Dean</option>
+      <option value="District or central staff">District or central staff</option>
+      <option value="ELL Coordinator">ELL Coordinator</option>
+      <option value="Family Worker">Family Worker</option>
+      <option value="Paraprofessional">Paraprofessional</option>
+      <option value="Parent Coordinator">Parent Coordinator</option>
+      <option value="Principal">Principal</option>
+      <option value="Psychologist">Psychologist</option>
+      <option value="School Aide">School Aide</option>
+      <option value="School Counselor">School Counselor</option>
+      <option value="School Secretary">School Secretary</option>
+      <option value="Social Worker">Social Worker</option>
+      <option value="Teacher">Teacher</option>
+      <option value="Other">Other</option>
+    </select>
+  </fieldset>
+</div>
+
+<fieldset id="section2-mobile" class="section field">
+<legend>Select up to 3 subject areas that describe your current role.</legend>
+  <div class="checkbox">
+    <input type="checkbox" id="Arts" name="subject" value="Arts">
+    <label for="Arts">Arts</label>
+  </div>
+  <div class="checkbox">
+    <input type="checkbox" id="Technology" name="subject" value="Technology">
+    <label for="Technology">Technology</label>
+  </div>
+  <div class="checkbox">
+    <input type="checkbox" id="Science" name="subject" value="Science">
+    <label for="Science">Science</label>
+  </div>
+    <div class="checkbox">
+      <input type="checkbox" id="Math" name="subject" value="Math">
+      <label for="Math">Math</label>
+    </div>
+    <div class="checkbox">
+      <input type="checkbox" id="ELA" name="subject" value="ELA">
+      <label for="ELA">ELA</label>
+      </div>
+      <div class="checkbox">
+        <input type="checkbox" id="Physical Science" name="subject" value="Physical Science">
+        <label for="Physical Science">Physical Science</label>
+      </div>
+    <div class="checkbox">
+      <input type="checkbox" id="Social Studies" name="subject" value="Social Studies">
+      <label for="Social Studies">Social Studies</label>
+    </div>
+    <div class="checkbox">
+      <input type="checkbox" id="Common Branch" name="subject" value="Common Branch">
+      <label for="Common Branch">Common Branch</label>
+    </div>
+    <div class="checkbox">
+      <input type="checkbox" id="Foreign Language" name="subject" value="Foreign Language">
+      <label for="Foreign Language">Foreign Language</label>
+  </div>
+    <div class="checkbox">
+      <input type="checkbox" id="Operations" name="subject" value="Operations">
+      <label for="Operations">Operations</label>
+    </div>
+    <div class="checkbox">
+      <input type="checkbox" id="Other" name="subject" value="Other">
+      <label for="Other">Other</label>
+  </div>
+</fieldset> 
+
+<fieldset id="section2" class="section field">
+<legend>Select up to 3 subject areas that describe your current role.</legend>
+  <div class="subj-row">
+    <div class="checkbox">
+      <input type="checkbox" id="Arts" name="subject" value="Arts">
+      <label for="Arts">Arts</label>
+    </div>
+    <div class="checkbox">
+      <input type="checkbox" id="Common Branch" name="subject" value="Common Branch">
+      <label for="Common Branch">Common Branch</label>
+    </div>
+    <div class="checkbox">
+      <input type="checkbox" id="ELA" name="subject" value="ELA">
+      <label for="ELA">ELA</label>
+    </div>
+  </div>
+  <div class="subj-row">
+    <div class="checkbox">
+      <input type="checkbox" id="Foreign Language" name="subject" value="Foreign Language">
+      <label for="Foreign Language">Foreign Language</label>
+    </div>
+    <div class="checkbox">
+      <input type="checkbox" id="Math" name="subject" value="Math">
+      <label for="Math">Math</label>
+    </div>
+    <div class="checkbox">
+      <input type="checkbox" id="Operations" name="subject" value="Operations">
+      <label for="Operations">Operations</label>
+    </div>
+
+  </div>
+  <div class="subj-row">
+    <div class="checkbox">
+        <input type="checkbox" id="Physical Science" name="subject" value="Physical Science">
+        <label for="Physical Science">Physical Science</label>
+    </div>
+    <div class="checkbox">
+      <input type="checkbox" id="Science" name="subject" value="Science">
+      <label for="Science">Science</label>
+    </div>
+    <div class="checkbox">
+      <input type="checkbox" id="Social Studies" name="subject" value="Social Studies">
+      <label for="Social Studies">Social Studies</label>
+    </div>
+  </div>
+  <div class="subj-row">
+    <div class="checkbox">
+      <input type="checkbox" id="Technology" name="subject" value="Technology">
+      <label for="Technology">Technology</label>
+    </div>
+    <div class="checkbox">
+      <input type="checkbox" id="Other" name="subject" value="Other">
+      <label for="Other">Other</label>
+    </div>
+  </div>
+</fieldset> 
+
+
+<div id="section3" class="section">
+  <fieldset class="field">
+   <legend>Years in current role</legend>  
+    <input  id="exp" type="number" name="experience" min="0" max="65" required />
+  </fieldset>
+  <fieldset class="field">
+   <legend>What is one thing you hope to learn from attending?</legend>  
+    <textarea id="goal" style="width: 100%;" type="text" name="goals" required></textarea>
+  </fieldset>
+</div>
+<div id="section4" class="section">
+  <fieldset class="field">
+   <legend id="likert-title">What is your current comfort level with this topic?</legend>
+    <div id="likert-scale">
+      <div class="scale-label">Not at all comfortable or knowledgeable</div>
+      <div class="likert-item"><input id="comf1" type="radio" value="1" name="comfort" class="button" required />1</div>
+      <div class="likert-item"><input id="comf2" type="radio" value="2" name="comfort" class="button" />2</div>
+      <div class="likert-item"><input id="comf3" type="radio" value="3" name="comfort" class="button" />3</div>
+      <div class="likert-item"><input id="comf4" type="radio" value="4" name="comfort" class="button" />4</div>
+      <div class="likert-item"><input id="comf5" type="radio" value="5" name="comfort" class="button" />5</div>
+      <div class="likert-item"><input id="comf6" type="radio" value="6" name="comfort" class="button" />6</div>
+      <div class="scale-label">Extremely comfortable or knowledgable</div>
+    </div>
+  </fieldset>
+</div>
+<div id="section5" class="section">
+  <fieldset class="field">
+   <legend id="ctle-note">Would you like to receive CTLE certification for attending?</legend>
+    <div id="ctle-choices">
+      <div class="ctle-button">Yes<input id="ctley" type="radio" value="yes" name="ctle" class="small-button" onclick="document.getElementById('section6').style.display = 'flex';" required /></div>
+      <div class="ctle-button">No<input id="ctlen" type="radio" value="no" name="ctle" class="small-button" onclick="document.getElementById('section6').style.display = 'none';" /></div>
+    </div>
+  </fieldset>
+</div>
+<div id="section6" class="section" style="display: none;">
+        <div id="nys">NYSED requires the following information in order for you to be eligible for CTLE.</div>
+        <select class="ss-input" id="month" name="bMonth">
+          <option value="">Birth Month</option>
+          <option value="January">January</option>
+          <option value="February">February</option>
+          <option value="March">March</option>
+          <option value="April">April</option>
+          <option value="May">May</option>
+          <option value="June">June</option>
+          <option value="July">July</option>
+          <option value="August">August</option>
+          <option value="September">September</option>
+          <option value="October">October</option>
+          <option value="November">November</option>
+          <option value="December">December</option>
+        </select>
+        <select class="ss-input" id="day" class="dob-input" name="bDay">
+          <option value="">Birth Day</option>
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+          <option value="4">4</option>
+          <option value="5">5</option>
+          <option value="6">6</option>
+          <option value="7">7</option>
+          <option value="8">8</option>
+          <option value="9">9</option>
+          <option value="10">10</option>
+          <option value="11">11</option>
+          <option value="12">12</option>
+          <option value="13">13</option>
+          <option value="14">14</option>
+          <option value="15">15</option>
+          <option value="16">16</option>
+          <option value="17">17</option>
+          <option value="18">18</option>
+          <option value="19">19</option>
+          <option value="20">20</option>
+          <option value="21">21</option>
+          <option value="22">22</option>
+          <option value="23">23</option>
+          <option value="24">24</option>
+          <option value="25">25</option>
+          <option value="26">26</option>
+          <option value="27">27</option>
+          <option value="28">28</option>
+          <option value="29">29</option>
+          <option value="30">30</option>
+          <option value="31">31</option>
+        </select>
+        <select class="ss-input" id="year" class="dob-input" name="bYear">
+          <option value="">Birth Year</option>
+          <option value="1949">1949</option>
+          <option value="1950">1950</option>
+          <option value="1951">1951</option>
+          <option value="1952">1952</option>
+          <option value="1953">1953</option>
+          <option value="1954">1954</option>
+          <option value="1955">1955</option>
+          <option value="1956">1956</option>
+          <option value="1957">1957</option>
+          <option value="1958">1958</option>
+          <option value="1959">1959</option>
+          <option value="1960">1960</option>
+          <option value="1961">1961</option>
+          <option value="1962">1962</option>
+          <option value="1963">1963</option>
+          <option value="1964">1964</option>
+          <option value="1965">1965</option>
+          <option value="1966">1966</option>
+          <option value="1967">1967</option>
+          <option value="1968">1968</option>
+          <option value="1969">1969</option>
+          <option value="1970">1970</option>
+          <option value="1971">1971</option>
+          <option value="1972">1972</option>
+          <option value="1973">1973</option>
+          <option value="1974">1974</option>
+          <option value="1975">1975</option>
+          <option value="1976">1976</option>
+          <option value="1977">1977</option>
+          <option value="1978">1978</option>
+          <option value="1979">1979</option>
+          <option value="1980">1980</option>
+          <option value="1981">1981</option>
+          <option value="1982">1982</option>
+          <option value="1983">1983</option>
+          <option value="1984">1984</option>
+          <option value="1985">1985</option>
+          <option value="1986">1986</option>
+          <option value="1987">1987</option>
+          <option value="1988">1988</option>
+          <option value="1989">1989</option>
+          <option value="1990">1990</option>
+          <option value="1991">1991</option>
+          <option value="1992">1992</option>
+          <option value="1993">1993</option>
+          <option value="1994">1994</option>
+          <option value="1995">1995</option>
+          <option value="1996">1996</option>
+          <option value="1997">1997</option>
+          <option value="1998">1998</option>
+          <option value="1999">1999</option>
+          <option value="2000">2000</option>
+          <option value="2001">2001</option>
+          <option value="2002">2002</option>
+          <option value="2003">2003</option>
+          <option value="2004">2004</option>
+          <option value="2005">2005</option>
+          <option value="2006">2006</option>
+          <option value="2007">2007</option>
+        </select>
+        <input class="ss-input" id="ss" name="ssNum" type="text" maxlength="4" placeholder="last 4 of social" pattern="[0-9][0-9][0-9][0-9]" title="ss# must be a #">
+</div>
+<div class="section">
+    <input id="submit-button" type="submit" style="width: 90px; height: 30px;" value="Submit" />
+</div>
+    </form>
+</div>
+<div id="meta-app-data">This app was created by the New York City Department of Education. <a target="_blank" href="https://script.google.com/macros/s/AKfycbyR4XnqVxxMK1azl2tjPZuq2SCSzHlTGT5VIRaVaVReiyB8eG8/exec">Report issues here</a></div>
+    <?!= include('JavaScript'); ?>
+  </body>
+</html>

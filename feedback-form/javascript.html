@@ -1,0 +1,102 @@
+<script>
+window.addEventListener('load', getRequestParameters);
+window.addEventListener('load', preventFormSubmit);
+
+var reqParameters;
+function item(item) {return document.getElementById(item)}
+
+function getRequestParameters() {
+  google.script.url.getLocation(function(loc) {
+    console.log(loc.parameter);
+    reqParameters = loc.parameter;
+    item('title').innerHTML = reqParameters.title;
+  });
+  showProgress(0,450,"Getting your event information. Hang on...",item('progress-box'),item('progress-msg'), item('spinner'), item('title'));  
+}
+
+function submitForm() {
+  var formArr = [new Date().toString().slice(0,15),reqParameters.id+"-"+reqParameters.title];
+  var radioArr = ["discussion","relevant","prepared","materials","community","recommend"];
+  radioArr.forEach(function(el) {
+    var names = document.getElementsByName(el);
+    for (var i=0;i<names.length;i++) {
+      if (names[i].checked===true && names[i].type!=="range") {
+        console.log(names[i]);
+        formArr.push(names[i].value);
+      }
+      }
+  });
+  if (formArr.length===2) {
+    radioArr.forEach(function(el) {
+      var names = document.getElementsByName(el);
+        for (var i=0;i<names.length;i++) {
+          if (names[i].type==="range") {
+            formArr.push(names[i].value);
+          }
+        }
+    });
+  };
+  formArr.push(item('suggestion').value);
+  console.log(formArr)
+  if (formArr.length<9 || item('suggestion').value=="") {alert("Please fill out all the questions. Your response is anonymous. Thank you!"); return;}  
+  formArr.push(reqParameters.num);
+  var withSuccess = google.script.run.withSuccessHandler(confirmSubmit);
+  var withFailure = withSuccess.withFailureHandler(handleFailure);
+  console.log(formArr);
+  withFailure.postForm(formArr,reqParameters.instance);
+  item('form').style.display="none";
+  showProgress(0,450,"Submitting your responses. Hang on...",item('progress-box'),item('progress-msg'), item('spinner'), item('form-callback')); 
+}
+
+function confirmSubmit(msg) {
+  item('title').style.display = "none";
+  item('help-text').style.display = "none";
+  item('form-callback').innerHTML = msg.msg;
+}
+
+function handleFailure(msg) {
+  item('form-callback').innerHTML = "Sorry, something went wrong.";
+  console.log(msg);
+}
+
+function showProgress(progress, speed, message, displayContainer, messageContainer, displayElement, baseCaseElement) {
+  if (baseCaseElement.innerHTML !== "") {displayContainer.style.display = "none"; displayElement.style.display = "none"; return;}
+  displayContainer.style.display = "flex";
+  displayContainer.style.position = "absolute";
+  //displayContainer.style.top = Number(browserHeight()*0.25)+"px";
+  //displayContainer.style.left = Number(browserWidth()*0.33)+"px";
+  displayElement.style.display = "";
+  messageContainer.innerHTML = message;
+  var canvas = displayElement.getContext("2d");
+  canvas.lineWidth = 5;
+  if(progress>2) {canvas.clearRect(0,0,displayElement.width, displayElement.height); progress=0.5;}
+  canvas.beginPath();
+  canvas.arc(25,25,20,0*Math.PI,progress*Math.PI);
+  canvas.stroke();
+  setTimeout(function() {showProgress(progress+0.5,speed,message,displayContainer,messageContainer,displayElement,baseCaseElement)},speed);  
+}
+
+function browserWidth() {
+  return Math.max(
+    document.body.scrollWidth,
+    document.documentElement.scrollWidth,
+    document.body.offsetWidth,
+    document.documentElement.offsetWidth,
+    document.documentElement.clientWidth
+  );
+}
+
+function browserHeight() {
+  return Math.max(
+    document.body.scrollHeight,
+    document.documentElement.scrollHeight,
+    document.body.offsetHeight,
+    document.documentElement.offsetHeight,
+    document.documentElement.clientHeight
+  );
+}
+
+function adjustInput(input,element) {
+  item(element).innerHTML = input;
+}
+</script>

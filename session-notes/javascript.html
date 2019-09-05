@@ -1,0 +1,274 @@
+<script>
+
+window.addEventListener('load',getLoadState);
+
+var parameters;
+/*
+parameters:
+ - instance
+ - event id
+ - status: active / archived
+ - view: district / undefined
+ - pdetails: participant details link
+*/
+
+function getLoadState() {
+  console.log("getting load state");
+  
+  google.script.url.getLocation(function(loc) {
+    console.log(loc);
+    if (!loc.parameter.instance) {
+      document.getElementById("main-spinner").innerHTML = "Bad URL";
+      return;
+    } else {
+       parameters=loc.parameter;
+       if (parameters.view==="school" || parameters.view==="district") {
+         document.getElementById("nav-bar").style.display="none";
+       }
+       document.getElementById("session-notes-link").href="https://script.google.com/macros/s/AKfycbxgfnlryy7ViDEmNqeYyU3EKOsRnSI6qIJ3EIfoghETw8-NnXHn/exec?instance="+encodeURIComponent(loc.parameter.instance)+"&status="+loc.parameter.status+"&sharing="+loc.parameter.sharing+"&eventid="+loc.parameter.eventid;
+       document.getElementById("participant-details-link").href=loc.parameter.pdetails;
+       fetchSessionNotes(loc.parameter.instance,loc.parameter.eventid,loc.parameter.status);
+    }
+  });
+}
+
+function shareNotes(shareType) {
+  if (shareType==="admin") {
+    var shareableLink = "https://script.google.com/macros/s/AKfycbxgfnlryy7ViDEmNqeYyU3EKOsRnSI6qIJ3EIfoghETw8-NnXHn/exec?instance="+encodeURIComponent(parameters.instance)+"&eventid="+parameters.eventid+"&status="+parameters.status+"&sharing=read&view=district";
+    document.getElementById("modal-body-info").innerHTML="<div class='alert alert-warning' role='alert'>Do not share this link with school staff!</div><br>Use <a href='"+shareableLink+"' target=_blank>this link</a> to view notes<br><br>You can paste the line above into an email for sharing.";
+    document.getElementById("modal-title").innerHTML="Share Notes With Administrators";
+  } else {
+    var shareableLink = "https://script.google.com/macros/s/AKfycbxgfnlryy7ViDEmNqeYyU3EKOsRnSI6qIJ3EIfoghETw8-NnXHn/exec?instance="+encodeURIComponent(parameters.instance)+"&eventid="+parameters.eventid+"&status="+parameters.status+"&sharing=read&view=school";
+    document.getElementById("modal-body-info").innerHTML="Use <a href='"+shareableLink+"' target=_blank>this link</a> to view notes<br><br>You can paste the line above into an email for sharing.";
+    document.getElementById("modal-title").innerHTML="Share Notes With Schools";  
+  }
+  document.getElementById("modal-success").style.display="none";
+  document.getElementById("modal-failure").style.display="none";
+  document.getElementById("modal-body-info").style.display="";      
+  document.getElementById("modal-footer").style.display="";
+  document.getElementById("modal-spinner").style.display="none";  
+}
+
+function screenWidth() {
+  return (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) >= 630) ? "large" : "small";
+}
+
+
+function fetchSessionNotes(instance,eventid,status) {
+  console.log("fetching session notes");
+  var withSuccess = google.script.run.withSuccessHandler(function(msg) {
+     var callback = JSON.parse(msg);
+     document.getElementById("main-spinner").style.display = "none";
+     //document.getElementById(screenWidth()+"-title-display").style.display = "";
+     //console.log(screenWidth()+"-title-display");
+     document.getElementById("event-title").innerHTML = callback.title;
+     document.getElementById("hosted-by").innerHTML = "<b>Hosted By: </b>"+callback.borough_office+" division of "+callback.division;
+     document.getElementById("intended-for").innerHTML = "<b>Intended For: </b>"+callback.audience;
+     document.getElementById("facilitators").innerHTML = "<b>Facilitated By: </b>"+callback.facilitators;
+     document.getElementById("registered").innerHTML = "<b>Registered: </b>"+callback.registered;
+     if (callback.resource_folder !== "") document.getElementById("resources").innerHTML = "<a href='"+callback.resource_folder+"' target='_blank'>Resource Folder for Participants</a>"
+     var notesContainer = document.getElementById("session-notes-container")
+     notesContainer.style.display = "";
+     for (var i=0; i<callback.sessions.length; i++) {
+       if (Number(i)===0) {
+         notesContainer.appendChild(card(callback.sessions[i],Number(i)+1,true));
+       } else {
+         notesContainer.appendChild(card(callback.sessions[i],Number(i)+1,false));
+       }
+     }
+  });
+  var withFailure = withSuccess.withFailureHandler(function(err) {
+   console.log(err);
+  });
+  console.log(instance);
+  withFailure.getNotes(instance, eventid,status);
+}
+
+  function card(session,sessionNumber,expanded) {
+    var card = htmlElement({tag: "DIV", className: "card"});
+    var header = htmlElement({tag: "DIV", className: "card-header", id: "heading-"+sessionNumber});
+    var headerTitle = htmlElement({tag: "H2", className: "mb-0", style: "display: flex; align-items: center; justify-content: space-between"});
+    if (expanded) {
+      var headerButton = htmlElement({tag: "BUTTON", className: "btn btn-link", type: "button", innerHTML: "Session "+sessionNumber, "data-toggle": "collapse", "data-target": "#note-"+sessionNumber, "aria-expanded": "true", "aria-controls": "note-"+sessionNumber});
+    } else {
+      var headerButton = htmlElement({tag: "BUTTON", className: "btn btn-link collapsed", type: "button", innerHTML: "Session "+sessionNumber, "data-toggle": "collapse", "data-target": "#note-"+sessionNumber, "aria-expanded": "false", "aria-controls": "note-"+sessionNumber});
+    }
+    headerTitle.appendChild(headerButton);
+    if (!parameters.view) {
+      headerTitle.appendChild(htmlElement({tag: "INPUT", type: "text", placeholder: "Session Title", style: "width: 37%;", className: "form-control", id:"session-title-"+sessionNumber, value: session.title || ""}));
+    } else {
+      if (session.title && session.title!=="") {
+        headerTitle.appendChild(htmlElement({tag: "div", innerHTML: session.title, className: "session-title"}));
+      }
+    }
+    headerTitle.appendChild(htmlElement({tag: "DIV", innerHTML: session.date, className: "session-date"}));
+    header.appendChild(headerTitle);
+    card.appendChild(header);
+    if (expanded) {
+      var note = htmlElement({tag: "DIV", id: "note-"+sessionNumber, className: "collapse show", "aria-labelledby": "heading-"+sessionNumber, "data-parent":"#session-notes-container"});
+    } else {
+      var note = htmlElement({tag: "DIV", id: "note-"+sessionNumber, className: "collapse", "aria-labelledby": "heading-"+sessionNumber, "data-parent":"#session-notes-container"});
+    }
+    var cardBody = htmlElement({tag: "DIV", className: "card-body"});
+    if (parameters.view==="district" || !parameters.view) {
+      var adminNotesContainer = htmlElement({tag: "DIV", style: "margin-bottom: 75px;"});
+      adminNotesContainer.appendChild(htmlElement({tag: "DIV", innerHTML: "<b>Notes for Borough Office and District Administrators: </b>", style: "margin-bottom: 10px;"}));
+      cardBody.appendChild(adminNotesContainer);
+    }
+    var schoolNotesContainer = htmlElement({});
+      schoolNotesContainer.appendChild(htmlElement({tag: "DIV", innerHTML: "<b>Notes for School Staff: </b>", style: "margin-bottom: 10px;"}));
+    if (session.admin_notes || session.school_notes) {
+      if (parameters.sharing==="read") {
+        if (session.school_notes.length===0 && parameters.view) {
+          schoolNotesContainer.appendChild(htmlElement({tag: "DIV", innerHTML: "No School Notes"}));
+        }
+        if (parameters.view==="district" || !parameters.view) {
+          if (session.admin_notes.length===0 && parameters.view==="district") {
+            adminNotesContainer.appendChild(htmlElement({tag: "DIV", innerHTML: "No Admin Notes"}));
+          }
+          for (var i=0;i<session.admin_notes.length;i++) {
+          console.log(session.admin_notes[i]);
+            if (session.admin_notes[i].note!=="") {
+              var container = htmlElement({tag: "DIV", style: "margin-bottom: 35px;"});
+              container.appendChild(htmlElement({tag: "DIV", innerHTML: session.admin_notes[i].label}));
+              container.appendChild(htmlElement({tag: "DIV", innerHTML: session.admin_notes[i]["note"]}))
+              adminNotesContainer.appendChild(container);
+            }
+          }
+        }
+        for (var k=0;k<session.school_notes.length;k++) {
+          if (session.school_notes[k].note!=="") {
+              var container = htmlElement({tag: "DIV", style: "margin-bottom: 35px;"});
+              container.appendChild(htmlElement({tag: "DIV", innerHTML: session.school_notes[k].label}));
+              container.appendChild(htmlElement({tag: "DIV", innerHTML: session.school_notes[k]["note"]}));
+              schoolNotesContainer.appendChild(container);
+          }
+        }
+      } else {
+        for (var j=0; j<session.admin_notes.length; j++) {
+          if (session.admin_notes[j].note!=="") {
+            var noteLabel=htmlElement({tag:"INPUT", type: "text", className: "form-control admin-label-"+sessionNumber, value: session.admin_notes[j].label});
+            var noteText=htmlElement({tag: "TEXTAREA", id: "admin-note-"+Number(j+1), className: "form-control admin-note-"+sessionNumber, innerHTML: session.admin_notes[j]["note"], value: session.admin_notes[j]["note"]});
+            adminNotesContainer.appendChild(noteLabel);
+            adminNotesContainer.appendChild(noteText);
+          }
+        }
+        for (var l=0; l<session.school_notes.length;l++) {
+          if (session.school_notes[l].note!=="") {
+            var noteLabel=htmlElement({tag:"INPUT", type: "text", className: "form-control school-label-"+sessionNumber, value: session.school_notes[l].label});
+            var noteText=htmlElement({tag: "TEXTAREA", id: "school-Note-"+Number(l+1), className: "form-control school-note-"+sessionNumber, innerHTML: session.school_notes[l]["note"], value: session.school_notes[l]["note"]});
+            schoolNotesContainer.appendChild(noteLabel);
+            schoolNotesContainer.appendChild(noteText);
+          }
+        }
+      }
+    } else {
+        if (parameters.view==="district" || !parameters.view) { adminNotesContainer.appendChild(htmlElement({tag: "DIV", innerHTML: "No Admin Notes"}))}
+        schoolNotesContainer.appendChild(htmlElement({tag: "DIV", innerHTML: "No School Notes"}));
+    }
+    if (parameters.sharing!=="read") {
+      adminNotesContainer.appendChild(htmlElement({tag: "BUTTON", style: "display: flex; align-items: center; justify-content: space-around; margin-top: 15px;", className: "btn btn-outline-primary btn-sm", innerHTML: 'Add Note <i class="material-icons">add</i>',
+        eventListener: {event: "click", "function": function() {addNote(adminNotesContainer,"admin",newNoteNumber(),sessionNumber)}}
+      }));
+      schoolNotesContainer.appendChild(htmlElement({tag: "BUTTON", style: "display: flex; align-items: center; justify-content: space-around; margin-top: 15px;", className: "btn btn-outline-primary btn-sm", innerHTML: 'Add Note <i class="material-icons">add</i>',
+        eventListener: {event: "click", "function": function() {addNote(schoolNotesContainer,"school",newNoteNumber(),sessionNumber)}}
+      }));
+    }
+    cardBody.appendChild(schoolNotesContainer);
+    if (parameters.sharing!=="read") {
+      cardBody.appendChild(htmlElement({tag: "BUTTON", "data-toggle":"modal", "data-target": "#modal-vertical", className: "btn btn-primary btn-sm",innerHTML: "Save Notes", style: "margin-top: 15px;", eventListener: {event: "click", "function": function() {writeNotes(sessionNumber)}}}));
+    }
+    note.appendChild(cardBody);
+    card.appendChild(note);
+    return card;
+  }
+  
+  var newNoteNumber = (function newNoteNum() {
+    var num=1;
+    return function increment() {
+      num++;
+      return num;
+    }
+  })();
+  
+  function addNote(parent,noteType,noteNumber,sessionNumber) {
+    var container = htmlElement({tag: "DIV", id: "note-container-"+noteNumber, style: "display: flex; align-items: center; align-content: center; justify-content: space-betwen; width: 100%;"});
+    var noteContainer = htmlElement({tag: "DIV", style: "width: 95%;"});
+    var label = htmlElement({tag: "INPUT", type: "text", className: "form-control "+noteType+"-label-"+sessionNumber, placeholder: "Note Title (e.g. date of visit, topic)", style: "margin-top: 10px;"});
+    if (noteType==="school") {
+      var note = htmlElement({tag: "TEXTAREA", className: noteType+"-note-"+sessionNumber+" form-control", placeholder: "Today I worked with...\n\"Look fors\" for reflecting on your practice"});
+    } else {
+     var note = htmlElement({tag: "TEXTAREA", className: noteType+"-note-"+sessionNumber+" form-control", placeholder: "Notes"});
+    }
+    var cancel = htmlElement({tag: "DIV", style: "width: 5%; text-align: center;", innerHTML: '<i class="material-icons">cancel</i>', className: "cancel-note", eventListener: {event: "click", "function": function() {
+      parent.removeChild(document.getElementById("note-container-"+noteNumber));
+    }}});
+    noteContainer.appendChild(label);
+    noteContainer.appendChild(note);
+    container.appendChild(noteContainer);
+    container.appendChild(cancel);
+    parent.appendChild(container);
+  }
+  
+  function writeNotes(sessionNumber) {
+    var notes = {"admin_notes": [], "school_notes": [], title: ""};
+    var adminNotes = document.getElementsByClassName("admin-note-"+sessionNumber);
+    var adminLabels = document.getElementsByClassName("admin-label-"+sessionNumber);
+    var schoolNotes = document.getElementsByClassName("school-note-"+sessionNumber);
+    var schoolLabels = document.getElementsByClassName("school-label-"+sessionNumber);
+    notes.title = document.getElementById("session-title-"+sessionNumber).value;
+    for (var i=0; i<adminNotes.length; i++) {
+      notes.admin_notes.push({note: adminNotes[i].value, label: adminLabels[i].value});
+    }
+    for (var j=0; j<schoolNotes.length; j++) {
+      notes.school_notes.push({note: schoolNotes[j].value, label: adminLabels[j].value});
+    }
+    console.log(notes);
+    var withSuccess = google.script.run.withSuccessHandler(function(msg) {
+            document.getElementById("modal-spinner").style.display="none";
+            document.getElementById("modal-success").style.display="";
+            document.getElementById("modal-success").innerHTML="Notes saved for session "+sessionNumber;   
+            document.getElementById("modal-footer").style.display="";
+        });
+        var withFailure = withSuccess.withFailureHandler(function(error) {
+          console.log(error);
+          document.getElementById("modal-spinner").style.display="none";
+          document.getElementById("modal-failure").style.display="";
+          document.getElementById("modal-failure").innerHTML=error;
+          document.getElementById("modal-footer").style.display="";
+        });
+        withFailure.saveNotes(notes,parameters.instance,parameters.eventid,sessionNumber,parameters.status);
+        document.getElementById("modal-success").style.display="none";
+        document.getElementById("modal-failure").style.display="none";
+        document.getElementById("modal-body-info").style.display="none";
+        document.getElementById("modal-title").innerHTML="Saving Notes";
+        document.getElementById("modal-loading-msg").innerHTML="Writing your notes for session "+sessionNumber;
+        document.getElementById("modal-spinner").style.display="";
+        document.getElementById("modal-footer").style.display="none";    
+  }
+
+  function htmlElement(obj,parent) {
+    if (obj.tag) {
+      var element = document.createElement(obj.tag);
+    } else {
+      var element = document.createElement("DIV");
+    }
+    var keys = Object.keys(obj);
+    keys.forEach(function(key) {
+      if (key==="tag") {return}
+      if (key.indexOf("data-")!==-1 || key==="colspan") {
+        element.setAttribute(key,obj[key])
+      } else if (key==="eventListener") {
+        element.addEventListener(obj[key].event, obj[key].function)
+      }
+      else {element[key]=obj[key]}
+    });
+    if (parent) {
+      parent.appendChild(element);
+    } else {
+      return element;
+    }
+  }
+
+
+</script>

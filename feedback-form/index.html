@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <?!= include('stylesheet') ?>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+  </head>
+  <body ng-app="">
+  <div ></div>
+    <div id='progress-box' style='display: none;'>
+      <div id='progress-msg'></div>
+      <!--<div id='spinner'><span class="progress-bit">hello</span></div>-->
+      <canvas id="spinner" width="75" height="75"></canvas>
+    </div>
+    <div id="title">{{title}}</div>
+    <div id="help-text">Please rate your agreement with the following 6 statements <b>on a scale from 0 to 10</b></div>
+    <div>Thank you for your feedback</div><br><br>
+    <div id="form-callback"></div>
+    <form id="form">
+    <div class="question" id="first-question">
+      <span class="question-title">1. There was ample opportunity for discussion and questions.</span>
+      <div class="options">
+        <span class="scale-label">Strongly Disagree</span>
+        <div class="radio-buttons">
+        <div class="item"><span>0</span><input name="discussion" type="radio" value="0" required></div>
+        <div class="item"><span>1</span><input name="discussion" type="radio" value="1"></div>
+        <div class="item"><span>2</span><input name="discussion" type="radio" value="2"></div>
+        <div class="item"><span>3</span><input name="discussion" type="radio" value="3"></div>
+        <div class="item"><span>4</span><input name="discussion" type="radio" value="4"></div>
+        <div class="item"><span>5</span><input name="discussion" type="radio" value="5"></div>
+        <div class="item"><span>6</span><input name="discussion" type="radio" value="6"></div>
+        <div class="item"><span>7</span><input name="discussion" type="radio" value="7"></div>
+        <div class="item"><span>8</span><input name="discussion" type="radio" value="8"></div>
+        <div class="item"><span>9</span><input name="discussion" type="radio" value="9"></div>
+        <div class="item"><span>10</span><input name="discussion" type="radio" value="10"></div>
+        </div>
+        <div class="slider-container">
+        <div class="slider-display"><!--<span>0</span>--><span id="input-display-1">{{rating1}}</span><!--<span>10</span>--></div>
+          <input class="slider" type="range" min="0" max="10" step="1" start="5" name="discussion" ng-model="rating1">
+        </div>
+        <span class="scale-label">Strongly Agree</span>
+      </div>
+      </div>
+      <div class="question">
+      <span class="question-title">2. The information presented was relevant to my work.</span>
+      <div class="options">
+        <span class="scale-label">Strongly Disagree</span>
+        <div class="radio-buttons">
+        <div class="item"><span>0</span><input name="relevant" type="radio" value="0" required></div>
+        <div class="item"><span>1</span><input name="relevant" type="radio" value="1"></div>
+        <div class="item"><span>2</span><input name="relevant" type="radio" value="2"></div>
+        <div class="item"><span>3</span><input name="relevant" type="radio" value="3"></div>
+        <div class="item"><span>4</span><input name="relevant" type="radio" value="4"></div>
+        <div class="item"><span>5</span><input name="relevant" type="radio" value="5"></div>
+        <div class="item"><span>6</span><input name="relevant" type="radio" value="6"></div>
+        <div class="item"><span>7</span><input name="relevant" type="radio" value="7"></div>
+        <div class="item"><span>8</span><input name="relevant" type="radio" value="8"></div>
+        <div class="item"><span>9</span><input name="relevant" type="radio" value="9"></div>
+        <div class="item"><span>10</span><input name="relevant" type="radio" value="10"></div>
+        </div>
+        <div class="slider-container">
+        <div class="slider-display"><!--<span>0</span>--><span id="input-display-2">{{rating2}}</span><!--<span>10</span>--></div>
+          <input class="slider" type="range" min="0" max="10" step="1" start="5" name="relevant" ng-model="rating2">
+        </div>
+        <span class="scale-label">Strongly Agree</span>
+      </div>
+      </div>
+      <div class="question">
+      <span class="question-title">3. I feel empowered and prepared to apply skills / knowledge gained in this session. (Turn-Key if necessary)</span>
+      <div class="options">
+        <span class="scale-label">Strongly Disagree</span>
+        <div class="radio-buttons">
+        <div class="item"><span>0</span><input name="prepared" type="radio" value="0" required></div>
+        <div class="item"><span>1</span><input name="prepared" type="radio" value="1"></div>
+        <div class="item"><span>2</span><input name="prepared" type="radio" value="2"></div>
+        <div class="item"><span>3</span><input name="prepared" type="radio" value="3"></div>
+        <div class="item"><span>4</span><input name="prepared" type="radio" value="4"></div>
+        <div class="item"><span>5</span><input name="prepared" type="radio" value="5"></div>
+        <div class="item"><span>6</span><input name="prepared" type="radio" value="6"></div>
+        <div class="item"><span>7</span><input name="prepared" type="radio" value="7"></div>
+        <div class="item"><span>8</span><input name="prepared" type="radio" value="8"></div>
+        <div class="item"><span>9</span><input name="prepared" type="radio" value="9"></div>
+        <div class="item"><span>10</span><input name="prepared" type="radio" value="10"></div>
+        </div>
+        <div class="slider-container">
+        <div class="slider-display"><!--<span>0</span>--><span id="input-display-3">{{rating3}}</span><!--<span>10</span>--></div>
+          <input class="slider" type="range" min="0" max="10" step="1" start="5" name="prepared" ng-model="rating3">
+        </div>
+        <span class="scale-label">Strongly Agree</span>
+      </div>
+      </div>
+      <div class="question">
+      <span class="question-title">4. I  (will) have the materials necessary to apply the skills/knowledge gained in this session.</span>
+      <div class="options">
+        <span class="scale-label">Strongly Disagree</span>
+        <div class="radio-buttons">
+        <div class="item"><span>0</span><input name="materials" type="radio" value="0" required></div>
+        <div class="item"><span>1</span><input name="materials" type="radio" value="1"></div>
+        <div class="item"><span>2</span><input name="materials" type="radio" value="2"></div>
+        <div class="item"><span>3</span><input name="materials" type="radio" value="3"></div>
+        <div class="item"><span>4</span><input name="materials" type="radio" value="4"></div>
+        <div class="item"><span>5</span><input name="materials" type="radio" value="5"></div>
+        <div class="item"><span>6</span><input name="materials" type="radio" value="6"></div>
+        <div class="item"><span>7</span><input name="materials" type="radio" value="7"></div>
+        <div class="item"><span>8</span><input name="materials" type="radio" value="8"></div>
+        <div class="item"><span>9</span><input name="materials" type="radio" value="9"></div>
+        <div class="item"><span>10</span><input name="materials" type="radio" value="10"></div>
+        </div>
+        <div class="slider-container">
+        <div class="slider-display"><!--<span>0</span>--><span id="input-display-4">{{rating4}}</span><!--<span>10</span>--></div>
+          <input class="slider" type="range" min="0" max="10" step="1" start="5" name="materials" ng-model="rating4">
+        </div>
+        <span class="scale-label">Strongly Agree</span>
+      </div>
+      </div>
+      <div class="question">
+      <span class="question-title">5. This session enhances my school's connection to its families and community.</span>
+      <div class="options">
+        <span class="scale-label">Strongly Disagree</span>
+        <div class="radio-buttons">
+        <div class="item"><span>0</span><input name="community" type="radio" value="0" required></div>
+        <div class="item"><span>1</span><input name="community" type="radio" value="1"></div>
+        <div class="item"><span>2</span><input name="community" type="radio" value="2"></div>
+        <div class="item"><span>3</span><input name="community" type="radio" value="3"></div>
+        <div class="item"><span>4</span><input name="community" type="radio" value="4"></div>
+        <div class="item"><span>5</span><input name="community" type="radio" value="5"></div>
+        <div class="item"><span>6</span><input name="community" type="radio" value="6"></div>
+        <div class="item"><span>7</span><input name="community" type="radio" value="7"></div>
+        <div class="item"><span>8</span><input name="community" type="radio" value="8"></div>
+        <div class="item"><span>9</span><input name="community" type="radio" value="9"></div>
+        <div class="item"><span>10</span><input name="community" type="radio" value="10"></div>
+        </div>
+        <div class="slider-container">
+        <div class="slider-display"><!--<span>0</span>--><span id="input-display-5">{{rating5}}</span><!--<span>10</span>--></div>
+          <input class="slider" type="range" min="0" max="10" step="1" start="5" name="community" ng-model="rating5">
+        </div>
+        <span class="scale-label">Strongly Agree</span>
+      </div>
+      </div>
+      <div class="question">
+      <span class="question-title">6.  How likely are you to recommend this session to a colleague?</span>
+      <div class="options">
+        <span class="scale-label">Strongly Disagree</span>
+        <div class="radio-buttons">
+        <div class="item"><span>0</span><input name="recommend" type="radio" value="0" required></div>
+        <div class="item"><span>1</span><input name="recommend" type="radio" value="1"></div>
+        <div class="item"><span>2</span><input name="recommend" type="radio" value="2"></div>
+        <div class="item"><span>3</span><input name="recommend" type="radio" value="3"></div>
+        <div class="item"><span>4</span><input name="recommend" type="radio" value="4"></div>
+        <div class="item"><span>5</span><input name="recommend" type="radio" value="5"></div>
+        <div class="item"><span>6</span><input name="recommend" type="radio" value="6"></div>
+        <div class="item"><span>7</span><input name="recommend" type="radio" value="7"></div>
+        <div class="item"><span>8</span><input name="recommend" type="radio" value="8"></div>
+        <div class="item"><span>9</span><input name="recommend" type="radio" value="9"></div>
+        <div class="item"><span>10</span><input name="recommend" type="radio" value="10"></div>
+        </div>
+        <div class="slider-container">
+        <div class="slider-display"><!--<span>0</span>--><span id="input-display-6">{{rating6}}</span><!--<span>10</span>--></div>
+          <input class="slider" type="range" min="0" max="10" start="5" step="1" name="recommend" ng-model="rating6">
+        </div>
+        <span class="scale-label">Strongly Agree</span>
+      </div>
+      </div>
+      <div class="question" id="last-question">
+      <div><span>7. Please list some things you like about the session(s) along with some things you would like to change.</span></div>
+      <textarea id="suggestion" required></textarea>
+      </div>
+      <div id="submit" type="submit" value="Submit" onclick="submitForm()">Submit</div>
+    </form>
+    <?!= include('prevent-form-submit') ?>
+    <?!= include('javascript'); ?>
+  </body>
+</html>

@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <?!= include('stylesheet'); ?>
+  </head>
+  <body>
+  <div id="progress-container" style="display: none;">
+    <div id="progress-msg"></div>
+    <canvas id="spinner" width="75" height="75"></canvas>
+  </div>
+    <div class="section-container" id="base-container" style="display: none;">
+      <div id="greeting"></div>
+      <form style="display: none;" id="new-user-form" onsubmit="postNewUser(this)">
+        <label for="dm">Your name</label><input type="text" id="dm" name="dm">
+        <label for="dm">Your name</label>
+        <select name="system">
+          <option value="Affinity PL System">Affinity PL System</option>
+          <option value="Bronx PL System">Bronx PL System</option>
+          <option value="Brooklyn North PL System">Brooklyn North PL System</option>
+          <option value="Brooklyn South PL System">Brooklyn South PL System</option>
+          <option value="Central PL System">Central PL System</option>
+          <option value="Manhattan PL System">Manhattan PL System</option>
+          <option value="Queens North PL System">Queens North PL System</option>
+          <option value="Queens South PL System">Queens South PL System</option>
+          <option value="Staten Island PL System">Staten Island PL System</option>
+          <option value="Demo PL System">Demo PL System</option>
+        </select>
+        <input type="submit" value="Save">
+      </form>
+      <div id="platform-select-container" style="display: none;">
+        <a id="setup" class="custom-buttons platform-select" href="https://script.google.com/macros/s/AKfycbzQHjynpgMQaOH6nHh-u3DygHPgiBbuKq_9Di5-BQLdxTGS8dI/dev?setup=true">Set Up a New PL Instance</a>
+        <a id="globals" class="custom-buttons platform-select" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbzQHjynpgMQaOH6nHh-u3DygHPgiBbuKq_9Di5-BQLdxTGS8dI/exec?globals=true">Manage Globals</a>
+        <a id="updates" class="custom-buttons platform-select" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbzQHjynpgMQaOH6nHh-u3DygHPgiBbuKq_9Di5-BQLdxTGS8dI/exec?updates=true">Check for Updates</a>
+        <a id="enhancements" class="custom-buttons platform-select" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbzQHjynpgMQaOH6nHh-u3DygHPgiBbuKq_9Di5-BQLdxTGS8dI/exechttps://script.google.com/macros/s/AKfycbzQHjynpgMQaOH6nHh-u3DygHPgiBbuKq_9Di5-BQLdxTGS8dI/dev?enhancements=true">Request Enhancements</a>
+        <a id="bugs" class="custom-buttons platform-select" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbzQHjynpgMQaOH6nHh-u3DygHPgiBbuKq_9Di5-BQLdxTGS8dI/exec?bugs=true">Report Bugs</a>
+      </div>
+    </div>
+    <div id="setup-callback"></div>
+    <div class="section-container" id="verify-setup-container" style="display: none;"></div>
+    <div class="section-container" id="setup-container" style="display: none;">
+      <div id="setup-display"></div>
+      <div id="setup-process">
+        <div>First, make a copy of all PL system docs, scripts and folders. When you click "make a copy" a new folder will be created in your Google Drive, which will contain clean copies of all the docs, sheets, forms, folders, and apps that you'll need to start a new PL system. Once copied, the unique IDs for all of the docs, sheets and folders will be saved for you so you don't have to add them to your code.</div>
+        <div id="copy-template" class="custom-buttons platform-select" onclick="initiateCopy()">Make a copy</div>
+        <div id="copy-callback"></div>
+        <div class="multi-button-container" id="continue-setup" style="display: none;">
+        <a style="padding: 5px;" class="custom-buttons small-button" href="https://script.google.com/macros/s/AKfycbzQHjynpgMQaOH6nHh-u3DygHPgiBbuKq_9Di5-BQLdxTGS8dI/dev?base=true">Back Home</a>
+        <a style="padding: 5px;" class="custom-buttons small-button" href="https://script.google.com/macros/s/AKfycbzQHjynpgMQaOH6nHh-u3DygHPgiBbuKq_9Di5-BQLdxTGS8dI/dev?globals=true">Manage Globals</a>
+        </div>
+      </div>
+    </div>
+    <div class="section-container" id="globals-mgmt-container" style="display: none;">
+      <div id="globals-message">Use this page to enter global variables that you want your scripts to reference.<br><strong>Important note: </strong>When you initialize a new PL System Instance, the unique reference IDs for all of your sheets and forms are automatically saved. So, you shouldn't need to change any of the IDs for files and folders in your instance.<br></div>
+    <div id="globals-callback"></div>
+        <form id="globals-display" onsubmit="postGlobals(this)">
+       </form>
+    </div>
+    <form id="copy-form" onsubmit="initiateCopy(this)" style="display: none;">
+        <input id="parent-folder-input" name="folderId" type="text" placeholder="Enter the ID of the folder you want to copy to." required />
+      <input type="submit">
+    </form>
+    <div class="section-container" id="bug-container" style="display: none;">This page is under construction. Just email &nbsp;<a href="mailto:nries@schools.nyc.gov"> nries@schools.nyc.gov </a>&nbsp; to report a bug for now.</div>
+    <div class="section-container" id="enhancement-container" style="display: none;">This page is under construction. Just email &nbsp;<a href="mailto:nries@schools.nyc.gov"> nries@schools.nyc.gov</a>&nbsp; to request an enhancement.</div>
+    <div class="section-container" id="updates-container" style="display: none;">
+      <div id="updates-callback"></div>
+      <div id="update-table" style="display: none;">
+        <div class="update-row">
+          <div class="update-cell">App name</div>
+          <div class="update-cell">Your Version</div>
+          <div class="update-cell">Last Update</div>
+          <div class="update-cell">Latest Version</div>
+          <div class="update-cell">Update Description</div>
+          <div class="update-cell">Update Now</div>
+        </div>
+      </div>
+    </div>
+    <?!= include('javascript'); ?>
+  </body>
+</html>

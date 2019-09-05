@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">  
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <?!= include('stylesheet'); ?>
+  </head>
+  <body>
+    <div class="modal fade" id="modal-vertical" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="modal-title">Modal title</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+             <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <div id="modal-body" class="modal-body">
+            <div id="modal-failure" class="alert alert-danger" role="alert" style="display: none;">Failed</div>
+            <div id="modal-success" class="alert alert-success" role="alert" style="display: none;">Success</div>
+            <div id="modal-spinner" style="text-align: center;">
+             <div id="modal-loading-msg">...</div>
+              <div class="spinner-border" role="status">
+               <span class="sr-only">Loading...</span>
+              </div>
+            </div>
+          </div>
+          <div id="modal-footer" class="modal-footer">
+            <button type="button" onclick="initSignin()" id="modal-callback-button" class="btn btn-primary" style="display: none;"></button>
+            <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+            <!--<button type="button" class="btn btn-primary">Save changes</button>-->
+          </div>
+        </div>
+      </div>
+    </div>
+    <ul style="width:100%;" class="nav nav-tabs" id="myTab" role="tablist">
+      <li class="nav-item">
+        <a class="nav-link active" id="confirmation-signin-tab" onclick="document.getElementById('search-sign-in-container').style.display='none'; document.getElementById('confirmation-signin-container').style.display='flex';" data-toggle="tab" href="#confirmation-signin-container" role="tab" aria-controls="confirmation-signin-container" aria-selected="true">Confirmation Code Sign In</a>
+       </li>
+      <li class="nav-item">
+        <a class="nav-link" id="search-sign-in-tab" onclick="showParticipantPage()" data-toggle="tab" href="#search-sign-in-container" role="tab" aria-controls="search-sign-in-container" aria-selected="false">Sign in By Email</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" id="contact-tab" target="_blank" href="https://script.google.com/a/macros/strongschools.nyc/s/AKfycbyR4XnqVxxMK1azl2tjPZuq2SCSzHlTGT5VIRaVaVReiyB8eG8/exec">Report Issues</a>
+      </li>
+    </ul>
+    <div class="tab-content" id="myTabContent">
+      <div style="width:100%; display: flex; flex-direction: column; align-items: center; align-content: center;" class="tab-pane fade show active" id="confirmation-signin-container" role="tabpanel" aria-labelledby="confirmation-signin-container">
+        <h5 style="text-align: center; margin-top: 20px; padding:15px" id="welcome"></h5>
+        <div id="sign-in-spinner" style="text-align: center; display: none;">
+          <div id="sign-in-spinner-msg">...</div>
+          <div class="spinner-border" role="status">
+           <span class="sr-only">Loading...</span>
+          </div>
+        </div>
+        <input style="width: 60%; text-align: center; border-radius: 8px; border-style: none; border: 1px solid; margin-bottom: 25px;" id="conf-input" class="text-input" type="text" name="confirmation" placeholder="7 digit code from your confirmation email">
+        <div style="width: 100%; display: flex; justify-content: space-around;">
+          <button data-toggle= "modal" data-target="#modal-vertical" type="button" class="btn btn-primary" onclick="startsignin(true)">Sign In</button>
+          <button data-toggle= "modal" data-target="#modal-vertical" type="button" class="btn btn-primary" onclick="startsignin(false)">Sign Out</button>
+        </div>
+      </div>
+      <div class="tab-pane fade" id="search-sign-in-container" role="tabpanel" aria-labelledby="search-sign-in-container" style="width:100%; display: flex; flex-direction: column; align-items: center; align-content: center;">
+        <div id="participant-spinner" style="text-align: center; display: none; margin-top: 35px;">
+          <div id="participant-loading-msg">...</div>
+            <div class="spinner-border" role="status">
+              <span id="particpant-spinner-loader" class="sr-only">Loading...</span>
+            </div>
+        </div>
+        <div id="participant-search" style="display: none; background-color: white; align-items center; border: 1px solid; border-radius: 8px; margin-bottom: 15px; margin-top: 35px;">
+          <input type="text" onkeyup="filterRegs(this)" placeholder="Search By Email" style="border: none; border-radius: 8px; display: flex; align-items: center;"><i class="material-icons">search</i>
+        </div>
+        <table id="pTable" class="table table-hover" style="display: none; width: 85%; margin: 20px 0px 35px; 0px">
+          <thead>
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Name</th>
+              <th scope="col">DBN</th>
+              <th scope="col">Email</th>
+              <th scope="col">Sign In</th>
+            </tr>
+          </thead>
+          <tbody id="table-body">
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div style="color: red; width: 100%; text-align: center; margin-top: 25px;">*If you want to receive CTLE credit for this event, then you must sign in and out.</div><br><br>
+    <div id="qr-code"></div>
+    <?!= include('javascript'); ?>  
+  </body>
+</html>

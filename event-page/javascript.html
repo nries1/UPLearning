@@ -1,0 +1,143 @@
+<script>
+window.addEventListener('load', getData);
+var screenWidth = "";
+
+var eventDetails;
+var reqParameters;
+var tableCreated=false;
+function item(element) {
+  return document.getElementById(element);
+}
+
+function getData() {
+  if (Math.max(document.documentElement.clientWidth, window.innerWidth || 0) >= 600) {
+    screenWidth="desktop"
+  } else {
+    screenWidth="mobile";
+  }
+  google.script.url.getLocation(function(loc) {
+    console.log(loc.parameter);
+    reqParameters = loc.parameter
+    var withSuccess = google.script.run.withSuccessHandler(displayEvent).withUserObject({"display_element": item('title')});
+    var withFailure = withSuccess.withFailureHandler(failHandler);
+    withFailure.getEventData(loc.parameter.id,loc.parameter.instance);
+  });
+  showProgress(0,450,"Getting your event information. Hang on...",item('progress-box'),item('progress-msg'), item('spinner'), item('title'))  
+}
+
+function failHandler(msg,userObj) {
+  userObj.display_element.innerHTML=msg;
+}
+
+function displayEvent(data) {
+  eventDetails = data;
+  if (!data) {item('title').innerHTML="Sorry. Your event was not found. Perhaps it was canceled, or has already passed. If you think this is a mistake, please contact nries@schools.nyc.gov"; return;}
+  //item("time-space-container").style.display="flex";
+  item("about").style.display="flex";
+  var sessions = data.all_sessions;
+  item('title').innerHTML=data.title;
+  console.log(data);
+  var keys = Object.keys(data);
+  for (var i in keys) {
+    if (item(keys[i]) || item(keys[i]+"-"+screenWidth)) {
+    //console.log(keys[i]);
+    //console.log(item(keys[i]));
+    //special formating for the basic date display
+    if (keys[i]==="num_sessions" && screenWidth==="mobile") {continue;} 
+    if (keys[i]==="num_sessions") {if (data.num_sessions===1) {item("num_sessions-"+screenWidth).innerHTML="1 Session:&nbsp;"} else {item("num_sessions-"+screenWidth).innerHTML=data.num_sessions+" Sessions:&nbsp;"} continue;}
+    if (keys[i]==="display-location") {console.log("setting "+keys[i]+"-"+screenWidth+" to location "+data[keys[i]]); item(keys[i]+"-"+screenWidth).innerHTML=data[keys[i]]; continue;}
+    if (keys[i]==="display-times") {item(keys[i]+"-"+screenWidth).innerHTML=data[keys[i]]; continue;}
+    if (keys[i]==="display-dates") {item(keys[i]+"-"+screenWidth).innerHTML=data[keys[i]]; continue;}
+    item(keys[i]).innerHTML=data[keys[i]]
+    }
+  }
+  if (data["display-location"].length>=65) {item("display-location-"+screenWidth).style.fontSize="0.75em"}
+  if (data.reg_status!=="Registraton Closed") {item('reg-link-'+screenWidth).href=data.reg_link}
+  item('reg-link-'+screenWidth).innerHTML=data.reg_status;
+  item('share').href="mailto:someone@schools.nyc.gov?subject="+data.title+"&body=I thought you might find this interesting: \
+  https://script.google.com/macros/s/AKfycbz4AthfjpkN8d_pttRsnKfYnsQp_Fal9N5O4tHpQX6Q-Hm58oo/exec?instance="+reqParameters.instance.replace(/ /g,"+")+"&id="+data.id;
+  item('print').href=data.reg_flyer;
+  if (sessions.length>1) {
+    item('display-dates-'+screenWidth).innerHTML=new Date(sessions[0].date).toString().slice(0,15)+" - "+new Date(sessions[data.all_sessions.length-1].date).toString().slice(0,15)
+  }
+    //item('display-dates-'+screenWidth).innerHTML=sessions[0].date.toString().slice(5,7)+"/"+sessions[0].date.toString().slice(8,10)+"/"+sessions[0].date.toString().slice(0,4)+" - "+sessions[data.all_sessions.length-1].date.toString().slice(5,7)+"/"+sessions[data.all_sessions.length-1].date.toString().slice(8,10)+"/"+sessions[data.all_sessions.length-1].date.toString().slice(0,4)}
+  else {
+    item('display-dates-'+screenWidth).innerHTML=new Date(sessions[0].date).toString().slice(0,15)
+    //item('display-dates-'+screenWidth).innerHTML=sessions[0].date.toString().slice(5,7)+"/"+sessions[0].date.toString().slice(8,10)+"/"+sessions[0].date.toString().slice(0,4)}
+  }
+  createSessionTable(item("time-space-table-"+screenWidth),eventDetails.all_sessions);
+}
+
+function browserWidth() {
+  return Math.max(
+    document.body.scrollWidth,
+    document.documentElement.scrollWidth,
+    document.body.offsetWidth,
+    document.documentElement.offsetWidth,
+    document.documentElement.clientWidth
+  );
+}
+
+function browserHeight() {
+  return Math.max(
+    document.body.scrollHeight,
+    document.documentElement.scrollHeight,
+    document.body.offsetHeight,
+    document.documentElement.offsetHeight,
+    document.documentElement.clientHeight
+  );
+}
+
+function showProgress(progress, speed, message, displayContainer, messageContainer, displayElement, baseCaseElement) {
+  if (baseCaseElement.innerHTML !== "") {displayContainer.style.display = "none"; displayElement.style.display = "none"; return;}
+  displayContainer.style.display = "flex";
+  displayContainer.style.position = "absolute";
+  displayContainer.style.top = Number(browserHeight()*0.15)+"px";
+  /*displayContainer.style.left = Number(browserWidth()*0.33)+"px";*/
+  displayElement.style.display = "";
+  messageContainer.innerHTML = message;
+  var canvas = displayElement.getContext("2d");
+  canvas.lineWidth = 5;
+  if(progress>2) {canvas.clearRect(0,0,displayElement.width, displayElement.height); progress=0.5;}
+  canvas.beginPath();
+  canvas.arc(25,25,20,0*Math.PI,progress*Math.PI);
+  canvas.stroke();
+  setTimeout(function() {showProgress(progress+0.5,speed,message,displayContainer,messageContainer,displayElement,baseCaseElement)},speed);  
+}
+
+function expandTimeSpace(element,screensize) {
+  if (item("expander-"+screensize).dataset.expanded==="false") {
+    item("more-time-space-"+screensize).style.height = "auto";
+    item("time-space-container-"+screensize).style.height = "auto";
+    item("expander-"+screensize).dataset.expanded=true;
+    item("expander-"+screensize).style.transform = "rotate(225deg)";
+  } else {
+    item("more-time-space-"+screensize).style.height = "0px";
+    item("time-space-container-"+screensize).style.height = "4em";
+    item("expander-"+screensize).dataset.expanded=false;
+    item("expander-"+screensize).style.transform = "rotate(45deg)";    
+  }
+}
+
+function createSessionTable(table,sessions,row) {
+  console.log(table);
+  for (var i=0; i<sessions.length; i++) {
+    var newRow = document.createElement("TR");
+    newRow.innerHTML="<td>"+Number(i+1)+"</td><td>"+new Date(sessions[i].date).toString().slice(0,15)+"</td><td>"+sessions[i].location+"</td>";
+    table.appendChild(newRow);
+  }
+  /*if (sessions.length===0) {return};
+    var newRow = table.insertRow();
+    newRow.innerHTML="<td>"+row+"</td><td>"+sessions[0].date.toString().slice(5,7)+"/"+sessions[0].date.toString().slice(8,10)+"/"+sessions[0].date.toString().slice(0,4)+"</td><td>"+sessions[0].location+"</td>";
+    setTimeout(function() {createSessionTable(table,sessions.slice(1,sessions.length),row+1)},150);*/
+}
+
+function removeSessionTable(table,row) {
+  if (row===0) {return}
+  table.deleteRow(row);
+  setTimeout(function() {removeSessionTable(table,row-1)},40);
+}
+
+</script>
+
+

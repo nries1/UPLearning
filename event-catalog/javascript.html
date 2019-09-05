@@ -1,0 +1,150 @@
+    <script>
+      window.addEventListener('load',getLoadState);
+      
+      var instance;
+
+      function fetchEvents() {
+        //document.getElementById("events-container").innerHTML = "Loading Events..."
+        var withSuccess = google.script.run.withSuccessHandler(renderEventsSections);
+        var withFailure = withSuccess.withFailureHandler(function(error) {
+        document.getElementById("events-container").innerHTML = "Sorry, we're unable to load events right now."
+        console.log(error)});
+        withFailure.getEventsData(instance);
+        showProgress(0);
+      }
+
+
+function getLoadState() {
+  console.log("getting load state");
+  console.log(window.location);
+  google.script.url.getLocation(function(loc) {
+    instance = loc.parameter.instance;
+    console.log(instance);
+    var withSuccess = google.script.run.withSuccessHandler(setFilters);
+    var withFailure = withSuccess.withFailureHandler(function(error) {console.log(error)});
+    withFailure.getFilters(instance);
+    fetchEvents(instance);
+  });
+}
+
+function setFilters(filters) {
+  console.log(filters);
+  filters.forEach(function(filt) {
+    var op = document.createElement("option");
+    op.value=filt; op.innerHTML = filt;
+    document.getElementById("district").appendChild(op);
+  });
+}
+
+      /*Create a tile for each event that is centered on the page and for which the width and height are dynamic.
+        Each tile should 
+      */
+      function renderEventsSections(data) {
+        var data = JSON.parse(data);
+        if (data.length===0) {document.getElementById("events-container").innerHTML="No events."; return;}
+        document.getElementById("progress-bar").style.display = "none";
+        document.getElementById("events-container").innerHTML = "";
+        var displayPage = "";
+        data.forEach(function(event) {
+          if (instance==="Queens South PL System Beta") {displayPage = event.regFlyer} else {displayPage="https://script.google.com/macros/s/AKfycbz4AthfjpkN8d_pttRsnKfYnsQp_Fal9N5O4tHpQX6Q-Hm58oo/exec?instance="+instance.replace(/ /g,"+")+"&id="+event.id}
+          document.getElementById("events-container").innerHTML+=
+          "<div class='event-tile' data-title='"+event.title+"' data-division='"+event.division+"' data-content='"+event.content+"' data-gradeband='"+event.gradeband+"'\
+             data-district='"+event.districts+"' data-startdate='"+new Date(event.firstDate).toString().slice(0,15)+"' data-id='"+event.id+"'>\
+            <div class='title-info'><strong>"+event.title+"</strong><br><spand class='tile-content'>id: "+event.id+"</span></div>\
+            <div class='tile-content grey-info'><strong>Where: </strong>"+event.location+"</div>\
+            <div class='tile-content grey-info'><strong>When: </strong>"+event.numDates+event.dates+"</div>\
+            <div class='tile-content grey-info'><strong>Content: </strong>"+event.content+"</div>\
+            <div class='tile-content grey-info districts'><strong>District(s): </strong>"+event.districts+"</div>\
+            <div class='tile-content grey-info'><strong>Division: </strong>"+event.division+"</div>\
+            <div class='grey-info' style='padding: 5px; font-size: 1rem;'><strong>Current registrants:</strong> "+event.registrants+"</div>\
+            <div class='more-info-box' style='display: none;'>\
+              <div class='tile-content grey-info'><strong>Description: </strong>"+event.description+"</div>\
+              <div class='tile-content grey-info'><strong>All Dates: </strong>"+event.allDates+"</div>\
+              <div class='tile-content grey-info'><strong>Times: </strong>"+event.times+"</div>\
+            </div>\
+            <div class='event-tile-buttons'>\
+              <div class='btn btn-primary' onclick=showMoreInfo(this)>show more</div>\
+              <a class='btn btn-primary' target=_blank href='"+event.regForm+"'>register</a>\
+              <a class='btn btn-primary' target=_blank href='"+displayPage+"'>event page</a>\
+            </div>\
+          </div>";
+        });
+        document.getElementById("progress-bar").style.display = "none";
+      }
+      
+      function showMoreInfo(buttonElement) {
+      console.log(buttonElement.parentElement.previousElementSibling.className);
+        if (buttonElement.parentElement.previousElementSibling.style.display === "none") {
+          buttonElement.innerHTML = "show less";
+          buttonElement.parentElement.previousElementSibling.style.display = "flex";
+        } else {
+          buttonElement.innerHTML = "show more";
+          buttonElement.parentElement.previousElementSibling.style.display = "none";
+        }
+      }
+      
+      var filters = {"division": "", "title": "", "content": "", "district": "", "startdate": "", "id": "", "gradeband": "", "date": ""
+                       "currentFilters": function() {
+                                           var currentFilters = [];
+                                           var keys = Object.keys(this);
+                                           for (var i in keys) {
+                                             if (this[keys[i]] !== "" && keys[i] !== "currentFilters") {
+                                               currentFilters.push(keys[i]);
+                                             }
+                                           }
+                                           return currentFilters;
+                                          }
+                     }
+      
+      function filterTable(input) {
+        console.log(filters);
+        var table = document.getElementById("events-container");
+        var events = document.getElementsByClassName("event-tile");
+        if (input.id === "date" && input.value !== "") {
+          var inputDate = new Date(input.value);
+          inputDate.setUTCHours(20);
+          console.log(inputDate.toDateString());
+          filters[input.id] = inputDate.toDateString();
+        } else {
+          filters[input.id] = input.value;
+          }
+        if (filters.currentFilters().length === 0) {
+           for (var m=0;m<events.length;m++) {
+             events[m].style.display = "";
+           }
+           return;
+        }
+        var currentFilters = filters.currentFilters()
+        for (var i=0; i<events.length; i++) {
+          var event = events[i];
+          console.log(input.value);
+          if (currentFilters.reduce(function(hide,key) {
+              if (events[x][key]) {
+                 if (event.dataset[key].toString().toUpperCase().indexOf(filters[key].toString().toUpperCase()) === -1) hide ++;
+              } else {
+                if (filters.date!=="") {
+                  if (event.allDates.indexOf(filters.date)===-1) hide++;
+                }
+              }
+              return hide;
+          },0) === 0) {
+            event.style.display = "flex";
+          } else {
+            event.style.display = "none";
+          }
+        }
+      }
+      
+      function showProgress(progress) {
+         if (document.getElementById("events-container").innerHTML.indexOf("<div") !== -1 || progress > 9) {
+         return;}
+         document.getElementById("progress-bar").style.display = "flex";
+         var bits = "";
+         for (var i=0; i<progress; i++) {
+           bits+="<span class='progress-bit'></span>";
+         }
+         document.getElementById("progress-bar").innerHTML=bits;
+         setTimeout(function() {showProgress(progress+1)},700);
+      }
+
+    </script>

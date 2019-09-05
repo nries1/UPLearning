@@ -1,0 +1,134 @@
+<style>
+      body {
+        font-family: Nunito;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+      #email-box {
+        width: 70%;
+        height: 220px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-between;
+        border: 0.75px solid rgb(181, 181, 181);
+        box-shadow: 2px 2px rgb(181, 181, 181);
+        border-radius: 8px;
+        margin-top: 25px;
+        margin-bottom: 30px;
+        text-align: center;
+        padding: 0 0 10px 0;
+      }
+      #email {
+        width: 70%;
+        height: 2.5em;
+        border-radius: 5px;
+        border-style: none;
+        text-align: center;
+        font-size: 16px;
+        font-family: Nunito;
+        border: 0.5px solid rgba(0,123,191,1);
+      }
+      #email:focus {
+        outline: none;
+      }
+      #events-display {
+        display: flex;
+        flex-direction: column;
+        width: 80%;
+        margin-left: 10%;
+      }
+      .event-tile {
+        border: 1px solid black;
+        display: flex;
+        flex-direction: column;
+        margin: 10px;
+        padding: 1px;
+        text-align: center;
+        justify-content: space-between;
+        box-shadow: 3px 3px 3px grey;
+    }
+    .title-info {
+      padding: 4px 0 4px 0;
+      margin-bottom: 4px;
+      padding: 20px;
+    }
+    .custom-button {
+      /*background-color: rgba(50,50,50,1);*/
+      background-color: rgba(0,123,191,1);
+      color: rgba(255,255,255,1);
+      text-decoration: none;
+      padding: 7px;
+      border-style: none;
+      border-radius: 4px;
+      box-shadow: 2px 2px rgb(181, 181, 181);
+    }
+    .custom-button:hover {
+      cursor:pointer;
+      box-shadow: 3.5px 3.5px rgb(181, 181, 181);
+    }
+    
+    .custom-button:active {
+      box-shadow: 0px 0px;
+    }
+    
+    .custom-button:focus {
+      outline: none;
+    }
+    
+    .event-tile-buttons {
+      display: flex;
+      justify-content: space-around;
+      margin: 10px 0 6px 0;
+      font-size: 0.75rem;
+    }
+    .grey-info {
+      color: #6f7287;
+    }
+    .tile-content {
+      font-size: 0.75rem;
+      padding: 3px;
+    }
+    
+    button {
+      margin-bottom: 5px;
+    }
+    .cancel-msg {
+      color: white;
+      background-color: black;
+      font-size: 1.1em;
+    }
+    
+    #progress-bar {
+      display: none;
+      border: 1px solid rgba(0,123,191,1);
+      width: 60%;
+      height: 30px;
+      justify-content: start;
+      margin-top: 20px;
+    }
+    
+    .progress-bit {
+      background-color: rgba(0,123,191,1);
+      height: 100%;
+      width: 10%;
+    }
+#progress-container {
+  flex-direction: column;
+  border: 1px solid black;
+  box-shadow: 3px 3px 3px;
+  width: 30%;
+  height: 175px;
+  text-align: center;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 10px 10px 10px;
+  background-color: white;
+}
+
+.confirmation {
+  font-weight: bold;
+}
+
+</style>

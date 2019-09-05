@@ -1,0 +1,100 @@
+<script>
+window.addEventListener('load', fetchDbns);
+window.addEventListener('load', preventFormSubmit);
+
+var dbns = [];
+var wildcards = ['AF-Affinity Citywide Office','BX-Bronx Borough Office','KN-Brooklyn North Borough Office','KS-Brooklyn South Borough Office','MN-Manhattan Borough Office','QN-Queens North Borough Office','QS-Queens South Borough Office','SI-Staten Island Borough Office','Central Office','District Office','Non DOE','Other'];
+
+      function fetchDbns() {
+      //support for Microsoft
+        var withSuccess = google.script.run.withSuccessHandler(function(msg) {
+          item("issue-form").style.display = "";
+          console.log("dbns = ",msg);
+          dbns = msg;
+        });
+        var withFailure = withSuccess.withFailureHandler(function(error) { console.log(error)});
+        withFailure.getDbns();
+      }
+
+function listDbns(input) {
+  item("dbn-list").innerHTML = "";
+  item("dbn-list").style.display = "";
+    var newDiv;
+  dbns.all.forEach(function(dbn) {
+    if (dbn.substring(0,input.length).toUpperCase()===input.trim().toUpperCase()) {
+      newDiv = document.createElement("div");
+      newDiv.innerHTML = dbn;
+      newDiv.className="dbn-select";
+      newDiv.onmousedown = function() {
+        item("dbn").value=dbn;
+      }
+      newDiv.onmouseup = function() {item("dbn-list").style.display = "none";}
+      item("dbn-list").appendChild(newDiv);
+    }
+  });
+  if (input!=="" && document.getElementById("dbn-list").children.length<1) {
+      wildcards.forEach(function(w) {
+       newDiv = document.createElement("div");
+       newDiv.innerHTML = w;
+       newDiv.className="dbn-select";
+       newDiv.style.fontSize = "11px";
+        newDiv.onmousedown = function() {
+          document.getElementById("dbn").value=w;
+        }
+        newDiv.onmouseup = function() {
+          document.getElementById("dbn-list").style.display = "none";
+        }
+        item("dbn-list").appendChild(newDiv);       
+      });  
+  }
+}
+function hideDbns() {setTimeout(function() {item("dbn-list").style.display="none";},100)}
+
+function preventFormSubmit() {
+        var forms = document.querySelectorAll('form');
+        for (var i = 0; i < forms.length; i++) {
+          forms[i].addEventListener('submit', function(event) {
+            event.preventDefault();
+          });
+        }
+}
+
+function item(element) {return document.getElementById(element);}
+
+function Form(formdata) {
+  var elements = formdata.elements;
+    for (var i=0; i<elements.length; i++) {
+    //these are the element types that microsoft browsers can handle
+    if (elements[i].type==="text" || elements[i].type==="textarea" || elements[i].type==="email") {
+      this[elements[i].name]=elements[i].value;
+    } else if (elements[i].type==="checkbox") {
+      this[elements[i].name]=[];
+      var selector = document.getElementsByName(elements[i].name);
+      for (var j=0; j<selector.length;j++) {
+        if (selector[j].checked===true) {
+          this[elements[i].name].push(selector[j].value);
+        }
+      }
+    } else if (elements[i].type==="radio") {
+      var radioButtons = document.getElementsByName(elements[i].name);
+      for (var l=0;l<radioButtons.length;l++) {
+        if (radioButtons[l].checked===true) {
+           this[elements[i].name]=radioButtons[l].value;
+        }
+      }
+    } else if(elements[i].type==="number") {
+      this[elements[i].name] = document.getElementsByName(elements[i].name)[0].value;
+    } else if (elements[i].tagName==="SELECT") {
+      console.log(elements[i].id);
+      console.log(elements[i].value);
+      this[elements[i].id]=elements[i].value;
+    }
+  }
+}
+
+function submitForm(data) {
+  var formObj = new Form(data);
+  google.script.run.postForm(formObj);
+  document.body.innerHTML = "Thank you for your input";
+}
+</script>

@@ -1,0 +1,166 @@
+<script>
+window.addEventListener('load',getLoadState());
+var instance;
+
+function getLoadState() {
+  console.log("getting load state");
+  console.log(window.location);
+  google.script.url.getLocation(function(loc) {
+    instance = loc.parameter.instance;
+    console.log(instance);
+  });
+} 
+
+function showSpinnerProgress(progress, callCount, speed, message, displayContainer, messageContainer, displayElement, baseCaseElement) {
+  if (baseCaseElement.innerHTML !== "") {console.log(baseCaseElement.innerHTML); displayContainer.style.display = "none"; displayElement.style.display = "none"; console.log("stopping progress"); return;}
+  displayContainer.style.display = "flex";
+  displayContainer.style.position = "absolute";
+  displayContainer.style.top = Number(browserHeight()*0.20)+"px";
+  displayContainer.style.left = Number(browserWidth()*0.33)+"px";
+  displayElement.style.display = "";
+  if (callCount > 100) {message = "Still working."}
+  if (callCount > 200) {message = "Getting there."}
+  if (callCount > 400) {message = "Almost done."}
+  messageContainer.innerHTML = message;
+  var canvas = displayElement.getContext("2d");
+  canvas.lineWidth = 5;
+  if(progress>2) {canvas.clearRect(0,0,displayElement.width, displayElement.height); progress=0.5;}
+  canvas.beginPath();
+  canvas.arc(25,25,20,0*Math.PI,progress*Math.PI);
+  canvas.stroke();
+  setTimeout(function() {showSpinnerProgress(progress+0.5,callCount+1,speed,message,displayContainer,messageContainer,displayElement,baseCaseElement)},speed);  
+}
+      var allEventsObj = {};
+    
+      function fetchEvents(email) {
+      document.getElementById("main-spinner").style.display="";
+      document.getElementById("main-spinner-msg").innerHTML="Searching for events associated with that email address"
+      //document.getElementById("event-display").innerHTML = "Searching for events associated with that email address";
+        var withSuccess = google.script.run.withSuccessHandler(fetchEventDetails)
+        var withFailure = withSuccess.withFailureHandler(function(error) {
+          document.getElementById("event-display").innerHTML = "Something went wrong.";
+          console.log(error);
+        });
+        withFailure.getEventIds(email,instance);
+      }
+      
+      function fetchEventDetails(events) {
+      console.log("all events obj==> ",events);
+        if (events.length === 0) {
+          document.getElementById("event-display").innerHTML = "There are no registrations associated with the email address you provided.";
+          document.getElementById("main-spinner").style.display="none";
+          return;
+        }
+        document.getElementById("main-spinner-msg").innerHTML="Found "+events.length+" registration(s) associated with that email address. Getting the most up to date event details now. Hang on.";
+        //document.getElementById("event-display").innerHTML = "Found "+events.length+" registration(s) associated with that email address. Getting the most up to date event details now. Hang on.";
+        allEventsObj = events;
+        var withSuccess = google.script.run.withSuccessHandler(renderEventDetails);
+        var withFailure = withSuccess.withFailureHandler(function(error) {
+          document.getElementById("event-display").innerHTML = "Something went wrong.";
+          console.log(error);
+        });
+        withFailure.getEventDetails(events,instance);
+      }
+      
+      function showProgress(progress) {
+         document.getElementById("progress-bar").style.display = "flex";
+         if (document.getElementById("event-display").innerHTML.indexOf("<div") !== -1 || progress > 9 || document.getElementById("event-display").innerHTML.indexOf("no registrations") !== -1) {
+         document.getElementById("progress-bar").style.display = "none";
+         return;}
+         var bits = "";
+         for (var i=0; i<progress; i++) {
+           bits+="<span class='progress-bit'></span>";
+         }
+         document.getElementById("progress-bar").innerHTML=bits;
+         setTimeout(function() {showProgress(progress+1)},1000);
+      }
+      
+      function renderEventDetails(data) {
+        document.getElementById("main-spinner").style.display="none";
+        document.getElementById("event-display").innerHTML = "";
+        data.forEach(function(event) {
+          document.getElementById("event-display").innerHTML+=
+          "<div id='tile-"+event.id+"' class='event-tile' data-title='"+event.title+"' data-division='"+event.division+"' data-content='"+event.content+"'\
+             data-district='"+event.districts+"' data-startdate='"+new Date(event.firstDate).toString().slice(0,15)+"' data-id='"+event.id+"' data-description='"+event.description+"' >\
+            <div class='title-info'><strong>"+event.title+"</strong><br><span class='tile-content'>id: "+event.id+"</span><br><span class='tile-content confirmation'>Confirmation Number: "+event.participant_id+"</span></div>\
+            <div class='tile-content grey-info'><strong>Where: </strong>"+event.location+"</div>\
+            <div class='tile-content grey-info'><strong>When: </strong>"+event.numDates+event.dates+"</div>\
+            <div class='tile-content grey-info'><strong>Content: </strong>"+event.content+"</div>\
+            <div class='tile-content grey-info'><strong>District(s): </strong>"+event.districts+"</div>\
+            <div class='tile-content grey-info'><strong>Division: </strong>"+event.division+"</div>\
+            <div style='display:none; flex-direction:column;' class='more-infoBox'>\
+              <div class='tile-content grey-info'><strong>Description: </strong>"+event.description+"</div>\
+              <div class='tile-content grey-info'><strong>CTLE Eligibility: </strong>"+event.ctle_eligible+"</div>\
+              <div class='tile-content grey-info'><strong>All Dates: </strong>"+event.allDates+"</div>\
+              <div class='tile-content grey-info'><strong>Times: </strong>"+event.times+"</div>\
+              <div class='tile-content grey-info'><strong>Facilitators: </strong>"+event.facilitators+"</div>\
+              <div class='tile-content grey-info'><strong>Facilitator Contact: </strong>"+event.facilitatorContact+"</div>\
+            </div>\
+            <div class='event-tile-buttons'>\
+              <div class='custom-button' onclick=showMoreInfo(this)>show more</div>\
+              <div class='custom-button' data-title='"+event.title+"' data-id='"+event.id+"' data-toggle='modal' data-target='#modal-vertical' onclick=initiateCancel(this)>de-register</div>\
+              <a class='custom-button' target=_blank href='"+event.event_page+"'>Event Page</a>\
+            </div>\
+          </div>";
+        });
+      }
+      
+     function showMoreInfo(buttonElement) {
+        if (buttonElement.parentElement.previousElementSibling.style.display === "none") {
+          buttonElement.innerHTML = "show less";
+          buttonElement.parentElement.previousElementSibling.style.display = "flex";
+        } else {
+          buttonElement.innerHTML = "show more";
+          buttonElement.parentElement.previousElementSibling.style.display = "none";
+        }
+      }
+      
+      function initiateCancel(eventElement) {
+        var eventTitle  = eventElement.dataset.title;
+        var eventId = eventElement.dataset.id;
+        var email = document.getElementById("email").value
+        var withSuccess = google.script.run.withSuccessHandler(function(msg) {
+          console.log(msg);
+          document.getElementById("modal-spinner").style.display="none";
+          document.getElementById("modal-success").style.display="";
+          document.getElementById("modal-success").innerHTML="Your registration was canceled";   
+          document.getElementById("modal-footer").style.display="";
+          document.getElementById("event-display").removeChild(document.getElementById("tile-"+eventId));
+        });
+        var withFailure = withSuccess.withFailureHandler(function(error) {
+          console.log(error);
+          document.getElementById("modal-spinner").style.display="none";
+          document.getElementById("modal-failure").style.display="";
+          document.getElementById("modal-failure").innerHTML=error;
+          document.getElementById("modal-footer").style.display="";
+        });
+        withFailure.cancelRegistration(email,eventId,instance);
+        document.getElementById("modal-success").style.display="none";
+        document.getElementById("modal-failure").style.display="none";
+        document.getElementById("modal-body-info").style.display="none";
+        document.getElementById("modal-title").innerHTML="Cancel Registration";
+        document.getElementById("modal-loading-msg").innerHTML="Removing you from "+eventTitle+". Hang on.";
+        document.getElementById("modal-spinner").style.display="";
+        document.getElementById("modal-footer").style.display="none";    
+      }
+      
+  function browserWidth() {
+  return Math.max(
+    document.body.scrollWidth,
+    document.documentElement.scrollWidth,
+    document.body.offsetWidth,
+    document.documentElement.offsetWidth,
+    document.documentElement.clientWidth
+  );
+}
+
+function browserHeight() {
+  return Math.max(
+    document.body.scrollHeight,
+    document.documentElement.scrollHeight,
+    document.body.offsetHeight,
+    document.documentElement.offsetHeight,
+    document.documentElement.clientHeight
+  );
+}
+    </script>
