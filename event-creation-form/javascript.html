@@ -174,10 +174,10 @@ function clearLocs(textarea) {
   var withFailure = withSuccess.withFailureHandler(confirmSubmit);
   if (reqParameters.edit) {
     withFailure.editEvent(reqParameters.id,formObj,formObj.bco[0]);
-    item('modal-spinner-msg').innerHTML = 'Editing Your event. Please wait for confirmation before closing this page.';
+    item('main-spinner-msg').innerHTML = 'Editing Your event. Please wait for confirmation before closing this page.';
   } else {
     withFailure.postForm(formObj,formObj.bco[0]);
-    item('modal-spinner-msg').innerHTML = 'Saving your event. Please wait for confirmation before closing this page.'
+    item('main-spinner-msg').innerHTML = 'Saving your event. Please wait for confirmation before closing this page.'
   }
 }
 
@@ -202,8 +202,8 @@ function confirmSubmit(response) {
   }); 
   var eventSummaryContainer = htmlElement({});
   eventSummaryContainer.appendChild(htmlElement({tag: 'DIV', innerHTML: '<b>Event ID: </b>'+response.event_id}));
-  eventSummaryContainer.appendChild(htmlElement({tag: 'DIV', innerHTML: '<b>Event Page: </b>'+msg.event_id}));
-  eventSummaryContainer.appendChild(htmlElement({tag: 'DIV', innerHTML: '<b>Registration Link: </b>'+msg.reg_form}));
+  eventSummaryContainer.appendChild(htmlElement({tag: 'DIV', innerHTML: '<b>Event Page: </b>'+response.event_id}));
+  eventSummaryContainer.appendChild(htmlElement({tag: 'DIV', innerHTML: '<b>Registration Link: </b>'+response.reg_form}));
   confirmationContainer.appendChild(eventSummaryContainer);
   item('event-form').innerHTML = '';
   item('event-form').appendChild(confirmationContainer);
