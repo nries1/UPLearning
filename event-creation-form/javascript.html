@@ -17,7 +17,7 @@ function getRequestParameters() {
     console.log(loc.parameter);
     reqParameters = loc.parameter;
     if (loc.parameter.edit) {
-      fetchEditData(requestParameters.id, requestParameters.instance);    
+      fetchEditData(reqParameters.id, reqParameters.instance);    
     } else {
       item('main-spinner').style.display = 'none';
       item('event-form').style.display = '';
