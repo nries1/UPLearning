@@ -9,11 +9,7 @@ function getEditData(id,instance) {
     if (data[i][50]===id) {
       for (var j=0;j<52;j++) {
         if (data[i][j]!=="") {
-          if (headers[j].indexOf("-email")!==-1) {
-            obj[headers[j]]=data[i][j].toString().replace(/@strongschools.nyc/,"");
-          } else {
             obj[headers[j]]=data[i][j].toString();
-          }
         }
       }
       for (var k=58;k<69;k++) {
@@ -23,5 +19,5 @@ function getEditData(id,instance) {
     }
   }
   Logger.log(obj);
-  return obj;
+  return JSON.stringify(obj);
 }
