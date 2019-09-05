@@ -166,6 +166,7 @@ function clearLocs(textarea) {
     }
  
  function submitForm(form) {
+  validateTimes();
   var formObj = new Formobj(form);
   console.log(formObj);
   item('event-form').innerHTML = '';
@@ -198,6 +199,7 @@ function confirmSubmit(response) {
       badgeHtml = '<i class="material-icons">error_outline</i>';
     }
     confirmationSubContainer.appendChild(htmlElement({tag: 'DIV', className: badgeType, innerHTML: badgeHtml}));
+    confirmationSubContainer.appendChild(htmlElement({tag: 'DIV', className: 'confirmation-sub-msg', innerHTML: resp.msg}));
     confirmationContainer.appendChild(confirmationSubContainer);
   }); 
   var eventSummaryContainer = htmlElement({});
