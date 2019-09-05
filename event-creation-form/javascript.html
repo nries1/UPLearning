@@ -36,6 +36,7 @@ function fetchEditData(id,instance) {
 }
 
 function populateForm(data) {
+  debugger;
   item('main-spinner').style.display = 'none';
   data = JSON.parse(data);
   console.log("data to populate form: ",data);
@@ -56,7 +57,7 @@ function populateForm(data) {
     //console.log(keys[i]);
     var inputs = document.getElementsByName(keys[i]);
     if (!inputs) continue;
-    for (var k=0;k<inputs.length;k++) {
+    for (var k = 0; k < inputs.length; k++) {
       if (!inputs[k].type) continue;
       //handle text,email, number, and select fields
       var valueFields = ['number', 'textarea', 'select-one', 'text', 'email'];
