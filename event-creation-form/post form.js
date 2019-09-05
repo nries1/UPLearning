@@ -95,25 +95,25 @@ function postForm(form,instance) {
   try {
     var calId = createCalendarEvent(eventDataObj,instance);
     row.push(calId);
-    confirmations.push({msg: 'Calendar Event Created', success: true});
+    output.confirmations.push({msg: 'Calendar Event Created', success: true});
   } catch(error) {
     row.push(error);
-    confirmations.push({msg: 'Failed to create a Calendar Event. '+error, success: false});
+    output.confirmations.push({msg: 'Failed to create a Calendar Event. '+error, success: false});
   }
   try {
     sendConfirmation(eventDataObj,false,instance);
     row.push("sent");
-    confirmations.push({msg: 'Email Confirmation Sent. ', success: true});
+    output.confirmations.push({msg: 'Email Confirmation Sent. ', success: true});
   } catch(error) {
     row.push(error);
-    confirmations.push({msg: 'Failed to Send a confirmation email. '+error, success: false});
+    output.confirmations.push({msg: 'Failed to Send a confirmation email. '+error, success: false});
   }
   try {
     // why try to append the row last? Because you need to save the confirmations above to the row.
     s.appendRow(row);
-    confirmations.push({msg: 'Saved Your Event', success: true});
+    output.confirmations.push({msg: 'Saved Your Event', success: true});
   } catch(error) {
-    confirmations.push({msg: 'FAILED TO SAVE YOUR EVENT. '+error, success: false});
+    output.confirmations.push({msg: 'FAILED TO SAVE YOUR EVENT. '+error, success: false});
   }
-  return confirmations;
+  return output;
 }
