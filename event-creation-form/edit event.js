@@ -4,18 +4,25 @@ function editEvent(id,form,instance) {
   var s = ss.getSheetByName("event creation form responses");
   var foundEvent = false;
   var data = s.getDataRange().getValues();
+  var output = {confirmations: [], event_id: ''};
   for (var i=1;i<data.length;i++) {
     if (data[i][50]===id) {
       var eventRow = Number(i)+1;
       foundEvent=true;
-      var sessionNotes = data[i].slice(58, 69).reduce(function(allNotes, note) {
-        
-      });
+      var attendanceInfoObj = data[i][87];
       break;
     }
   }
-  if (!foundEvent) {return "Sorry. There was an error when trying to edit your event. Please contact nries@schools.nyc.gov for support."}
-  var allErrors = [];
+  if (!foundEvent) {
+    output = {event_id: 'ERROR', event_page: 'ERROR', reg_form: 'ERROR',
+              confirmations: [
+                {success: false,
+                 msg: 'Event not found in database. This is likely a database issue. Please contact your system admin for assistance.'
+                }
+              ]
+             }
+    return output;
+  }
   var numSessions = 0;
   var allDates = [];
   var location = "";
@@ -50,6 +57,9 @@ function editEvent(id,form,instance) {
                       "waitlist":form.waitlist,"maxParticipants":form.max,"reg_text": "Click Here to Register",
                       "doc_structure":data[eventRow-1][78],"duration": duration,"eventCreator": form.event_creator,"edit_form":editLink}
   var flyerObj = createCustomRegFlyer(eventDataObj,data[eventRow-1][77],instance);
+  output.reg_form = regForm;
+  output.event_page = eventPage;
+  output.event_id = id;
   eventDataObj["regFlyer"] = flyerObj.url;
   //create a new row of data to replace the old row
   var row = [form.creation_date,form.event_creator,form.title,form.description,"new",form.public,form.max];
@@ -86,56 +96,50 @@ function editEvent(id,form,instance) {
   });
   //all dates, all facs, times, extra, edit link, extra, extra, flyer url, edit date, flyer id, flyer structure, extra, last date, extra,extra, num sessions,registrants,feedback received, archived, last reminder sent, attn track rate, extra
   row.push(allDates.join(", "),allFacs.join(", "),times,
-          "",editLink,"",flyerObj.url,new Date(),flyerObj.id,flyerObj.doc_structure,"",form.sessions[numSessions-1].date,form.feedback,"","=countifs('form registrations'!S:S,INDIRECT(\"R[0]C[-33]\",FALSE),'form registrations'!BL:BL,\"Waitlist\")",numSessions,"=countifs('form registrations'!S:S,INDIRECT(\"R[0]C[-35]\",FALSE),'form registrations'!BL:BL,\"<>Waitlist\",'form registrations'!BL:BL,\"<>excess\")","=countif('Feedback Form Responses'!B:B,INDIRECT(\"R[0]C[-35]\",FALSE))","","","=iferror(sumif('form registrations'!S:S,INDIRECT(\"R[0]C[-39]\",FALSE),'form registrations'!BH:BH)/(INDIRECT(\"R[0]C[-5]\",FALSE)*INDIRECT(\"R[0]C[-4]\",FALSE)),\"no registrants\")","");
-  if (data[eventRow-1][91]==="" || data[eventRow-1][91].indexOf("Exception")!==-1 || data[eventRow-1][91].indexOf("Error")!==-1) {
+          "",editLink,"",flyerObj.url,new Date(),flyerObj.id,flyerObj.doc_structure,"",form.sessions[numSessions-1].date,form.feedback,"","=countifs('form registrations'!S:S,INDIRECT(\"R[0]C[-33]\",FALSE),'form registrations'!BL:BL,\"Waitlist\")",numSessions,"=countifs('form registrations'!S:S,INDIRECT(\"R[0]C[-35]\",FALSE),'form registrations'!BL:BL,\"<>Waitlist\",'form registrations'!BL:BL,\"<>excess\")","=countif('Feedback Form Responses'!B:B,INDIRECT(\"R[0]C[-35]\",FALSE))",attendanceInfoObj,"","=iferror(sumif('form registrations'!S:S,INDIRECT(\"R[0]C[-39]\",FALSE),'form registrations'!BH:BH)/(INDIRECT(\"R[0]C[-5]\",FALSE)*INDIRECT(\"R[0]C[-4]\",FALSE)),\"no registrants\")","");
+  if (data[eventRow-1][91]==="" || data[eventRow-1][91].indexOf("Exception")!==-1 || data[eventRow-1][91].indexOf("Error")!==-1 || data[eventRow-1][91].indexOf("no calendar event created")!==-1) {
     try {
       var calId = createCalendarEvent(eventDataObj,instance);
       row.push(calId);
-    } catch(error) { allErrors.push({"title": "Calendar Event", "error": error}); row.push(error);}
+      output.confirmations.push({msg: 'Calendar Event Created', success: true});
+    } catch(error) {
+      output.confirmations.push({msg: 'Failed to create a Calendar Event '+error, success: false});
+      row.push(error);
+    }
   } else {
     try {
       var calEvent = CalendarApp.getCalendarsByName(props[prefix+"_calendar_name"])[0].getEventById(data[eventRow-1][91]);
       var guestList = calEvent.getGuestList().map(function(g) {return g.getEmail()});
       calEvent.deleteEvent();
       var calId = createCalendarEvent(eventDataObj,instance,guestList);
-      row.push(calId);      
-    } catch(error) { Logger.log(error); allErrors.push({"title": "Calendar Event", "error": error}); row.push(error);} finally {}
+      row.push(calId);
+      output.confirmations.push({msg: 'Calendar Event Edited', success: true});      
+    } catch(error) {
+      row.push(error);
+      output.confirmations.push({msg: 'Failed to edit your calendar event '+error, success: false});
+    }
   }
   if (form.notify && Object.keys(form.notifyObj).length>0) {
-    var notificationRequest = true;
     try {
       notifyRegs(form.notifyObj,id,form.event_creator,form.title,instance);
-      var registrantsNotified = true;
+      output.confirmations.push({msg: 'Sent an email update to registrants.', success: true});
     } catch (error) {
-      allErrors.push({"title": "Registrant Notification", "error": error});
-      var registrantsNotified = false;
-    } finally {}
-  } else {
-    var notificationRequest = false;
+      output.confirmations.push({msg: 'Failed to send an email update to registrants '+error, success: false});
+    }
   }
   try {
     sendConfirmation(eventDataObj,true,instance);
     row.push("sent");
-    var confirmationSent = true;
+    output.confirmations.push({msg: 'Sent you an email confirmation.', success: true});
   } catch(error) {
-    allErrors.push({"title": "Email Confirmation", "error": error});
+    output.confirmations.push({msg: 'Failed to send you an email confirmation '+error, success: false});
     row.push(error);
-    var confirmationSent = false;
   }
   try {
     s.getRange(eventRow,1,1,row.length).setValues([row]);
-    var returnMsg = "Your event was edited successfully.";
-    var eventPosted = true;
-    if (allErrors.length>0) {
-      returnMsg+=" But the following errors occured:<br><br>";
-      allErrors.forEach(function(er,index) {
-        returnMsg+="("+Number(index+1)+") "+er.title+": "+er.error+"<br>";
-      });
-    }
-    var outObj = {confirmation_success: confirmationSent, edit: true, notification_requested: notificationRequest, notification_success: registrantsNotified, "msg": returnMsg, "reg_link": regForm, "edit_link":editLink, "reg_flyer": flyerObj.url, "event_page": "", "event_id": id}; 
+    output.confirmations.push({msg: 'Saved your changes.', success: true});
   } catch(error) {
-    return error;
+    output.confirmations.push({msg: 'FAILED TO SAVE YOUR CHANGES '+error, success: false});
   }
-  finally {Logger.log(outObj)}
-  return outObj;
+    return output;
 }
