@@ -31,7 +31,8 @@ function fetchEditData(id,instance) {
   var withSuccess = google.script.run.withSuccessHandler(function(data) {
     data = JSON.parse(data);
     item('main-spinner').style.display = 'none';
-    if (data.form_values.length === 2) {
+    item("event-form").style.display = '';
+    if (data.form_values.length === 1) {
       item("event-form").innerHTML='<div class="confirmation-sub-container"><div class="fail-badge"></div><div>Failed to load your event data.</div></div>';
       return;
     }
