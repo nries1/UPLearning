@@ -12,19 +12,20 @@ function scheduledSystemArchive() {
                                   var obj = {};
                                   var data = sheet.getDataRange().getValues();
                                   data.forEach(function(row,index) {
-                                    if (index===0) {obj.instance=sheet.getName()}
+                                    if (index===0) {
+                                      obj.instance = sheet.getName()
+                                    }
                                      else {
-                                      obj[row[4]]=row[8];
+                                      obj[row[4]] = row[8];
                                     }
                                   });
                                   return obj;
                                 });
-  for (var i=0;i<databases.length; i++) {
-    Logger.log(databases[i].instance);
+  for (var i = 0; i < databases.length; i++) {
       if (databases[i].borough_office !== "Static PL System")  {
-        if (databases[i].instance_name==="Brooklyn South PL System") {  
+        //if (databases[i].instance_name==="Brooklyn South PL System") {  
           archiveSystem(databases[i]);
-        }
+        //}
       }
   }
 }
