@@ -38,7 +38,7 @@ function fetchEditData(id,instance) {
     }
     eventCreator = data["Event Creator"];
     creationDate = data["TimeStamp"];
-    populateForm(data.form_values, document.getElementById('event-form'));
+    populateForm(data.form_values, document.getElementById('event-form').elements);
   });
   var withFailure = withSuccess.withFailureHandler(function(error) {
     item('main-spinner').innerHTML = ':(\n\n'+error;
@@ -46,10 +46,11 @@ function fetchEditData(id,instance) {
   withFailure.getEditData(id,instance); 
 }
 
-function populateForm(formValues, form) {
+function populateForm(formValues, formElements) {
   //recursively map the array of form values to the nodelist of form elements
   if (formValues.length === 0) return;
-  var thisInput = form.getElementsByName(Object.keys(formValues[0])[0]);
+  console.log('this form value: ',formValues[0]);
+  var thisInput = formElements[(Object.keys(formValues[0])[0])];
   console.log('this form value: ',formValues[0]);
   console.log('this input: ',thisInput);
   if (!thisInput) return;
@@ -62,7 +63,7 @@ function populateForm(formValues, form) {
   } else if (thisInput.type === 'CHECKBOX') {
     setCheckboxValue(thisInput, Object.values(formValues[0])[0]);
   }
-  return populateForm(formValues.slice(1, formValues.length), form);
+  return populateForm(formValues.slice(1, formValues.length), formElements);
 }
 
 function isSingleValueInput(input) {
