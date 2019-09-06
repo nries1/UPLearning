@@ -14,7 +14,7 @@ function getEditData(id,instance) {
         }
       }
       for (var k=58;k<69;k++) {
-        if (data[i][k]!=="") {out.form_values.sessions.push(JSON.parse(data[i][k]))}
+        if (data[i][k]!=="") {out.sessions.push(JSON.parse(data[i][k]))}
       }
       break;
     }
