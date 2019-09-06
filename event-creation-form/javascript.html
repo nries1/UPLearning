@@ -40,6 +40,11 @@ function fetchEditData(id,instance) {
     eventCreator = data["Event Creator"];
     creationDate = data["TimeStamp"];
     populateForm(data.form_values, document.getElementById('event-form').elements);
+    var session1 = data.sessions.splice(0,1);
+    console.log(session1);
+    document.getElementById('date1').value = session1.date;
+    document.getElementById('start-time1').value = session1.start_time;
+    document.getElementById('end-time1').value = session1.end_time;
     setSessionValues(data.sessions);
   });
   var withFailure = withSuccess.withFailureHandler(function(error) {
