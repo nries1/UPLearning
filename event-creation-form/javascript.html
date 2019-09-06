@@ -41,6 +41,7 @@ function fetchEditData(id,instance) {
     eventCreator = data["Event Creator"];
     creationDate = data["TimeStamp"];
     populateForm(data.form_values, document.getElementById('event-form').elements);
+    setSessionValues(data.sessions);
   });
   var withFailure = withSuccess.withFailureHandler(function(error) {
     item('main-spinner').innerHTML = ':( '+error;
