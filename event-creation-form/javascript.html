@@ -374,8 +374,8 @@ function confirmSubmit(response) {
 }
 
 function validateTimes() {
-  var endTime = Number(item("end_time").value.replace(/:/,""));
-  var startTime = Number(item("start_time").value.replace(/:/,""));
+  var endTime = Number(item("end-time1").value.replace(/:/,""));
+  var startTime = Number(item("start-time1").value.replace(/:/,""));
   if (endTime>2000 || startTime > 1700 || endTime<=startTime || startTime < 700 || endTime < 700) {alert("Check your start and end times."); return;}
 }
 
