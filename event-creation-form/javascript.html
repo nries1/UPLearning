@@ -40,7 +40,7 @@ function fetchEditData(id,instance) {
     eventCreator = data["Event Creator"];
     creationDate = data["TimeStamp"];
     populateForm(data.form_values, document.getElementById('event-form').elements);
-    var session1 = data.sessions.splice(0,1);
+    var session1 = data.sessions.splice(0,1)[0];
     console.log(session1);
     document.getElementById('date1').value = session1.date;
     document.getElementById('start-time1').value = session1.start_time;
@@ -73,7 +73,7 @@ function populateForm(formValues, formElements) {
 }
 
 function setSessionValues(sessions) {
-  console.log('setting session values with '+sessions);
+  console.log('setting session values with ',sessions);
   if (sessions.length === 0) return;
   addSession(document.getElementById('all-sessions-container'), document.getElementById('count_dates'), sessions[0].start_time, sessions[0], sessions[0].location)
   return setSessionValues(sessions.slice(1, sessions.length));
