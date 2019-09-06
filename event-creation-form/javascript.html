@@ -66,6 +66,17 @@ function populateForm(formValues, formElements) {
   return populateForm(formValues.slice(1, formValues.length), formElements);
 }
 
+function setSessionValues(sessions) {
+  if (sessions.length === 0) return;
+  addSession(document.getElementById('all-sessions-container'), document.getElementById('count-dates'), sessions[i].start_time, sessions[i], sessions[i].location)
+  return setSessionValues(sessions.slice(1, sessions.length));
+}
+
+function setSessionValues(sessions) {
+  if (sessions.length === 0) return;
+  
+}
+
 function isSingleValueInput(input) {
   return (['number', 'textarea', 'select-one', 'text', 'email', 'time', 'date'].indexOf(input.type) !== -1)
 }
@@ -205,7 +216,7 @@ function clearLocs(textarea) {
     }
   }
   
-    var session = function(number, start, end, location) {
+  var session = function(number, start, end, location) {
       var container = htmlElement({tag: 'DIV', className: 'session-container', id:'session-container-'+number});
       var titleContainer = htmlElement({tag: 'DIV', className: 'session-title-container'});
       titleContainer.appendChild(htmlElement({tag: 'DIV', className: 'session-number label', innerHTML: 'Session '+number}))
@@ -229,11 +240,11 @@ function clearLocs(textarea) {
         form.appendChild(htmlElement({tag: 'LABEL', for: 'date', htmlFor: 'date-'+number, innerHTML: 'Date:'}))
         form.appendChild(htmlElement({tag: 'INPUT', type: 'date', name: 'date', className: 'form-control date'}));
         form.appendChild(htmlElement({tag: 'LABEL', for: 'start_time', htmlFor: 'start_time', innerHTML: 'Start Time:'}));
-        form.appendChild(htmlElement({tag: 'INPUT', type: 'time', name: 'start_time', className: 'form-control', value: start, readOnly: true}));
+        form.appendChild(htmlElement({tag: 'INPUT', type: 'time', name: 'start_time', className: 'form-control start-time', value: start, readOnly: true}));
         form.appendChild(htmlElement({tag: 'LABEL', for: 'start_time', htmlFor: 'end_time', innerHTML: 'End Time:'}));
-        form.appendChild(htmlElement({tag: 'INPUT', type: 'time', name: 'end_time', className: 'form-control', value: end, readOnly: true}));
+        form.appendChild(htmlElement({tag: 'INPUT', type: 'time', name: 'end_time', className: 'form-control end-time', value: end, readOnly: true}));
         form.appendChild(htmlElement({tag: 'LABEL', for: 'location', htmlFor: 'location', innerHTML: 'Location:'}));
-        form.appendChild(htmlElement({tag: 'TEXTAREA', name: 'location', value: location, className: 'form-control location', style: 'width: 270px'}));
+        form.appendChild(htmlElement({tag: 'TEXTAREA', name: 'location', id: 'location', value: location, className: 'form-control location', style: 'width: 270px'}));
       container.appendChild(form);
       return container;
     }
