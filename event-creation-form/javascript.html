@@ -60,7 +60,7 @@ function populateForm(formValues, formElements) {
     setRadioInputValue(thisInput, Object.values(formValues[0])[0]);
   } else if (thisInput.type === 'select-multiple') {
     setMultiSelectValue(thisInput, Object.values(formValues[0])[0]);
-  } else if (thisInput.type === 'checkbox') {
+  } else if (thisInput[0].type === 'checkbox') {
     setCheckboxValue(thisInput, Object.values(formValues[0])[0]);
   }
   return populateForm(formValues.slice(1, formValues.length), formElements);
