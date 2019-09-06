@@ -53,7 +53,7 @@ function populateForm(formValues, formElements) {
   console.log('this form value: ',formValues[0]);
   var thisInput = formElements[(Object.keys(formValues[0])[0])];
   console.log('this input: ',thisInput);
-  if (!thisInput) return;
+  if (!thisInput) return populateForm(formValues.slice(1, formValues.length), formElements);
   if (isSingleValueInput(thisInput)) {
     thisInput.value = Object.values(formValues[0])[0];
   } else if (thisInput[0].type = radio) {
