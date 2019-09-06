@@ -10,7 +10,7 @@ function getEditData(id,instance) {
       for (var j=0; j<52 ; j++) {
         if (data[i][j] !== "") {
             var formValue = {};
-            formValue[header[j]] = data[i][j].toString()
+            formValue[headers[j]] = data[i][j].toString()
             out.form_values.push(formValue);
         }
       }
