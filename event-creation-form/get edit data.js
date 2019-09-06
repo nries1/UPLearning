@@ -19,5 +19,5 @@ function getEditData(id,instance) {
       break;
     }
   }
-  return JSON.stringify(obj);
+  return JSON.stringify(out);
 }
