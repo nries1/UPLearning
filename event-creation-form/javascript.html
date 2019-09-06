@@ -350,8 +350,8 @@ function confirmSubmit(response) {
   item("wl-size") ? this["wl-size"] = item("wl-size").value : this["wl-size"]="";
   this.sessions = [];
   var sessionContainers = document.getElementsByClassName('session-info');
-  var startTime = item('start_time').value;
-  var endTime = item('end_time').value;
+  var startTime = item('start-time1').value;
+  var endTime = item('end-time1').value;
   for (var j=0;j<11;j++) {
     if (sessionContainers[j]) {
     var location = sessionContainers[j].getElementsByClassName('location')[0].value;
