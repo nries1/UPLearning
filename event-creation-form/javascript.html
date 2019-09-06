@@ -30,6 +30,7 @@ function fetchEditData(id,instance) {
   item('main-spinner-msg').innerHTML = 'Getting your event details...'
   var withSuccess = google.script.run.withSuccessHandler(function(data) {
     data = JSON.parse(data);
+    console.log('data to populate form ', data);
     item('main-spinner').style.display = 'none';
     item("event-form").style.display = '';
     if (data.form_values.length === 1) {
@@ -51,7 +52,6 @@ function populateForm(formValues, formElements) {
   if (formValues.length === 0) return;
   console.log('this form value: ',formValues[0]);
   var thisInput = formElements[(Object.keys(formValues[0])[0])];
-  console.log('this form value: ',formValues[0]);
   console.log('this input: ',thisInput);
   if (!thisInput) return;
   if (isSingleValueInput(thisInput)) {

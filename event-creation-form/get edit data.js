@@ -5,12 +5,13 @@ function getEditData(id,instance) {
   var data = s.getDataRange().getValues();
   var headers = data[0];
   var out = {success: true, form_values: [{bco: instance}], sessions: []};
-  for (var i=1;i<data.length;i++) {
-    if (data[i][50]===id) {
-      for (var j=0;j<52;j++) {
-        if (data[i][j]!=="") {
-            var key = headers[j];
-            out.form_values.push({key: data[i][j].toString()})
+  for (var i = 1; i < data.length; i++) {
+    if (data[i][50] === id) {
+      for (var j=0; j<52 ; j++) {
+        if (data[i][j] !== "") {
+            var formValue = {};
+            formValue[header[j]] = data[i][j].toString()
+            out.form_values.push(formValue);
         }
       }
       for (var k=58;k<69;k++) {
