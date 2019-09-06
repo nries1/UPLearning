@@ -6,7 +6,7 @@ function gettimezone() {
   Logger.log(formattedDate);
 }
 
-function postForm(form,instance) {
+function oldpostForm(form,instance) {
   Logger.log(instance);
   var prefix = boMap[instance].prefix;
   var ss = SpreadsheetApp.openById(props[prefix+"_database_id"]);
@@ -15,8 +15,6 @@ function postForm(form,instance) {
   var output = {confirmations: [], event_id: ''};
   Logger.log(form);  
   /* 1) declare all necessary variables */
-  var emailError;
-  var calError;
   var numSessions = 0
   var allDates = [];
   var location = "";
