@@ -16,7 +16,8 @@ function getEditData(id,instance) {
             out.form_values.push(formValue);
         }
       }
-      for (var k=58;k<69;k++) {
+      // we only need sessions 2 - 11. The first sesh gets collected in the loop above.
+      for (var k=59;k<69;k++) {
         if (data[i][k]!=="") {out.sessions.push(JSON.parse(data[i][k]))}
       }
       break;
