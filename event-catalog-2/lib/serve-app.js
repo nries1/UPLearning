@@ -1,5 +1,3 @@
-"use strict";
-
 var doGet = function doGet(e) {
   if (e.parameter.globalupdate) {
     setScriptProperties();
