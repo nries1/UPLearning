@@ -70,7 +70,7 @@ function populateForm(formValues, formElements) {
 function setSessionValues(sessions) {
   console.log('setting session values with '+sessions);
   if (sessions.length === 0) return;
-  addSession(document.getElementById('all-sessions-container'), document.getElementById('count-dates'), sessions[i].start_time, sessions[i], sessions[i].location)
+  addSession(document.getElementById('all-sessions-container'), document.getElementById('count-dates'), sessions[0].start_time, sessions[0], sessions[0].location)
   return setSessionValues(sessions.slice(1, sessions.length));
 }
 
