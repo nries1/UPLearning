@@ -56,7 +56,7 @@ function populateForm(formValues, formElements) {
   if (!thisInput) return populateForm(formValues.slice(1, formValues.length), formElements);
   if (isSingleValueInput(thisInput)) {
     thisInput.value = Object.values(formValues[0])[0];
-  } else if (thisInput[0].type = 'radio') {
+  } else if (thisInput[0].type === 'radio') {
     setRadioInputValue(thisInput, Object.values(formValues[0])[0]);
   } else if (thisInput.type === 'select-multiple') {
     setMultiSelectValue(thisInput, Object.values(formValues[0])[0]);
