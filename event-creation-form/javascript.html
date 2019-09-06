@@ -17,7 +17,8 @@ function getRequestParameters() {
     console.log(loc.parameter);
     reqParameters = loc.parameter;
     if (loc.parameter.edit) {
-      fetchEditData(reqParameters.id, reqParameters.instance);    
+      fetchInstanceDetails(reqParameters.instance, fetchEditData);
+      //fetchEditData(reqParameters.id, reqParameters.instance);    
     } else {
       item('main-spinner').style.display = 'none';
       item('event-form').style.display = '';
@@ -26,7 +27,7 @@ function getRequestParameters() {
 }
 
 function fetchEditData(id,instance) {
-  console.log("fetching");
+  console.log("fetching edit data with this = "+this+" and arguments = "+arguments);
   item('main-spinner-msg').innerHTML = 'Getting your event details...'
   var withSuccess = google.script.run.withSuccessHandler(function(data) {
     data = JSON.parse(data);
@@ -42,7 +43,7 @@ function fetchEditData(id,instance) {
     populateForm(data.form_values, document.getElementById('event-form').elements);
   });
   var withFailure = withSuccess.withFailureHandler(function(error) {
-    item('main-spinner').innerHTML = ':(\n\n'+error;
+    item('main-spinner').innerHTML = ':( '+error;
   });
   withFailure.getEditData(id,instance); 
 }
@@ -110,19 +111,6 @@ function oldPopulateForm(data)  {
     item("wl-size").value = data["wl-size"]
   }
   //populate session location containers
-  for (var j=1;j<=data.sessions.length;j++) {
-    if (j>1) {addSession();}
-    item('start-time'+j).value=data.sessions[j-1].start_time;
-    item('end-time'+j).value=data.sessions[j-1].end_time;
-    if (data.sessions[j-1].date.toString().indexOf("/")!==-1) {
-      var dateArray = data.sessions[j-1].date.toString().split("/");
-      item('date'+j).value=dateArray[2]+"-"+dateArray[0]+"-"+dateArray[1];
-    } else {
-      item('date'+j).value=data.sessions[j-1].date;
-    }
-    item('location'+j).value=data.sessions[j-1].location;
-  }
-  item("display").innerHTML = "<strong>Title: </strong>"+data.title+"<br><strong>ID: </strong>"+data.event_id+"<br><br>";
 }
 
 function preventFormSubmit() {
@@ -143,13 +131,15 @@ function districtSelect(districts) {
    return select;
 }
 
-function fetchInstanceDetails(instance) {
+function fetchInstanceDetails(instance, callback) {
   console.log("fetching instance details")
   var withSuccess = google.script.run.withSuccessHandler(function(msg) {
-    console.log("instance details ",msg);
+    console.log('loaded details for '+instance);
     instanceDetails = JSON.parse(msg);
     item('districts-container').innerHTML = '';
     item('districts-container').appendChild(districtSelect(instanceDetails.districts));
+    if (!callback) return;
+    callback.call(this, reqParameters.id, reqParameters.instance);
    });
   var withFailure = withSuccess.withFailureHandler(function(msg) {
     console.log(msg);
