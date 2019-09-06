@@ -98,44 +98,6 @@ function oldPopulateForm(data)  {
     item("wl-size").required=true;
     item("wl-size").value = data["wl-size"]
   }
-  for (var i = 0; i < keys.length; i++) {
-    //console.log(keys[i]);
-    var inputs = document.getElementsByName(keys[i]);
-    if (!inputs) continue;
-    for (var k = 0; k < inputs.length; k++) {
-      if (!inputs[k].type) continue;
-      //handle text,email, number, and select fields
-      var valueFields = ['number', 'textarea', 'select-one', 'text', 'email'];
-      if (valueFields.indexOf(inputs[k].type.toLowerCase())) {
-        inputs[k].value=data[keys[i]];
-      }
-      //hand multi select
-      if (inputs[k].type === 'select-multiple') {
-        var options = document.getElementById(inputs[k].id).getElementsBytagName('OPTION');
-        for (var o = 0; o < options.length; o++) {
-          if (options[o].value === data[keys[i]]) {
-            options[o].selected = true;
-          }
-        }
-      }
-      //handle checkboxes and radio buttons
-      if (inputs[k].type.toLowerCase()==="radio") {
-        if (data[keys[i]]===inputs[k].value) {
-          inputs[k].checked=true;
-        }
-      }
-      if (inputs[k].type.toLowerCase()==="checkbox") {
-        //if this is a stringified array
-        if (data[keys[i]].indexOf("[")===0) {
-          if (JSON.parse(data[keys[i]]).indexOf(inputs[k].value)!==-1) {
-            inputs[k].checked=true
-          } 
-        } else if (data[keys[i]].indexOf(inputs[k].value)!==-1) {
-            inputs[k].checked=true
-        }
-      }
-    }
-  }
   //populate session location containers
   for (var j=1;j<=data.sessions.length;j++) {
     if (j>1) {addSession();}
