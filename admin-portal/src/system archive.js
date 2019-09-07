@@ -12,7 +12,7 @@ function scheduledSystemArchive() {
                                   var obj = {};
                                   var data = sheet.getDataRange().getValues();
                                   data.forEach(function(row,index) {
-                                    if (index===0) {
+                                    if (index === 0) {
                                       obj.instance = sheet.getName()
                                     }
                                      else {
@@ -22,35 +22,35 @@ function scheduledSystemArchive() {
                                   return obj;
                                 });
   for (var i = 0; i < databases.length; i++) {
-      if (databases[i].borough_office !== "Static PL System")  {
-        //if (databases[i].instance_name==="Brooklyn South PL System") {  
+      if (databases[i].borough_office !== 'Static PL System')  { 
           archiveSystem(databases[i]);
-        //}
       }
   }
 }
 
 function archiveSystem(instance) {
-  Logger.log("archiving system for "+instance["instance"]);
+  Logger.log("archiving system for " + instance["instance"]);
   var currentArchive = SpreadsheetApp.openById(instance.archive_id);
   var curYear = new Date().getFullYear();
-  var curSy = "SY"+Number(curYear-1).toString().slice(2,4)+"-"+curYear.toString().slice(2,4);
-  var newSsName = "PL System Archive "+curSy;
+  var curSy = 'SY' + Number(curYear - 1).toString().slice(2, 4) + "-" + curYear.toString().slice(2,4);
+  var newSsName = "PL System Archive " + curSy;
   try {
     var newArchive = DriveApp.getFileById(instance.archive_id).makeCopy(newSsName).addEditor(instance.dm_email);
-    PropertiesService.getScriptProperties().setProperty(boMap[instance.instance_name].prefix+"_"+curSy, newArchive.getId());
+    PropertiesService.getScriptProperties().setProperty(boMap[instance.instance_name].prefix + "_" + curSy, newArchive.getId());
     MailApp.sendEmail(instance.dm_email, "System Archive Report",
-    "Hello,\n\nThe PL System archive for instance "+instance.instance_name+" was archived to a new spreadsheet.\
+    "Hello,\n\nThe PL System archive for instance " + instance.instance_name + " was archived to a new spreadsheet.\
      Please make sure that the new spreadsheet contains all of your PL data from the previous school year and that \
      the contents of the 'PL System Archive Current' spreadsheet are deleted except for the headers.\n\nYour archive \
-     from the previous school year has been copied to a new spreadsheet here: "+SpreadsheetApp.openById(newArchive.getId()).getUrl()+"\n\n\
-     Your current working archive is here (this will always be the same spreadsheet): "+DriveApp.getFileById(instance.archive_id).getUrl(), {cc: "nries@schools.nyc.gov"});
+     from the previous school year has been copied to a new spreadsheet here: " + SpreadsheetApp.openById(newArchive.getId()).getUrl() + "\n\n\
+     Your current working archive is here (this will always be the same spreadsheet): " + DriveApp.getFileById(instance.archive_id).getUrl(), {cc: "nries@schools.nyc.gov"});
      var currentEvents = currentArchive.getSheetByName("Events");
      var currentRegs = currentArchive.getSheetByName("Registrants");
-     currentEvents.deleteRows(2,currentEvents.getLastRow()-1);
-     currentRegs.deleteRows(2,currentEvents.getLastRow()-1);
-  } catch(error) {
+     currentEvents.getRange(2, 1, currentEvents.getLastRow()-1, currentEvents.getLastColumn()).clear();
+     currentRegs.getRange(2, 1, currentRegs.getLastRow()-1, currentRegs.getLastColumn()).clear();
+     currentEvents.deleteRows(3, currentEvents.getLastRow() - 2);
+     currentRegs.deleteRows(3, currentEvents.getLastRow() - 2);
+  } catch (error) {
     MailApp.sendEmail(instance.dm_email,"Error archiving your archive",
-    "Something went wrong while trying to archive your working archive.\n\nError: "+error+"\n\nPlease make sure that your PL System Archive Current file and its parent folder are shared for editing with professionallearning@strongschools.nyc", {cc: "nries@schools.nyc.gov"})
+    "Something went wrong while trying to archive your working archive.\n\nError: " + error + "\n\nPlease make sure that your PL System Archive Current file and its parent folder are shared for editing with professionallearning@strongschools.nyc", {cc: "nries@schools.nyc.gov"})
   }
 }

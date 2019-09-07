@@ -13,7 +13,7 @@ function getInstanceDetails(bcos,sy) {
       var fbData = database.getSheetByName("Feedback Form Responses").getDataRange().getValues();
       var dbs = [archiveEventData, eventCreationData];
     } else {
-      var dbs = [SpreadsheetApp.openById(props[prefix+"_arhchive_"+sy]).getSheetByName("Events").getDataRange().getValues()];
+      var dbs = [SpreadsheetApp.openById(props[prefix+ '_' +sy]).getSheetByName("Events").getDataRange().getValues()];
     }
     var event;
     for (var i=0; i<dbs.length; i++) {
