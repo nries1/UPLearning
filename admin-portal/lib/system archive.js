@@ -1,5 +1,3 @@
-"use strict";
-
 /*
   Why does the system archive live in the admin portal app?
   Because the admin portal needs access to the spreadsheets that are created when archives are arvhied.

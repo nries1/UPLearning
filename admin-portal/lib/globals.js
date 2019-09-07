@@ -1,5 +1,3 @@
-"use strict";
-
 // These refer to the column indexes in the Event Creation Form Responses Sheet
 var displayTitleIndex = 2;
 var eventCreatorIndex = 1;

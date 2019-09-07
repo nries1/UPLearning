@@ -1,5 +1,3 @@
-"use strict";
-
 function getDbns() {
   var dbnObj = {};
   var dbnSs = SpreadsheetApp.openById("1eb40-3XjECuXRJGRLLjFPdLXhLsRR8tk_heq0b25x-o").getSheets();

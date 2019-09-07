@@ -1,5 +1,3 @@
-"use strict";
-
 var props = PropertiesService.getScriptProperties().getProperties();
 
 function setScriptProperties() {

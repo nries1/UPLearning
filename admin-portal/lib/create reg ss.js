@@ -1,5 +1,3 @@
-"use strict";
-
 function createRegSs(events, instances, filters) {
   Logger.log(filters);
   var eventsData = [["Borough Office", "Event ID", "Event Title", "Description", "Public", "Capacity", "Facilitators", "Audience", "Grade Level", "Division", "Subject", "Times", "Location", "CTLE", "Funding", "Resource Folder", "Districts", "Support Type", "Feedback Received", "Duration", "Sessions", "Registered", "Registered Sessions", "Attended", "Sessions Attended", "Attendance Rate", "Attendance Track Rate"]];

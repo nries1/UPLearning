@@ -1,5 +1,3 @@
-"use strict";
-
 function postToArchive(eventid, instance, sy) {
   var prefix = boMap[instance].prefix;
   var mainDb = SpreadsheetApp.openById(props[prefix + "_database_id"]);

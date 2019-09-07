@@ -1,5 +1,3 @@
-"use strict";
-
 function activateEvent(eventid, instance) {
   var out = {
     success: false,

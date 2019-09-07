@@ -1,5 +1,3 @@
-"use strict";
-
 function getDbnSupport(dbn, bcos) {
   var supports = [];
 
