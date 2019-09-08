@@ -1,11 +1,15 @@
+/* eslint-disable max-statements */
+/* eslint-disable no-confusing-arrow */
 function postToArchive(eventid, instance, sy) {
   var prefix = boMap[instance].prefix;
   var mainDb = SpreadsheetApp.openById(props[prefix+"_database_id"]);
-  if (sy==="current") {
-    var archiveDb = SpreadsheetApp.openById(props[prefix+"_archive_id"]);
-  } else {
-    var archiveDb = SpreadsheetApp.openById(props[prefix+"_"+sy]);
-  }
+  // if (sy==="current") {
+  //   var archiveDb = SpreadsheetApp.openById(props[prefix+"_archive_id"]);
+  // } else {
+  //   var archiveDb = SpreadsheetApp.openById(props[prefix+"_"+sy]);
+  // }
+  const archiveDb = getArchiveDb(sy);
+
   var eventSheet = mainDb.getSheetByName("event creation form responses");
   var eventData = eventSheet.getDataRange().getValues();
   var regSheet = mainDb.getSheetByName("form registrations");
@@ -25,6 +29,7 @@ function postToArchive(eventid, instance, sy) {
       break;
     }
   }
+  
   for (var j=regData.length-1; j>0; j--) {
     if (regData[j][18] === eventid) {
       registrants.push(regData[j]);
@@ -49,6 +54,37 @@ function postToArchive(eventid, instance, sy) {
     });
     return {success: false, msg: err}
   }
+}
+
+class Spreadsheet {
+  constructor(id, sheetNamesArray) {
+    this.ss = SpreadsheetApp.openById(id);
+    this.sheets = {};
+    this.data = {};
+    if (sheetNamesArray) {
+      sheetNamesArray.forEach(sheetName => {
+        this.sheets[sheetName] = this.ss.getSheetByName(sheetName);
+        this.data[sheetName] = this.sheets[sheetName].getDataRange().getValues();
+      })
+    } else {
+      this.ss.getSheets().forEach(sheet => {
+        this.sheets[sheet.getName()] = sheet;
+        this.data[sheet.getName()] = sheet.getDataRange().getValues();
+      });
+    }
+  }
+}
+
+const  getArchiveDb = schoolYear => schoolYear === 'current' ?
+    // eslint-disable-next-line no-undef
+    SpreadsheetApp.openById(props[prefix + '_archive_id'])
+    :
+    // eslint-disable-next-line no-undef
+    SpreadsheetApp.openById(props[prefix + '_' + sy]);
+
+const getMatchingRow = (condition, data)=> {
+  if (data.length === 0) return;
+
 }
 
 function debug() {
