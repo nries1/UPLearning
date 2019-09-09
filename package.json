@@ -1,0 +1,25 @@
+{
+  "name": "uplearning",
+  "version": "2.0.1",
+  "description": "NYC DOEs Professional Learning Site",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babel src -d lib"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nries1/UPLearning.git"
+  },
+  "author": "Nicolas Ries",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nries1/UPLearning/issues"
+  },
+  "homepage": "https://github.com/nries1/UPLearning#readme",
+  "devDependencies": {
+    "@babel/cli": "^7.6.0",
+    "@babel/core": "^7.6.0",
+    "@babel/preset-env": "^7.6.0"
+  }
+}
