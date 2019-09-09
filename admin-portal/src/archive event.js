@@ -9,36 +9,32 @@ function postToArchive(eventid, instance, sy) {
    } else {
     archiveSs = new Spreadsheet(props[prefix + '_' + sy], ['Events', 'Registrants']);
    }
-  let event = [];
-  let registrants = [];
   // find and delete the event and its registrants
-  let thisEvent = archiveSs.matchRow('Events', eventid, 50)
+  let thisEvent = archiveSs.matchRow('Events', eventid, 50, function(row) {
+    archiveSs.sheets.Events.deleteRow(row);
+  });
   thisEvent.row_data.push(`=COUNTIF(Registrants!S:S,AY${Number(archiveSs.sheets.Events.getLastRow() + 1)})`)
   thisEvent.row_data.push(0);
-  event.push(thisEvent.row_data);
-  archiveSs.sheets.Events.deleteRow(thisEvent.row_number)
-  
-  for (var j=regData.length-1; j>0; j--) {
-    if (regData[j][18] === eventid) {
-      registrants.push(regData[j]);
-      regSheet.deleteRow(Number(j)+1);
-    }
-  }
+  let registrants = archiveSs.matchRows('Registrants', eventid, 18, function(row) {
+    archiveSs.sheets.Registrants.deleteRow(row);
+  });
   //append the event and its registrants to the archive
   try {
     archiveEventSheet.appendRow(event[0]);
     registrants.forEach(function(registrant) {
-      archiveRegSheet.appendRow(registrant);
+      archiveRegSheet.appendRow(registrant.row_data);
     });
-    return {success: true, msg: "Event ID "+eventid+" was archived along with "+registrants.length+" registrants."}
+    return {success: true,
+            msg: `Event ID ${eventid} was archived along with ${registrants.length} registrants.`
+           }
   }
   //roll back the deletions if you're unable to append the data to the archive.
   catch(err) {
     event.pop();
     event.pop();
-    eventSheet.appendRow(event[0])
+    archiveSs.sheets.Events.appendRow(event[0])
     registrants.forEach(function(registrant) {
-      regSheet.appendRow(registrant);
+      regSheet.appendRow(registrant.row_data);
     });
     return {success: false, msg: err}
   }
@@ -61,9 +57,10 @@ class Spreadsheet {
       });
     }
   }
-  matchRow(sheetName, criterion, columnIndex) {
+  matchRow(sheetName, criterion, columnIndex, callback) {
     for (let i = 0; i < this.data[sheetName].length; i++) {
       if (this.data[sheetName][i][columnIndex] === criterion) {
+        if (callback) callback(Number(i) + 1);
         return {row_number: Number(i) + 1, row_data: this.data[sheetName][i]}
       }
     }
@@ -72,7 +69,7 @@ class Spreadsheet {
     let rows = [];
     for (let i = this.data[sheetName].length; i >= 1; i--) {
       if (this.data[sheetName][i][columnIndex] === criterion) {
-        callback(Number(i) + 1);
+        if (callback) callback(Number(i) + 1);
         rows.push({row_number: Number(i) + 1, row_data: this.data[sheetName][i]});
       }
     }
