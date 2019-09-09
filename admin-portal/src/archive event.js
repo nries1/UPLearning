@@ -65,7 +65,7 @@ class Spreadsheet {
   }
   matchRows(sheetName, criterion, columnIndex, callback) {
     let rows = [];
-    for (let i = this.data[sheetName].length; i >= 1; i--) {
+    for (let i = this.data[sheetName].length-1; i >= 1; i--) {
       if (this.data[sheetName][i][columnIndex] === criterion) {
         if (callback) callback(Number(i) + 1);
         rows.push({row_number: Number(i) + 1, row_data: this.data[sheetName][i]});
