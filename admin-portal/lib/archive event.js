@@ -4,12 +4,9 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-/* eslint-disable max-statements */
-
-/* eslint-disable no-confusing-arrow */
 function postToArchive(eventid, instance, sy) {
   var prefix = boMap[instance].prefix;
-  var mainDb = SpreadsheetApp.openById(props[prefix + "_database_id"]);
+  var mainDb = new Spreadsheet(props["".concat(prefix, "_database_id")], ['event creation form responses', 'form registrations']);
   var archiveSs;
 
   if (sy === "current") {
@@ -19,19 +16,19 @@ function postToArchive(eventid, instance, sy) {
   } // find and delete the event and its registrants
 
 
-  var thisEvent = archiveSs.matchRow('Events', eventid, 50, function (row) {
-    archiveSs.sheets.Events.deleteRow(row);
+  var thisEvent = mainDb.matchRow('event creation form responses', eventid, 50, function (row) {
+    mainDb.sheets['event creation form responses'].deleteRow(row);
   });
   thisEvent.row_data.push("=COUNTIF(Registrants!S:S,AY".concat(Number(archiveSs.sheets.Events.getLastRow() + 1), ")"));
   thisEvent.row_data.push(0);
-  var registrants = archiveSs.matchRows('Registrants', eventid, 18, function (row) {
-    archiveSs.sheets.Registrants.deleteRow(row);
+  var registrants = mainDb.matchRows('form registrations', eventid, 18, function (row) {
+    mainDb.sheets['form registrations'].deleteRow(row);
   }); //append the event and its registrants to the archive
 
   try {
-    archiveEventSheet.appendRow(event[0]);
+    archiveSs.sheets.Events.appendRow(thisEvent.row_data);
     registrants.forEach(function (registrant) {
-      archiveRegSheet.appendRow(registrant.row_data);
+      archiveSs.sheets.Registrants.appendRow(registrant.row_data);
     });
     return {
       success: true,
@@ -41,9 +38,9 @@ function postToArchive(eventid, instance, sy) {
   catch (err) {
     event.pop();
     event.pop();
-    archiveSs.sheets.Events.appendRow(event[0]);
+    mainDb.sheets['event creation form responses'].appendRow(thisEvent.row_data);
     registrants.forEach(function (registrant) {
-      regSheet.appendRow(registrant.row_data);
+      mainDb.sheets['form registrations'].appendRow(registrant.row_data);
     });
     return {
       success: false,
@@ -55,6 +52,7 @@ function postToArchive(eventid, instance, sy) {
 var Spreadsheet =
 /*#__PURE__*/
 function () {
+  "use strict";
 
   function Spreadsheet(id, sheetNamesArray) {
     var _this = this;
@@ -96,7 +94,7 @@ function () {
     value: function matchRows(sheetName, criterion, columnIndex, callback) {
       var rows = [];
 
-      for (var i = this.data[sheetName].length; i >= 1; i--) {
+      for (var i = this.data[sheetName].length - 1; i >= 1; i--) {
         if (this.data[sheetName][i][columnIndex] === criterion) {
           if (callback) callback(Number(i) + 1);
           rows.push({
