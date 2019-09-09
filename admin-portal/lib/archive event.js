@@ -1,13 +1,17 @@
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+/* eslint-disable max-statements */
+
+/* eslint-disable no-confusing-arrow */
 function postToArchive(eventid, instance, sy) {
   var prefix = boMap[instance].prefix;
-  var mainDb = SpreadsheetApp.openById(props[prefix + "_database_id"]);
+  var mainDb = SpreadsheetApp.openById(props[prefix + "_database_id"]); // if (sy==="current") {
+  //   var archiveDb = SpreadsheetApp.openById(props[prefix+"_archive_id"]);
+  // } else {
+  //   var archiveDb = SpreadsheetApp.openById(props[prefix+"_"+sy]);
+  // }
 
-  if (sy === "current") {
-    var archiveDb = SpreadsheetApp.openById(props[prefix + "_archive_id"]);
-  } else {
-    var archiveDb = SpreadsheetApp.openById(props[prefix + "_" + sy]);
-  }
-
+  var archiveDb = getArchiveDb(sy);
   var eventSheet = mainDb.getSheetByName("event creation form responses");
   var eventData = eventSheet.getDataRange().getValues();
   var regSheet = mainDb.getSheetByName("form registrations");
@@ -59,6 +63,40 @@ function postToArchive(eventid, instance, sy) {
     };
   }
 }
+
+var Spreadsheet = function Spreadsheet(id, sheetNamesArray) {
+  "use strict";
+
+  var _this = this;
+
+  _classCallCheck(this, Spreadsheet);
+
+  this.ss = SpreadsheetApp.openById(id);
+  this.sheets = {};
+  this.data = {};
+
+  if (sheetNamesArray) {
+    sheetNamesArray.forEach(function (sheetName) {
+      _this.sheets[sheetName] = _this.ss.getSheetByName(sheetName);
+      _this.data[sheetName] = _this.sheets[sheetName].getDataRange().getValues();
+    });
+  } else {
+    this.ss.getSheets().forEach(function (sheet) {
+      _this.sheets[sheet.getName()] = sheet;
+      _this.data[sheet.getName()] = sheet.getDataRange().getValues();
+    });
+  }
+};
+
+var getArchiveDb = function getArchiveDb(schoolYear) {
+  return schoolYear === 'current' ? // eslint-disable-next-line no-undef
+  SpreadsheetApp.openById(props[prefix + '_archive_id']) : // eslint-disable-next-line no-undef
+  SpreadsheetApp.openById(props[prefix + '_' + sy]);
+};
+
+var getMatchingRow = function getMatchingRow(condition, data) {
+  if (data.length === 0) return;
+};
 
 function debug() {
   postToArchive("999MS19", "Brooklyn South PL System", "current");

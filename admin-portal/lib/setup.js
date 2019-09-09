@@ -1,5 +1,3 @@
-var props = PropertiesService.getScriptProperties().getProperties();
-
 function setScriptProperties() {
   var properties = {};
   var globalRefSheets = SpreadsheetApp.openById("15Gv1ZbjUX2ZGSUOPBIUfDlo8jRod4DgwYoy2WLnmVoo").getSheets();
