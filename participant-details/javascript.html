@@ -220,6 +220,7 @@ function archive(eventid) {
         var attendeeEmails = [];
         var divContent;
         var newDiv;
+        document.getElementById("walkin-link").setAttribute("href", "https://script.google.com/a/strongschools.nyc/macros/s/AKfycbz13TA6TRLjXeWWS4UzoZp0Si7VH0DV8Qjhco5ZG2FHe2y7j-Y/exec?instance="+encodeURIComponent(instance)+"&id="+parameters.eventid+"&walkin=walkin")
         if (!details.participants[0]) {
           document.getElementById("event-details").innerHTML = "It looks like nobody has registered for this event yet...";
           return;
