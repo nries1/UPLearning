@@ -1,28 +1,26 @@
-/* eslint-disable max-statements */
-/* eslint-disable no-confusing-arrow */
 function postToArchive(eventid, instance, sy) {
-  var prefix = boMap[instance].prefix;
-  var mainDb = SpreadsheetApp.openById(props[prefix+"_database_id"]);
+  const prefix = boMap[instance].prefix;
+  const mainDb = new Spreadsheet(props[`${prefix}_database_id`], ['event creation form responses', 'form registrations']);
   let archiveSs;
-   if (sy==="current") {
+   if (sy === "current") {
     archiveSs = new Spreadsheet(props[prefix + '_archive_id'], ['Events', 'Registrants']);
    } else {
     archiveSs = new Spreadsheet(props[prefix + '_' + sy], ['Events', 'Registrants']);
    }
   // find and delete the event and its registrants
-  let thisEvent = archiveSs.matchRow('Events', eventid, 50, function(row) {
-    archiveSs.sheets.Events.deleteRow(row);
+  let thisEvent = mainDb.matchRow('event creation form responses', eventid, 50, function(row) {
+    mainDb.sheets['event creation form responses'].deleteRow(row);
   });
   thisEvent.row_data.push(`=COUNTIF(Registrants!S:S,AY${Number(archiveSs.sheets.Events.getLastRow() + 1)})`)
   thisEvent.row_data.push(0);
-  let registrants = archiveSs.matchRows('Registrants', eventid, 18, function(row) {
-    archiveSs.sheets.Registrants.deleteRow(row);
+  let registrants = mainDb.matchRows('form registrations', eventid, 18, function(row) {
+    mainDb.sheets['form registrations'].deleteRow(row);
   });
   //append the event and its registrants to the archive
   try {
-    archiveEventSheet.appendRow(event[0]);
+    archiveSs.sheets.Events.appendRow(thisEvent.row_data);
     registrants.forEach(function(registrant) {
-      archiveRegSheet.appendRow(registrant.row_data);
+      archiveSs.sheets.Registrants.appendRow(registrant.row_data);
     });
     return {success: true,
             msg: `Event ID ${eventid} was archived along with ${registrants.length} registrants.`
@@ -32,9 +30,9 @@ function postToArchive(eventid, instance, sy) {
   catch(err) {
     event.pop();
     event.pop();
-    archiveSs.sheets.Events.appendRow(event[0])
+    mainDb.sheets['event creation form responses'].appendRow(thisEvent.row_data)
     registrants.forEach(function(registrant) {
-      regSheet.appendRow(registrant.row_data);
+      mainDb.sheets['form registrations'].appendRow(registrant.row_data);
     });
     return {success: false, msg: err}
   }
