@@ -14,23 +14,145 @@
          width: 100%;
      }
      .box {
-       width: 300px;
        height: 200px;
        background-color: aqua;
-       margin: 20px;
+       margin: 10px;
+     }
+     .nav-link:hover {
+       cursor: pointer;
+     }
+     .jumbotron {
+       padding: 0.5em;
+     }
+     #bco-select {
+       height: 235px;
      }
     </style>
   </head>
   <body>
+      <nav class="navbar navbar-expand-lg navbar-light bg-light">
+          <a class="navbar-brand" href="#">UPLearning</a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item">
+                    <a class="nav-link" href="https://script.google.com/macros/s/AKfycbwJWBNRPuHcfhT6jkCZWfUZDXsEzkW70XsuGaizDXEBO6HG1Xk6/exec?instance=Brooklyn+South+PL+System">Event Catalog</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="https://script.google.com/macros/s/AKfycbwJWBNRPuHcfhT6jkCZWfUZDXsEzkW70XsuGaizDXEBO6HG1Xk6/exec?instance=Brooklyn+South+PL+System">Registrant Portal</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbzLNQ3zv6p2P-xa3xhQi2t5hPhsqvrxug99FDCEo4f2CdPIXU35/exec?instance=Brooklyn+South+PL+System">Facilitator Dashboard</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="https://script.google.com/macros/s/AKfycbyR4XnqVxxMK1azl2tjPZuq2SCSzHlTGT5VIRaVaVReiyB8eG8/exec">Report Issues</a>
+              </li>
+              <li class="nav-item">
+                  <a class="nav-link" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbyj-5NAe87vulP4Y9tSS4d4rWDMlazCykqK10c0Qm9ywdcU270/exec">Data and Reports</a>
+              </li>
+              <!-- <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Dropdown
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="#">Action</a>
+                  <a class="dropdown-item" href="#">Another action</a>
+                  <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#">Something else here</a>
+                </div>
+              </li> -->
+              <!-- <li class="nav-item">
+                <a class="nav-link disabled" href="#">Disabled</a>
+              </li> -->
+            </ul>
+            
+          </div>
+        </nav>
+        <div id="modal-vertical" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modal-title">UPLearning Administrators Portal</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
+                </div>
+                <div id="modal-body" class="modal-body">
+                  <div id="modal-success" class="alert alert-success" role="alert" style="display: none;">Success!</div>
+                  <div id="modal-failure" class="alert alert-danger" role="alert" style="display: none;">Failure!</div>
+                  <div id="modal-body-msg" style="display: flex; flex-direction: column; align-items: center; width: 100%;">        
+                    <p><b>To get started, select the borough or citywide offices for which you want to view events</b></p>
+                    <select id='bco-select' class='form-control' multiple>
+                        <option value="">All</option>
+                        <option value="Affinity PL System">Affinity</option>
+                        <option value="Bronx PL System">Bronx</option>
+                        <option value="Brooklyn North PL System">Brooklyn North</option>
+                        <option value="Brooklyn South PL System">Brooklyn South</option>
+                        <option value="Manhattan PL System">Manhattan</option>
+                        <option value="Central PL System">OFDC</option>
+                        <option value="Queens North PL System">Queens North</option>
+                        <option value="Queens South PL System">Queens South</option>
+                        <option value="Staten Island PL System">Staten Island</option>
+                    </select>
+                    <button type="button" class="btn btn-primary" style="margin-top: 15px;" onclick="fetchEvents(getMultiSelectValues(document.getElementById('bco-select')))" data-dismiss="modal">Load Events</button>
+                  </div>
+                  <div id="modal-spinner" style="text-align: center; display: none;">
+                    <div id="modal-spinner-msg">Spinner Message...</div>
+                    <div class="spinner-border" role="status" id="modal-spinner-loader">
+                     <span class="sr-only">Loading...</span>
+                    </div>
+                  </div>          
+                </div>
+                <div id="modal-footer" class="modal-footer">
+                  <button id="close-modal-button" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="jumbotron jumbotron-fluid">
+              <div class="container">
+                <h1 class="display-4">Event Catalog</h1>
+                <p class="lead">Use the search bar for a quick search, or set filters.</p>
+                <p>
+                  <form class="form-inline my-2 my-lg-0">
+                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Quick Search</button>
+                  </form>
+                </p>
+                <p>
+                  <button class='btn btn-outline-primary btn-sm' data-toggle="modal" data-target="#modal-vertical">Select BCO</button>
+                  <button class='btn btn-outline-primary btn-sm' data-toggle="modal" data-target="#modal-vertical">More Filters</button>
+                </p>
+              </div>
+          </div>
+          <div id="main-spinner" style="text-align: center; display: none;">
+              <div id="main-spinner-msg">Loading Events...</div>
+              <div class="spinner-border" role="status" id="spinner-loader">
+               <span class="sr-only">Loading...</span>
+              </div>
+          </div>
       <div class='container'>
         <div class='row'>
-          <div class='box col-12 col-md-6'>
+          <div class='box col-12 col-xl-5'>
 
           </div>
-          <div class='box col-12 col-md-6'>
+          <div class='box col-12 col-xl-5'>
 
           </div>
-          <div class='box col-12 col-md-6'>
+          <div class='box col-12 col-xl-5'>
+
+          </div>
+        <!-- </div>
+        <div class='row'> -->
+          <div class='box col-12 col-md-12 col-lg-12 col-xl-5'>
+
+          </div>
+          <div class='box col-12 col-md-12 col-lg-12 col-xl-5'>
+
+          </div>
+          <div class='box col-12 col-md-12 col-lg-12 col-xl-5'>
 
           </div>
         </div>
