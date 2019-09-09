@@ -1,3 +1,5 @@
+var props = PropertiesService.getScriptProperties().getProperties();
+
 const getEvents = instances => JSON.stringify(instances.reduce((allEvents, instance) => {
     let ss = new Spreadsheet(props[`${boMap[instance].prefix}_database_id`], ['event creation form responses']);
     allEvents.concat(ss.data['event creation form responses']);
