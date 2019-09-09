@@ -3,7 +3,12 @@ var doGet = function doGet(e) {
     setScriptProperties();
     return ContentService.createTextOutput("Your settings have been updated");
   } else {
-    return HtmlService.createTemplateFromFile('index').evaluate().setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL).setTitle("Event Catalog");
+    return HtmlService.createTemplateFromFile('catalog')
+          .evaluate()
+          .setXFrameOptionsMode(HtmlService.XFrameOptionsMode.ALLOWALL)
+          .setTitle("Event Catalog")
+          .setFaviconUrl("https://www.schools.nyc.gov/favicon.ico")
+          .addMetaTag('viewport', 'width=device-width, initial-scale=1');
   }
 };
 
