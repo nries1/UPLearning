@@ -1,3 +1,4 @@
+/* eslint-disable max-statements */
 function gettimezone() {
   var timeZone = Session.getScriptTimeZone();
   Logger.log(timeZone);
@@ -6,7 +7,7 @@ function gettimezone() {
   Logger.log(formattedDate);
 }
 
-function oldpostForm(form,instance) {
+function postForm(form,instance) {
   Logger.log(instance);
   var prefix = boMap[instance].prefix;
   var ss = SpreadsheetApp.openById(props[prefix+"_database_id"]);
@@ -113,5 +114,53 @@ function oldpostForm(form,instance) {
   } catch(error) {
     output.confirmations.push({msg: 'FAILED TO SAVE YOUR EVENT. '+error, success: false});
   }
+  saveEventObj(eventDataObj);
   return output;
+}
+
+const saveEventObj = eventData => {
+  const ss = new Spreadsheet('1fk3wDBZ9hFcpqRGMBBrM58iwxv6nk0hYMIgUavtdv_c');
+  const row = ss.matchRow('Sheet1', eventData.id, 1);
+  if (row) {
+    ss.sheets.Sheet1.getRange(row, 1).setValue(JSON.stringify(eventData));
+  } else {
+    ss.sheets.Sheet1.appendRow([JSON.stringify(eventData), eventData.id]);
+  }
+}
+
+class Spreadsheet {
+  constructor(id, sheetNamesArray) {
+    this.ss = SpreadsheetApp.openById(id);
+    this.sheets = {};
+    this.data = {};
+    if (sheetNamesArray) {
+      sheetNamesArray.forEach(sheetName => {
+        this.sheets[sheetName] = this.ss.getSheetByName(sheetName);
+        this.data[sheetName] = this.sheets[sheetName].getDataRange().getValues();
+      })
+    } else {
+      this.ss.getSheets().forEach(sheet => {
+        this.sheets[sheet.getName()] = sheet;
+        this.data[sheet.getName()] = sheet.getDataRange().getValues();
+      });
+    }
+  }
+  matchRow(sheetName, criterion, columnIndex, callback) {
+    for (let i = 0; i < this.data[sheetName].length; i++) {
+      if (this.data[sheetName][i][columnIndex] === criterion) {
+        if (callback) callback(Number(i) + 1);
+        return {row_number: Number(i) + 1, row_data: this.data[sheetName][i]}
+      }
+    }
+  }
+  matchRows(sheetName, criterion, columnIndex, callback) {
+    let rows = [];
+    for (let i = this.data[sheetName].length-1; i >= 1; i--) {
+      if (this.data[sheetName][i][columnIndex] === criterion) {
+        if (callback) callback(Number(i) + 1);
+        rows.push({row_number: Number(i) + 1, row_data: this.data[sheetName][i]});
+      }
+    }
+    return rows;
+  }
 }
