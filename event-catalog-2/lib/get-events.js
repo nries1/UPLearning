@@ -4,13 +4,15 @@ function _defineProperties(target, props) { for (var i = 0; i < props.length; i+
 
 function _createClass(Constructor, protoProps, staticProps) { if (protoProps) _defineProperties(Constructor.prototype, protoProps); if (staticProps) _defineProperties(Constructor, staticProps); return Constructor; }
 
-var props = PropertiesService.getScriptProperties().getProperties();
+var props = PropertiesService.getScriptProperties().getProperties(); // const getEvents = instances => JSON.stringify(instances.reduce((allEvents, instance) => {
+//     let ss = new Spreadsheet('1fk3wDBZ9hFcpqRGMBBrM58iwxv6nk0hYMIgUavtdv_c');
+//     return allEvents.concat(ss.data['event creation form responses']);
+// }, []));
 
-var getEvents = function getEvents(instances) {
-  return JSON.stringify(instances.reduce(function (allEvents, instance) {
-    var ss = new Spreadsheet(props["".concat(boMap[instance].prefix, "_database_id")], ['event creation form responses']);
-    return allEvents.concat(ss.data['event creation form responses']);
-  }, []));
+var getEvents = function getEvents() {
+  var ss = SpreadsheetApp.openById('1fk3wDBZ9hFcpqRGMBBrM58iwxv6nk0hYMIgUavtdv_c');
+  var sheet = ss.getSheetByName('Sheet1');
+  return sheet.getRange(1, 1, sheet.getLastRow(), 1).getValues();
 };
 
 var Spreadsheet =

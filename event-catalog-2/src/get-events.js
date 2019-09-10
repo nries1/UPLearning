@@ -1,9 +1,15 @@
 var props = PropertiesService.getScriptProperties().getProperties();
 
-const getEvents = instances => JSON.stringify(instances.reduce((allEvents, instance) => {
-    let ss = new Spreadsheet(props[`${boMap[instance].prefix}_database_id`], ['event creation form responses']);
-    return allEvents.concat(ss.data['event creation form responses']);
-}, []));
+// const getEvents = instances => JSON.stringify(instances.reduce((allEvents, instance) => {
+//     let ss = new Spreadsheet('1fk3wDBZ9hFcpqRGMBBrM58iwxv6nk0hYMIgUavtdv_c');
+//     return allEvents.concat(ss.data['event creation form responses']);
+// }, []));
+
+const getEvents = () => {
+  const ss = SpreadsheetApp.openById('1fk3wDBZ9hFcpqRGMBBrM58iwxv6nk0hYMIgUavtdv_c')
+  const sheet = ss.getSheetByName('Sheet1')
+  return sheet.getRange(1, 1, sheet.getLastRow(), 1).getValues();
+}
 
 class Spreadsheet {
     constructor(id, sheetNamesArray) {
