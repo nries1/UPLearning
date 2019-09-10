@@ -9,8 +9,7 @@ var props = PropertiesService.getScriptProperties().getProperties();
 var getEvents = function getEvents(instances) {
   return JSON.stringify(instances.reduce(function (allEvents, instance) {
     var ss = new Spreadsheet(props["".concat(boMap[instance].prefix, "_database_id")], ['event creation form responses']);
-    allEvents.concat(ss.data['event creation form responses']);
-    return allEvents;
+    return allEvents.concat(ss.data['event creation form responses']);
   }, []));
 };
 
