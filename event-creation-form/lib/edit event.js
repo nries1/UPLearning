@@ -210,6 +210,8 @@ function editEvent(id, form, instance) {
       msg: 'Saved your changes.',
       success: true
     });
+    saveEventObj(eventDataObj);
+    saveUserPermissions([eventCreator, facEmails.join(', ')]);
   } catch (error) {
     output.confirmations.push({
       msg: 'FAILED TO SAVE YOUR CHANGES ' + error,
@@ -219,3 +221,14 @@ function editEvent(id, form, instance) {
 
   return output;
 }
+
+var saveUserPermissions = function saveUserPermissions(users, bco) {
+  var ss = new Spreadsheet('1gnL2-wUXBJuGdh8wv1QhQyKsU8Jit4cO7_4m-FYlFDo');
+  users.forEach(function (user) {
+    var userRow = ss.matchRow('Sheet1', user, 0);
+
+    if (!userRow) {
+      ss.sheets.Sheet1.appendRow([user, bco]);
+    }
+  });
+};
