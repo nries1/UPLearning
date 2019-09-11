@@ -1,4 +1,5 @@
 /* eslint-disable max-statements */
+
 window.addEventListener('load', function() {
   $(function () {
     $('[data-toggle="popover"]').popover()
@@ -12,6 +13,18 @@ const getMultiSelectValues = input => {
         if (option.selected) values.push(option.value);
         return values;
     }, []);
+}
+
+const filterEvents = filters => {
+  // for (let i = 0; i < filters.length; i++) {
+  //   for (let j = 0; j < allEvents.length; j++) {
+  //     if (filters[i].hasOwnProperty('wildcard')) {
+  //       if (JSON.stringify(allEvents[j]).indexOf(filters[i].wildcard) === -1) {
+
+  //       }
+  //     }
+  //   }
+  // }
 }
 
 const fetchEvents = instances => {
@@ -31,8 +44,8 @@ const renderEvents = eventData => {
     let parent = document.getElementById('event-container');
     parent.innerHTML = '';
     for (let i = 0; i < eventData.length; i++) {
-      console.log(eventData[i][0]);
-      parent.appendChild(eventCard(JSON.parse(eventData[i])));
+      let event = JSON.parse(eventData[i]);
+      parent.appendChild(eventCard(event));
     }
 }
 

@@ -1,15 +1,15 @@
 <script>
-window.addEventListener('load',getLoadState());
-var instance;
+// window.addEventListener('load',getLoadState());
+// var instance;
 
-function getLoadState() {
-  console.log("getting load state");
-  console.log(window.location);
-  google.script.url.getLocation(function(loc) {
-    instance = loc.parameter.instance;
-    console.log(instance);
-  });
-} 
+// function getLoadState() {
+//   console.log("getting load state");
+//   console.log(window.location);
+//   google.script.url.getLocation(function(loc) {
+//     instance = loc.parameter.instance;
+//     console.log(instance);
+//   });
+// } 
 
 function showSpinnerProgress(progress, callCount, speed, message, displayContainer, messageContainer, displayElement, baseCaseElement) {
   if (baseCaseElement.innerHTML !== "") {console.log(baseCaseElement.innerHTML); displayContainer.style.display = "none"; displayElement.style.display = "none"; console.log("stopping progress"); return;}
@@ -33,6 +33,10 @@ function showSpinnerProgress(progress, callCount, speed, message, displayContain
       var allEventsObj = {};
     
       function fetchEvents(email) {
+      if (document.getElementById('bco-select').value === '') {
+        alert('You need to select a borough office.');
+        return;
+      }
       document.getElementById("main-spinner").style.display="";
       document.getElementById("main-spinner-msg").innerHTML="Searching for events associated with that email address"
       //document.getElementById("event-display").innerHTML = "Searching for events associated with that email address";
@@ -41,7 +45,7 @@ function showSpinnerProgress(progress, callCount, speed, message, displayContain
           document.getElementById("event-display").innerHTML = "Something went wrong.";
           console.log(error);
         });
-        withFailure.getEventIds(email,instance);
+        withFailure.getEventIds(email, document.getElementById('bco-select').value);
       }
       
       function fetchEventDetails(events) {
@@ -59,7 +63,7 @@ function showSpinnerProgress(progress, callCount, speed, message, displayContain
           document.getElementById("event-display").innerHTML = "Something went wrong.";
           console.log(error);
         });
-        withFailure.getEventDetails(events,instance);
+        withFailure.getEventDetails(events, document.getElementById('bco-select').value);
       }
       
       function showProgress(progress) {
@@ -76,6 +80,7 @@ function showSpinnerProgress(progress, callCount, speed, message, displayContain
       }
       
       function renderEventDetails(data) {
+        console.log('rendering events with ', data);
         document.getElementById("main-spinner").style.display="none";
         document.getElementById("event-display").innerHTML = "";
         data.forEach(function(event) {

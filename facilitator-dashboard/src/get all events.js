@@ -2,8 +2,8 @@
 function getAllEvents(instance) {
     const prefix = boMap[instance].prefix;
     let out = {events: [], districts: props[`${prefix}_all_districts`].split(', ')};
-    const database = new Spreadsheet(`${prefix}_database_id`, ['event creation form responses']);
-    const archive = new Spreadsheet(`${prefix}_archive_id`, ['Events']);
+    const database = new Spreadsheet(props[prefix + '_database_id'], ['event creation form responses']);
+    const archive = new Spreadsheet(props[prefix + '_archive_id'], ['Events']);
     const dbs = [archive.data.Events, database.data['event creation form responses']];
     let event;
     for (var i = 0; i < dbs.length; i++) {
