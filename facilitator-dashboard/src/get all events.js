@@ -1,39 +1,35 @@
+/* eslint-disable complexity */
 function getAllEvents(instance) {
-  var prefix = boMap[instance].prefix;
-  var database = SpreadsheetApp.openById(props[prefix+"_database_id"]);
-  var regData = database.getSheetByName("form registrations").getDataRange().getValues();
-  var eventCreationData = database.getSheetByName("event creation form responses").getDataRange().getValues();
-  var archiveSheet = SpreadsheetApp.openById(props[prefix+"_archive_id"]);
-  var archiveEventData = archiveSheet.getSheetByName("Events").getDataRange().getValues();
-  var archiveRegData = archiveSheet.getSheetByName("Registrants").getDataRange().getValues();  
-  var fbData = database.getSheetByName("Feedback Form Responses").getDataRange().getValues();
-  var dbs = [archiveEventData, eventCreationData];
-  var event;
-  var out = {"events": [], "districts": props[prefix+"_all_districts"].split(",")};
-  for (var i=0; i<dbs.length; i++) {
-    for (var j=1; j<dbs[i].length; j++) {
-      if (dbs[i][j][eventCreatorIndex].toUpperCase() === userMail.toUpperCase() ||
-          dbs[i][j][firstFacEmailIndex].toUpperCase() === userMail.toUpperCase() ||
-          dbs[i][j][secondFacEmailIndex].toUpperCase() === userMail.toUpperCase() ||
-          dbs[i][j][thirdFacEmailIndex].toUpperCase() === userMail.toUpperCase()   ||
-          userMail.toLowerCase() === props[prefix+"_dm_email"].toLowerCase() ||
-          userMail.toLowerCase() === "professionallearning@strongschools.nyc" ||
-          dbs[i][j][directorEmailIndex].toUpperCase() === userMail.toUpperCase())
-         {
-           if (dbs[i][j][0]==="") {continue;}
-            if (i===0) {
-              event = new Event(dbs[i][j],archiveRegData,true,instance);
-            } else {
-              event = new Event(dbs[i][j],false,false,instance);
+    const prefix = boMap[instance].prefix;
+    let out = {events: [], districts: props[`${prefix}_all_districts`].split(', ')};
+    const database = new Spreadsheet(`${prefix}_database_id`, ['event creation form responses']);
+    const archive = new Spreadsheet(`${prefix}_archive_id`, ['Events']);
+    const dbs = [archive.data.Events, database.data['event creation form responses']];
+    let event;
+    for (var i = 0; i < dbs.length; i++) {
+      for (var j = 1; j < dbs[i].length; j++) {
+        if (dbs[i][j][eventCreatorIndex].toUpperCase() === userMail.toUpperCase() ||
+            dbs[i][j][firstFacEmailIndex].toUpperCase() === userMail.toUpperCase() ||
+            dbs[i][j][secondFacEmailIndex].toUpperCase() === userMail.toUpperCase() ||
+            dbs[i][j][thirdFacEmailIndex].toUpperCase() === userMail.toUpperCase()   ||
+            userMail.toLowerCase() === props[`${prefix}_dm_email`].toLowerCase() ||
+            userMail.toLowerCase() === 'professionallearning@strongschools.nyc' ||
+            dbs[i][j][directorEmailIndex].toUpperCase() === userMail.toUpperCase())
+           {
+             if (dbs[i][j][0] === '') continue;
+              if (i === 0) {
+                event = new Event(dbs[i][j], true, instance);
+              } else {
+                event = new Event(dbs[i][j], false, instance);
+              }
+             out.events.push(event);
             }
-           out.events.push(event);
-          }
+      }
     }
-  }
   return JSON.stringify(out);
 }
 
-function Event(data,database,archive,instance) {
+function Event(data,archive,instance) {
   this.countDates = data[84];
   if (archive) {
     this.currentRegs = data[93];
@@ -127,4 +123,41 @@ function Event(data,database,archive,instance) {
   this.feedback_link="https://script.google.com/macros/s/AKfycbx3TCsDsYscGa83l4n5nNVDyYTIIXJCuI4z6B1v8jbpIG6ZMxc/exec?instance="+encodeURIComponent(instance)+"&eventid="+this.id;
   this.session_notes_link="https://script.google.com/macros/s/AKfycbxgfnlryy7ViDEmNqeYyU3EKOsRnSI6qIJ3EIfoghETw8-NnXHn/exec?instance="+encodeURIComponent(instance)+"&eventid="+this.id+"&status="+this.status+"&pdetails="+encodeURIComponent(this.participant_details_link);
   this.feedback_form="https://script.google.com/macros/s/AKfycbwXs13RmZjPTZMeTDLSNY6r5xVwmFc-HRGNW3lHFLRudH1iBG0/exec?title="+encodeURIComponent(this.title)+"&id="+this.id+"&num=TBD&instance="+encodeURIComponent(instance);
+}
+
+class Spreadsheet {
+  constructor(id, sheetNamesArray) {
+    this.ss = SpreadsheetApp.openById(id);
+    this.sheets = {};
+    this.data = {};
+    if (sheetNamesArray) {
+      sheetNamesArray.forEach(sheetName => {
+        this.sheets[sheetName] = this.ss.getSheetByName(sheetName);
+        this.data[sheetName] = this.sheets[sheetName].getDataRange().getValues();
+      })
+    } else {
+      this.ss.getSheets().forEach(sheet => {
+        this.sheets[sheet.getName()] = sheet;
+        this.data[sheet.getName()] = sheet.getDataRange().getValues();
+      });
+    }
+  }
+  matchRow(sheetName, criterion, columnIndex, callback) {
+    for (let i = 0; i < this.data[sheetName].length; i++) {
+      if (this.data[sheetName][i][columnIndex] === criterion) {
+        if (callback) callback(Number(i) + 1);
+        return {row_number: Number(i) + 1, row_data: this.data[sheetName][i]}
+      }
+    }
+  }
+  matchRows(sheetName, criterion, columnIndex, callback) {
+    let rows = [];
+    for (let i = this.data[sheetName].length-1; i >= 1; i--) {
+      if (this.data[sheetName][i][columnIndex] === criterion) {
+        if (callback) callback(Number(i) + 1);
+        rows.push({row_number: Number(i) + 1, row_data: this.data[sheetName][i]});
+      }
+    }
+    return rows;
+  }
 }
