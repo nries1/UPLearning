@@ -46,7 +46,7 @@ function postForm(form,instance) {
   var eventPage = "https://script.google.com/macros/s/AKfycbz4AthfjpkN8d_pttRsnKfYnsQp_Fal9N5O4tHpQX6Q-Hm58oo/exec?instance="+encodeURIComponent(instance)+"&id="+id
   output.event_page = eventPage;
   output.reg_form = regForm;
-  var eventDataObj = {"title":form.title,"id":id,"location":location,"dates":allDates.join(", "),
+  var eventDataObj = {borough_office: instance, title: form.title, id: id, 'location': location, dates: allDates.join(', '),
                       "times":times,"start_time": form.sessions[0].start_time,
                       "description":form.description,"ctle":form.ctle,"facilitators":allFacs, "end_time": form.sessions[0].end_time,
                       "regUrl":regForm,"facEmails":facEmails,"otherInfo":form["other_info"],"public":form.public,
@@ -111,11 +111,22 @@ function postForm(form,instance) {
     // why try to append the row last? Because you need to save the confirmations above to the row.
     s.appendRow(row);
     output.confirmations.push({msg: 'Saved Your Event', success: true});
+    saveEventObj(eventDataObj);
+    saveUserPermissions([eventCreator, facEmails.join(', ')]);
   } catch(error) {
     output.confirmations.push({msg: 'FAILED TO SAVE YOUR EVENT. '+error, success: false});
   }
-  saveEventObj(eventDataObj);
   return output;
+}
+
+const saveUserPermissions = (users, bco) => {
+  const ss = new Spreadsheet('1gnL2-wUXBJuGdh8wv1QhQyKsU8Jit4cO7_4m-FYlFDo');
+  users.forEach(user => {
+    const userRow = ss.matchRow('Sheet1', user, 0);
+    if (!userRow) {
+      ss.sheets.Sheet1.appendRow([user, bco]);
+    }
+  })
 }
 
 const saveEventObj = eventData => {
