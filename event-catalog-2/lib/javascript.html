@@ -84,7 +84,6 @@ var displayAfterDateFilter = function displayAfterDateFilter(event, startDate, e
 };
 
 var filterEvents = function filterEvents(filters) {
-  debugger;
   console.log('filters ', filters);
   var eventCards = document.getElementsByClassName('event-card');
   console.log('cards before filter '+eventCards.length)
@@ -94,7 +93,7 @@ var filterEvents = function filterEvents(filters) {
     eventCards[i].style.display = filterKeys.reduce(function (display, filter) {
       if (filter === 'end_date') return displayAfterDateFilter(eventObj, filters.start_date, filters.end_date);
       if (display === 'none' || filter === 'start_date' || filters[filter] === '') return display;
-      return displayAfterFilter(eventObj, filter, filters[filter]);
+      console.log('diplay after filter '+filter+' = '+displayAfterFilter(eventObj, filter, filters[filter]));
     }, 'flex')[0];
   };
 
