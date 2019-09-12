@@ -28,32 +28,62 @@ const clearFilters = () => {
       }
 }
 
-const filterEvents = filters => {
-  console.log('filters ', filters);
-  const eventCards = document.getElementsByClassName('event-card')
-  filters.forEach(filter => {
-    for (let i = 0; i < eventCards.length; i++) {
-      if (filter.wildcard) {
-        console.log(typeof (eventCards[i].dataset.obj));
-        if (eventCards[i].dataset.obj.indexOf(filter.wildcard) === -1 ) {
-          eventCards[i].style.display = 'none';
-        } else {
-          eventCards[i].style.display = 'flex';
-        }
-      }
-    }
-  })
+// eslint-disable-next-line no-confusing-arrow
+const displayAfterWildcardFilter = (event, filter) => event.indexOf(filter) === -1 ? 'none' : 'flex';
+
+const displayAfterFilter = (event, filterKey, filterValue) => {
+  return event[filterKey].indexOf(filterValue) === -1 ? 'none' : 'flex';
 }
 
-function formObj(form) {
-  const elements = form.elements;
-  let out = []
-  for (let i = 0; i < elements.length; i++) {
-    let obj = {};
-    out[elements[i].name] = elements[i].value;
-    out.push(obj);
+const filterEventsWithWildcard = filter => {
+  console.log('filters ', filters);
+  if (filter.wildcard === '') {
+    clearFilters();
+  } else {
+    const eventCards = document.getElementsByClassName('event-card')
+    for (let i = 0; i < eventCards.length; i++) {
+      eventCards[i].style.display = displayAfterWildcardFilter(eventCards[i].dataset.obj, filter.wildcard)
+    }
   }
-  return out;
+}
+const displayAfterDateFilter  = (event, startDate, endDate) => {
+  if (startDate === '') {
+    startDate = 0;
+  } else {
+    startDate = new Date(startDate).getTime();
+  }
+  if (endDate === '') {
+    endDate = Infinity;
+  } else {
+    endDate = new Date(endDate).getTime();
+  }
+  const dates = event.dates.split(',');
+  const firstDate = new Date(dates[0]).getTime()
+  const lastDate = new Date(dates[dates.length - 1]).getTime()
+  return (firstDate >= startDate && lastDate <= endDate) ? 'flex' : 'none';
+}
+
+const filterEvents = filters => {
+  console.log('filters ', filters);
+  const eventCards = document.getElementsByClassName('event-card');
+  const filterKeys = Object.keys(filters);
+  for (let i = 0; i < eventCards.length; i++) {
+    const eventObj = JSON.parse(eventCards[i].dataset.obj);
+    eventCards[i].style.display = filterKeys.reduce((display, filter) => {
+      if (filter === 'end_date') return displayAfterDateFilter(eventObj, filters.start_date, filters.end_date);
+      if (display === 'none' || filter === 'start_date' || filters[filter] === '') return display;
+      return displayAfterFilter(eventObj, filter, filters[filter]);
+    }, 'flex')[0];
+  }
+}
+
+function FormObj(form) {
+  const elements = form.elements;
+  for (let i = 0; i < elements.length; i++) {
+    if (elements[i].name !== '') {
+      this[elements[i].name] = elements[i].value;
+    }
+  }
 }
 
 const fetchEvents = instances => {

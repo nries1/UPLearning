@@ -167,7 +167,7 @@
                     </div>
                     <div class='form-group'>
                       <label for='audience-filter'>Role (Target Audience)</label>
-                      <select id='audience-filter' name='role' class='form-control'>
+                      <select id='audience-filter' name='display_audience' class='form-control'>
                           <option value=''>Any</option>
                           <option value='APs'>APs</option>
                           <option value='Coaches'>BCO Staff</option>
@@ -186,6 +186,7 @@
                     <div class='form-group'>
                       <label for='grade-filter'>Grade Level</label>
                       <select id='grade-filter' name='grade_level' class='form-control'>
+                          <option value=''>Any</option>
                           <option value='(PK-2)'>PK-2</option>
                           <option value='(3-5)'>3-5</option>
                           <option value='(6-8)'>6-8</option>
@@ -195,7 +196,8 @@
                           <option value='(K-12)'>K-12</option>
                       </select>
                     </div>
-                    <button type="submit" class="btn btn-primary" style="margin-top: 15px;" data-dismiss="modal" onclick='filterEvents(formObj(document.getElementById("filter-form")))'>Apply</button>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 15px;" data-dismiss="modal" onclick='filterEvents(new FormObj(document.getElementById("filter-form")))'>Apply</button>
+                    <button type="submit" class="btn btn-outline-secondary" style="margin-top: 15px;" data-dismiss="modal" onclick='clearFilters()'>Clear Filters</button>
                   </form>
                   <div id="modal-filter-spinner" style="text-align: center; display: none;">
                     <div id="modal-filter-spinner-msg">Spinner Message...</div>
@@ -217,7 +219,7 @@
                 <p>
                   <form class="form-inline my-2 my-lg-0">
                     <div id='quick-search-container' class='form-control'><input id='quick-search' class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"><span id='cancel-quick-search' onclick='clearFilters()'>X</span></div>
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit" onclick='filterEvents([{wildcard: document.getElementById("quick-search").value}])'>Quick Search</button>
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit" onclick='filterEventsWithWildcard({wildcard: document.getElementById("quick-search").value})'>Quick Search</button>
                   </form>
                 </p>
                 <p>
