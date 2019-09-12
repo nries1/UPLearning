@@ -1,3 +1,5 @@
+/* eslint-disable complexity */
+/* eslint-disable max-statements */
       window.addEventListener('load', getLoadState);
       var allEventData;
       var filteredEvents = [];
@@ -200,7 +202,7 @@ function card(event) {
     cardBody.appendChild(moreInfo);
       //more info button
       var moreButtonsContainer = htmlElement({tag: "DIV", style: "width: 100%; display: flex; align-items: center; align-content: center; justify-content: center; position: relative; margin-top: 15px;"});
-      if (event.attendanceInfo.attendanceTrackRate<1 && event.currentRegs > 0) {
+      if ((event.attendanceInfo.attendanceTrackRate < 1 || !event.attendanceInfo) && event.currentRegs > 0) {
         var attnNeededButton=htmlElement({tag: "A", className: "btn btn-outline-danger btn-sm", innerHTML: "Attendance Needed", style: "position: absolute; left: 0;", href: event.participant_details_link, target: "_blank"});
       } else if (event.currentRegs === 0) {
         var attnNeededButton=htmlElement({tag: "A", className: "btn btn-outline-secondary btn-sm", innerHTML: "No Registrants", style: "position: absolute; left: 0;", href: event.participant_details_link, target: "_blank"});

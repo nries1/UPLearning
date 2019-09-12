@@ -1,6 +1,9 @@
 <script>
 function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
 
+/* eslint-disable complexity */
+
+/* eslint-disable max-statements */
 window.addEventListener('load', getLoadState);
 var allEventData;
 var filteredEvents = [];
@@ -484,7 +487,7 @@ function card(event) {
     style: "width: 100%; display: flex; align-items: center; align-content: center; justify-content: center; position: relative; margin-top: 15px;"
   });
 
-  if (event.attendanceInfo.attendanceTrackRate < 1 && event.currentRegs > 0) {
+  if ((event.attendanceInfo.attendanceTrackRate < 1 || !event.attendanceInfo) && event.currentRegs > 0) {
     var attnNeededButton = htmlElement({
       tag: "A",
       className: "btn btn-outline-danger btn-sm",
