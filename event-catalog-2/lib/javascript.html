@@ -94,6 +94,7 @@ var filterEvents = function filterEvents(filters) {
       if (filter === 'end_date') return displayAfterDateFilter(eventObj, filters.start_date, filters.end_date);
       if (display === 'none' || filter === 'start_date' || filters[filter] === '') return display;
       console.log('diplay after filter '+filter+' = '+displayAfterFilter(eventObj, filter, filters[filter]));
+      
     }, 'flex')[0];
   };
 
