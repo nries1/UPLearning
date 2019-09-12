@@ -1,4 +1,3 @@
-<script>
       window.addEventListener('load', getLoadState);
       var allEventData;
       var filteredEvents = [];
@@ -8,28 +7,35 @@
       var participantDetails;
       var usingFeedback = true;
       var instance;
-      
+
 function getLoadState() {
   console.log("getting load state");
   console.log(window.location);
-  google.script.url.getLocation(function(loc) {
-    instance = loc.parameter.instance;
-    if (!instance) {
-      document.getElementById("main-spinner").innerHTML = "Bad URL";
-      return;
-    } else {
-      fetchAllEvents(instance);
-    }
-  });
+  const withSuccess = google.script.run.withSuccessHandler(function(instance) {
+    fetchAllEvents(instance);
+  })
+  const withFailure = withSuccess.withFailureHandler(function(error) {
+    console.log(error)
+  })
+  withFailure.getUserPermissions();
+  // google.script.url.getLocation(function(loc) {
+  //   instance = loc.parameter.instance;
+  //   if (!instance) {
+  //     document.getElementById("main-spinner").innerHTML = "Bad URL";
+  //     return;
+  //   } else {
+  //     fetchAllEvents(instance);
+  //   }
+  // });
 }
 
-function fetchAllEvents(instance) {
+function fetchAllEvents(instances) {
   var withSuccess = google.script.run.withSuccessHandler(renderEvents);
   var withFailure = withSuccess.withFailureHandler(function(error) {
      console.log("error handler for fetchParticipantDetails message: "+error);
      document.getElementById("main-spinner").innerHTML = "Something went wrong...";
    });
-  withFailure.getAllEvents(instance);  
+  withFailure.getAllEvents(instances);  
 }
 
 function exportRegDetails() {
@@ -624,5 +630,3 @@ function card(event) {
           }
         }
       }
-      
-</script>

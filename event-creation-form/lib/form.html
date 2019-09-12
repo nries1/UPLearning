@@ -38,9 +38,46 @@
       </div>
     </div>
   </div>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+          <a class="navbar-brand" href="#"><img style="width: 4em; height: 1.5em;" src="https://lh6.googleusercontent.com/kHJcsgfQ3_sts6AVJ5MtDnZoKlhDjTKFWKE3ThlJfZ4wIAIuFo90hQJ24l9bopRppcwPuqdt4W6amK_NUy3ivYW62wa6m2REE-MZSsgsO2halQy-kw=w271" role="img"></a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+              <li class="nav-item">
+                    <a class="nav-link" href="https://script.google.com/macros/s/AKfycbwasiAn7z9JGQnUXzlPmH_za3Zx1o1Gf3d-dkoNLf2EgPrIFw/exec">Event Catalog</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="https://script.google.com/macros/s/AKfycbwJWBNRPuHcfhT6jkCZWfUZDXsEzkW70XsuGaizDXEBO6HG1Xk6/exec?instance=Brooklyn+South+PL+System">Registrant Portal</a>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                  Facilitators
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                  <a class="dropdown-item" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbzLNQ3zv6p2P-xa3xhQi2t5hPhsqvrxug99FDCEo4f2CdPIXU35/exec?instance=Brooklyn+South+PL+System">Dashboard</a>
+                  <a class="dropdown-item" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbyy20zX6RnVHDTSIcv6TxqBrpYUh5rg-tiY_d6oLA1tDr3I61Y/exec">Post an Event</a>
+                  <!-- <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#">Something else here</a> -->
+                </div>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbyj-5NAe87vulP4Y9tSS4d4rWDMlazCykqK10c0Qm9ywdcU270/exec">Data and Reports</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="https://script.google.com/macros/s/AKfycbyR4XnqVxxMK1azl2tjPZuq2SCSzHlTGT5VIRaVaVReiyB8eG8/exec">Report Issues</a>
+              </li>
+              <!-- <li class="nav-item">
+                <a class="nav-link disabled" href="#">Disabled</a>
+              </li> -->
+            </ul>
+            
+          </div>
+        </nav>
   <div style="width: 100%; padding: 0.5em 1em 0.5em 1em;" class="jumbotron jumbotron-fluid">
     <div class="container-fluid">
-      <h1 class="display-4" id='title-text' style='font-size: 2.5rem;'>Post an Event</h1>
+      <div id='title-text-container'><h1 id='title-text' style='font-size: 2.5rem;'>Post an Event</h1><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="What is an event?" data-content="The defining characteristic of an event in Up Learning is its intended audience. An ‘event’ in UP Learning is any professional learning opportunity that occurs on a single date or as a series of scaffolded sessions, for which attendance at all sessions is expected by a common cohort of participants.">?</a></div>
       <p class="lead">Fill out the form and click submit to add your event to the <span id='bco'></span> PL system.</p>
       <p class='lead'><a href='https://script.google.com/macros/s/AKfycbyR4XnqVxxMK1azl2tjPZuq2SCSzHlTGT5VIRaVaVReiyB8eG8/exec' target='_blank'>Report Issues</a></p>
     </div>
@@ -100,7 +137,7 @@
     <div class='section container-fluid'>
     <div class='label' style='margin-bottom: 25px;'>Select up to 3 Content Areas <span class="required">*</span></div>
       <div class='content-row row'>
-          <div class='content-category col-12 col-md-6 col-xl-4'>
+          <div class='content-category col-12 col-md-6 col-lg-4 col-xl-4'>
           <div class='content-header'><span class="content-header-text">Advanced Literacy</span></div>
             <div class='content-sub-categories' id="advanced-literacy">
               <div class="form-check"><input type='checkbox' id='Advanced Literacy:Placing Data at the Core' name='subject' value='Advanced Literacy:Placing Data at the Core'><label for='Advanced Literacy:Placing Data at the Core'>Placing Data at the Core</label></div>
@@ -111,7 +148,7 @@
         </div>
       
       
-        <div class='content-category col-12 col-md-6 col-xl-4'>
+        <div class='content-category col-12 col-md-6 col-lg-4 col-xl-4'>
             <div class='content-header'><span class="content-header-text">Arts</span></div>
             <div class='content-sub-categories' id="arts">
               <div class="form-check"><input type='checkbox' id='Arts:Performing' name='subject' value='Arts:Performing'><label for='Arts:Performing'>Performance</label></div>
@@ -120,7 +157,7 @@
             </div>
         </div>
       
-        <div class='content-category col-12 col-md-6 col-xl-4'>
+        <div class='content-category col-12 col-md-6 col-lg-4 col-xl-4'>
               <div class='content-header'><span class="content-header-text">Climate and Wellness</span></div>
               <div class='content-sub-categories' id="climate">
                 <div class="form-check"><input type='checkbox' id='Climate and Wellness:Attendance' name='subject' value='Climate and Wellness:Attendance'><label for='Climate and Wellness:Attendance'>Attendance</label></div>
@@ -132,16 +169,16 @@
                 <div class="form-check"><input type='checkbox' id='Climate and Wellness:Social Emotional Learning' name='subject' value='Climate and Wellness:Social Emotional Learning'><label for='Climate and Wellness:Social Emotional Learning'>Social Emotional Learning</label></div>        
               </div>
         </div>
-      </div>
-      <div class='content-row row'>
-        <div class='content-category col col-12 col-md-6 col-xl-4'>
+      <!-- </div>
+      <div class='content-row row'> -->
+        <div class='content-category col-12 col-md-6 col-lg-4 col-xl-4'>
               <div class='content-header' ><span class="content-header-text">Community Empowerment</span></div>
               <div class='content-sub-categories' id="community">
                 <div class="form-check"><input type='checkbox' id='Community Empowerment:Family Engagement' name='subject' value='Community Empowerment:Family Engagement'><label for='Community Empowerment:Family Engagement'>Family Engagement</label></div>
                 <div class="form-check"><input type='checkbox' id='Community Empowerment:Other' name='subject' value='Community Empowerment:Other'><label for='Community Empowerment:Other'>Other</label></div>
               </div>
         </div>
-        <div class='content-category col col-12 col-md-6 col-xl-4'>
+        <div class='content-category col-12 col-md-6 col-lg-4 col-xl-4'>
               <div class='content-header'><span class="content-header-text">Data and Systems</span></div>
               <div class='content-sub-categories' id="data">
                 <div class="form-check"><input type='checkbox' id='Data and Systems:Academic Policy' name='subject' value='Data and Systems:Academic Policy'><label for='Data and Systems:Academic Policy'>Academic Policy</label></div>
@@ -152,7 +189,7 @@
                 <div class="form-check"><input type='checkbox' id='Data and Systems:Other' name='subject' value='Data and Systems:Other'><label for='Data and Systems:Other'>Other</label></div> 
               </div>
         </div>
-        <div class='content-category col col-12 col-md-6 col-xl-4'>
+        <div class='content-category col-12 col-md-6 col-lg-4 col-xl-4'>
               <div class='content-header'><span class="content-header-text">ELA</span></div>
               <div class='content-sub-categories' id="ela">
                 <div><input type='checkbox' id='ELA:Next Generation Standards' name='subject' value='ELA:Next Generation Standards'><label for='ELA:Next Generation Standards'>Next Generation Standards</label></div>
@@ -161,9 +198,10 @@
                 <div><input type='checkbox' id='ELA:Other' name='subject' value='ELA:Other'><label for='ELA:Other'>Other</label></div>
               </div>
         </div>
-      </div>
-      <div class='content-row row'>
-        <div class='content-category col col-12 col-md-6 col-xl-4'>
+
+      <!-- </div>
+      <div class='content-row row'> -->
+        <div class='content-category col-12 col-md-6 col-lg-4 col-xl-4'>
               <div class='content-header'><span class="content-header-text">ELL/MLL</span></div>
               <div class='content-sub-categories' id="ell">
                 <div><input type='checkbox' id='ELL/MLL:Compliance' name='subject' value='ELL/MLL:Compliance'><label for='ELL/MLL:Compliance'>Compliance</label></div>
@@ -173,7 +211,7 @@
                 <div><input type='checkbox' id='ELL/MLL:Other' name='subject' value='ELL/MLL:Other'><label for='ELL/MLL:Other'>Other</label></div>
               </div>
         </div>
-        <div class='content-category col col-12 col-md-6 col-xl-4'>
+        <div class='content-category col-12 col-md-6 col-lg-4 col-xl-4'>
               <div class='content-header'><span class="content-header-text">Leadership</span></div>
               <div class='content-sub-categories' id="leadership">
                 <div><input type='checkbox' id='Leadership:Continuous Improvement' name='subject' value='Leadership:Continuous Improvement'><label for='Leadership:Continuous Improvement'>Continuous Improvement</label></div>
@@ -182,7 +220,7 @@
                 <div><input type='checkbox' id='Leadership:Other' name='subject' value='Leadership:Other'><label for='Leadership:Other'>Other</label></div>
               </div>
         </div>
-        <div class='content-category col col-12 col-md-6 col-xl-4'>
+        <div class='content-category col-12 col-md-6 col-lg-4 col-xl-4'>
             <div class='content-header'><span class="content-header-text">Math</span></div>
             <div class='content-sub-categories' id="math">
                 <div><input type='checkbox' id='Math:Algebra I' name='subject' value='Math:Algebra I'><label for='Math:Algebra I'>Algebra I</label></div>
@@ -193,9 +231,10 @@
                 <div><input type='checkbox' id='Math:Other' name='subject' value='Math:Other'><label for='Math:Other'>Other</label></div>
             </div>
       </div>
-    </div>
-    <div class='content-row row'>
-      <div class='content-category col col-12 col-md-6 col-xl-4'>
+
+    <!-- </div>
+    <div class='content-row row'> -->
+      <div class='content-category col-12 col-md-6 col-lg-4 col-xl-4'>
           <div class='content-header'><span class="content-header-text">Operations</span></div>
             <div class='content-sub-categories' id="operations">
                 <div><input type='checkbox' id='Operations:Budget' name='subject' value='Operations:Budget'><label for='Operations:Budget'>Budget</label></div>
@@ -207,7 +246,7 @@
                 <div><input type='checkbox' id='Operations:Other' name='subject' value='Operations:Other'><label for='Operations:Other'>Other</label></div>
             </div>
       </div>
-      <div class='content-category col col-12 col-md-6 col-xl-4'>
+      <div class='content-category col-12 col-md-6 col-lg-4 col-xl-4'>
           <div class='content-header'><span class="content-header-text">Pedagogy</span></div>
             <div class='content-sub-categories' id="pedagogy">
                 <div><input type='checkbox' id='Pedagogy:Continuous Improvement' name='subject' value='Pedagogy:Continuous Improvement'><label for='Pedagogy:Continuous Improvement'>Continuous Improvement</label></div>
@@ -216,7 +255,7 @@
                 <div><input type='checkbox' id='Pedagogy:Other' name='subject' value='Pedagogy:Other'><label for='Pedagogy:Other'>Other</label></div>
             </div>
       </div>
-      <div class='content-category col col-12 col-md-6 col-xl-4'>
+      <div class='content-category col-12 col-md-6 col-lg-4 col-xl-4'>
           <div class='content-header'><span class="content-header-text">Social Science</span></div>
             <div class='content-sub-categories' id="social-science">
                 <div><input type='checkbox' id='Social Science:Economics' name='subject' value='Social Science:Economics'><label for='Social Science:Economics'>Economics</label></div>
@@ -226,9 +265,10 @@
                 <div><input type='checkbox' id='Social Science:Other' name='subject' value='Social Science:Other'><label for='Social Science:Other'>Other</label></div>
             </div>
       </div>
-    </div>
-    <div class='content-row row'>
-      <div class='content-category col col-12 col-md-6 col-xl-4'>
+
+    <!-- </div>
+    <div class='content-row row'> -->
+      <div class='content-category col-12 col-md-6 col-lg-4 col-xl-4'>
           <div class='content-header'><span class="content-header-text">Special Education</span></div>
             <div class='content-sub-categories' id="sped">
                 <div><input type='checkbox' id='Special Education:Compliance' name='subject' value='Special Education:Compliance'><label for='Special Education:Compliance'>Compliance</label></div> 
@@ -238,7 +278,7 @@
                 <div><input type='checkbox' id='Special Education:Other' name='subject' value='Special Education:Other'><label for='Special Education:Other'>Other</label></div>
             </div>
       </div>
-      <div class='content-category col col-12 col-md-6 col-xl-4'>
+      <div class='content-category col-12 col-md-6 col-lg-4 col-xl-4'>
           <div class='content-header'><span class="content-header-text">Science and Technology</span></div>
             <div class='content-sub-categories' id="tech">
                 <div><input type='checkbox' id='Science and Technology:Chemistry' name='subject' value='Science and Technology:Chemistry'><label for='Science and Technology:Chemistry'>Chemistry</label></div>

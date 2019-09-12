@@ -36,16 +36,45 @@
       </div>
     </div>
   </div>
-  
-  <ul class="nav nav-tabs" style="margin-bottom: 5px;">
-    <li class="nav-item dropdown">
-      <a class="nav-link dropdown-toggle" data-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">Menu</a>
-      <div class="dropdown-menu">
-        <div class="dropdown-item" onclick="exportRegDetails()" data-toggle="modal" data-target="#modal-vertical">Export Registrant Details</div>
-        <a class="dropdown-item" href="https://script.google.com/macros/s/AKfycbyR4XnqVxxMK1azl2tjPZuq2SCSzHlTGT5VIRaVaVReiyB8eG8/exec" target="_blank">Report an Issue</a>
+  <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <a class="navbar-brand" href="#">UPLearning</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav mr-auto">
+          <li class="nav-item">
+                <a class="nav-link" href="https://script.google.com/macros/s/AKfycbwasiAn7z9JGQnUXzlPmH_za3Zx1o1Gf3d-dkoNLf2EgPrIFw/exec">Event Catalog</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://script.google.com/macros/s/AKfycbwJWBNRPuHcfhT6jkCZWfUZDXsEzkW70XsuGaizDXEBO6HG1Xk6/exec?instance=Brooklyn+South+PL+System">Registrant Portal</a>
+          </li>
+          <li class="nav-item dropdown">
+            <a class="nav-link active dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              Facilitators
+            </a>
+            <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+              <a class="dropdown-item" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbzLNQ3zv6p2P-xa3xhQi2t5hPhsqvrxug99FDCEo4f2CdPIXU35/exec?instance=Brooklyn+South+PL+System">Dashboard</a>
+              <a class="dropdown-item" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbyy20zX6RnVHDTSIcv6TxqBrpYUh5rg-tiY_d6oLA1tDr3I61Y/exec">Post an Event</a>
+              <!-- <div class="dropdown-divider"></div>
+              <a class="dropdown-item" href="#">Something else here</a> -->
+            </div>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbyj-5NAe87vulP4Y9tSS4d4rWDMlazCykqK10c0Qm9ywdcU270/exec">Data and Reports</a>
+          </li>
+          <li class="nav-item">
+              <div class="nav-link" onclick="exportRegDetails()" data-toggle="modal" data-target="#modal-vertical">Export Event Details</a>
+            </li>
+          <li class="nav-item">
+            <a class="nav-link" href="https://script.google.com/macros/s/AKfycbyR4XnqVxxMK1azl2tjPZuq2SCSzHlTGT5VIRaVaVReiyB8eG8/exec">Report Issues</a>
+          </li>
+          <!-- <li class="nav-item">
+            <a class="nav-link disabled" href="#">Disabled</a>
+          </li> -->
+        </ul>
       </div>
-  </ul>
-
+    </nav>
   <div id="body-container">
       <div class="card" style="width: 85%; margin-bottom: 25px;">
       <div class="card-body">

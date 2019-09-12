@@ -37,32 +37,29 @@
           </button>
           <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
-              <li class="nav-item">
-                    <a class="nav-link" href="https://script.google.com/macros/s/AKfycbwJWBNRPuHcfhT6jkCZWfUZDXsEzkW70XsuGaizDXEBO6HG1Xk6/exec?instance=Brooklyn+South+PL+System">Event Catalog</a>
+              <li class="nav-item active">
+                    <a class="nav-link" href="https://script.google.com/macros/s/AKfycbwasiAn7z9JGQnUXzlPmH_za3Zx1o1Gf3d-dkoNLf2EgPrIFw/exec">Event Catalog</a>
               </li>
               <li class="nav-item">
                 <a class="nav-link" href="https://script.google.com/macros/s/AKfycbwJWBNRPuHcfhT6jkCZWfUZDXsEzkW70XsuGaizDXEBO6HG1Xk6/exec?instance=Brooklyn+South+PL+System">Registrant Portal</a>
               </li>
-              <li class="nav-item">
-                  <a class="nav-link" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbzLNQ3zv6p2P-xa3xhQi2t5hPhsqvrxug99FDCEo4f2CdPIXU35/exec?instance=Brooklyn+South+PL+System">Facilitator Dashboard</a>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link" href="https://script.google.com/macros/s/AKfycbyR4XnqVxxMK1azl2tjPZuq2SCSzHlTGT5VIRaVaVReiyB8eG8/exec">Report Issues</a>
-              </li>
-              <li class="nav-item">
-                  <a class="nav-link" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbyj-5NAe87vulP4Y9tSS4d4rWDMlazCykqK10c0Qm9ywdcU270/exec">Data and Reports</a>
-              </li>
-              <!-- <li class="nav-item dropdown">
+              <li class="nav-item dropdown">
                 <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                  Dropdown
+                  Facilitators
                 </a>
                 <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                  <a class="dropdown-item" href="#">Action</a>
-                  <a class="dropdown-item" href="#">Another action</a>
-                  <div class="dropdown-divider"></div>
-                  <a class="dropdown-item" href="#">Something else here</a>
+                  <a class="dropdown-item" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbzLNQ3zv6p2P-xa3xhQi2t5hPhsqvrxug99FDCEo4f2CdPIXU35/exec?instance=Brooklyn+South+PL+System">Dashboard</a>
+                  <a class="dropdown-item" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbyy20zX6RnVHDTSIcv6TxqBrpYUh5rg-tiY_d6oLA1tDr3I61Y/exec">Post an Event</a>
+                  <!-- <div class="dropdown-divider"></div>
+                  <a class="dropdown-item" href="#">Something else here</a> -->
                 </div>
-              </li> -->
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbyj-5NAe87vulP4Y9tSS4d4rWDMlazCykqK10c0Qm9ywdcU270/exec">Data and Reports</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" href="https://script.google.com/macros/s/AKfycbyR4XnqVxxMK1azl2tjPZuq2SCSzHlTGT5VIRaVaVReiyB8eG8/exec">Report Issues</a>
+              </li>
               <!-- <li class="nav-item">
                 <a class="nav-link disabled" href="#">Disabled</a>
               </li> -->
@@ -105,25 +102,129 @@
                     </div>
                   </div>          
                 </div>
-                <div id="modal-footer" class="modal-footer">
+                <!-- <div id="modal-footer" class="modal-footer">
                   <button id="close-modal-button" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div> -->
+              </div>
+            </div>
+          </div>
+          <div id="modal-filters" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                <div class="modal-header">
+                  <h5 class="modal-title" id="modal-filter-title">Filters</h5>
+                  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                  </button>
                 </div>
+                <div id="modal-body" class="modal-body">
+                  <div id="modal-success" class="alert alert-success" role="alert" style="display: none;">Success!</div>
+                  <div id="modal-failure" class="alert alert-danger" role="alert" style="display: none;">Failure!</div>
+                <form id='filter-form'>
+                  <div class='form-group'>
+                     <label id='title-filter'>Title</label>
+                     <input type='text' name='title' class='form-control'>
+                   </div>
+                   <div class='form-group'>
+                      <label for='bco-filter'>BCO</label>
+                      <select id='bco-filter' name='borough_office' class='form-control'>
+                        <option value="">Any</option>
+                        <option value="Affinity PL System">Affinity</option>
+                        <option value="Bronx PL System">Bronx</option>
+                        <option value="Brooklyn North PL System">Brooklyn North</option>
+                        <option value="Brooklyn South PL System">Brooklyn South</option>
+                        <option value="Manhattan PL System">Manhattan</option>
+                        <option value="Central PL System">OFDC</option>
+                        <option value="Queens North PL System">Queens North</option>
+                        <option value="Queens South PL System">Queens South</option>
+                        <option value="Staten Island PL System">Staten Island</option>
+                      </select>
+                    </div>
+                    <div class='form-group'>
+                      <label for='division-filter'>Division</label>
+                      <select id='division-filter' name='division' class='form-control'>
+                          <option value="">Any</option>
+                          <option value="Academic Policy, Systems, Performance, and Assessment">Academic Policy, Systems, Performance, and Assessment</option>
+                          <option value="Advance">Advance</option>
+                          <option value="Data Managers">Data Managers</option>
+                          <option value="District">District Team</option>
+                          <option value="English Language Learners">English Language Learners</option>
+                          <option value="Finance">Finance and HR</option>
+                          <option value="Instruction">Instruction</option>
+                          <option value="Language Access">Language Access</option>
+                          <option value="Operations">Operations</option>
+                          <option value="School Improvement">School Improvement</option>
+                          <option value="Special Education">Special Education</option>
+                          <option value="Student Services">Student Services</option>
+                      </select>
+                    </div>
+                    <div class='form-group'>
+                      <div class='label'>Occurs between</div>
+                      <label for='start-date-filter'>From</label>
+                      <input type='date' id='start-date-filter' name='start_date' class='form-control'>
+                      <label for='start-date-filter'>To</label>
+                      <input type='date' id='end-date-filter' name='end_date' class='form-control'>
+                    </div>
+                    <div class='form-group'>
+                      <label for='audience-filter'>Role (Target Audience)</label>
+                      <select id='audience-filter' name='display_audience' class='form-control'>
+                          <option value=''>Any</option>
+                          <option value='APs'>APs</option>
+                          <option value='Coaches'>BCO Staff</option>
+                          <option value='Coaches'>Coaches</option>
+                          <option value='Deans'>Deans</option>
+                          <option value='District Staff'>District Staff</option>
+                          <option value='Paras'>Paras</option>
+                          <option value='Parent Coordinators'>Parent Coordinators</option>
+                          <option value='Principals'>Principals</option>
+                          <option value='School Community'>School Community</option>
+                          <option value='School Counselors'>School Counselors</option>
+                          <option value='Secretaries'>Secretaries</option>
+                          <option value='Teachers'>Teachers</option>
+                      </select>
+                    </div>
+                    <div class='form-group'>
+                      <label for='grade-filter'>Grade Level</label>
+                      <select id='grade-filter' name='grade_level' class='form-control'>
+                          <option value=''>Any</option>
+                          <option value='(PK-2)'>PK-2</option>
+                          <option value='(3-5)'>3-5</option>
+                          <option value='(6-8)'>6-8</option>
+                          <option value='(K-8)'>K-8</option>
+                          <option value='(6-12)'>6-12</option>
+                          <option value='(9-12)'>9-12</option>
+                          <option value='(K-12)'>K-12</option>
+                      </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 15px;" data-dismiss="modal" onclick='filterEvents(new FormObj(document.getElementById("filter-form")))'>Apply</button>
+                    <button type="submit" class="btn btn-outline-secondary" style="margin-top: 15px;" data-dismiss="modal" onclick='clearFilters()'>Clear Filters</button>
+                  </form>
+                  <div id="modal-filter-spinner" style="text-align: center; display: none;">
+                    <div id="modal-filter-spinner-msg">Spinner Message...</div>
+                    <div class="spinner-border" role="status" id="modal-filter-spinner-loader">
+                     <span class="sr-only">Loading...</span>
+                    </div>
+                  </div>          
+                </div>
+                <!-- <div id="modal-filter-footer" class="modal-footer">
+                  <button id="close-modal-button" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div> -->
               </div>
             </div>
           </div>
           <div class="jumbotron jumbotron-fluid">
               <div class="container">
-                <h1 class="display-4">Event Catalog</h1>
-                <p class="lead">Use the search bar for a quick search, or set filters.</p>
+                <h1 class="page-title">Event Catalog</h1>
+                <p class="title-sub-text">Use the search bar for a quick search, or set filters.</p>
                 <p>
                   <form class="form-inline my-2 my-lg-0">
-                    <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Quick Search</button>
+                    <div id='quick-search-container' class='form-control'><input id='quick-search' class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"><span id='cancel-quick-search' onclick='clearFilters()'>X</span></div>
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit" onclick='filterEventsWithWildcard({wildcard: document.getElementById("quick-search").value})'>Quick Search</button>
                   </form>
                 </p>
                 <p>
-                  <button class='btn btn-outline-primary btn-sm' data-toggle="modal" data-target="#modal-vertical">Select BCO</button>
-                  <button class='btn btn-outline-primary btn-sm' data-toggle="modal" data-target="#modal-vertical">More Filters</button>
+                  <button class='btn btn-outline-primary btn-sm' data-toggle="modal" data-target="#modal-vertical">Select BCOs</button>
+                  <button class='btn btn-outline-primary btn-sm' data-toggle="modal" data-target="#modal-filters">More Filters</button>
                 </p>
               </div>
           </div>
@@ -134,27 +235,7 @@
               </div>
           </div>
       <div class='container'>
-        <div class='row'>
-          <div class='box col-12 col-xl-5'>
-
-          </div>
-          <div class='box col-12 col-xl-5'>
-
-          </div>
-          <div class='box col-12 col-xl-5'>
-
-          </div>
-        <!-- </div>
-        <div class='row'> -->
-          <div class='box col-12 col-md-12 col-lg-12 col-xl-5'>
-
-          </div>
-          <div class='box col-12 col-md-12 col-lg-12 col-xl-5'>
-
-          </div>
-          <div class='box col-12 col-md-12 col-lg-12 col-xl-5'>
-
-          </div>
+        <div class='row' id="event-container">
         </div>
       </div>
       <?!= include('javascript') ?>

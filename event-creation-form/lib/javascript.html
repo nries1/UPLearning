@@ -13,6 +13,10 @@ var instanceDetails;
 function item(item) {return document.getElementById(item)}
 
 function getRequestParameters() {
+  $(function () {
+    $('[data-toggle="popover"]').popover()
+  })
+  //$("#modal-vertical").modal({show: true});
   google.script.url.getLocation(function(loc) {
     console.log(loc.parameter);
     reqParameters = loc.parameter;

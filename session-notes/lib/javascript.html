@@ -25,6 +25,7 @@ function getLoadState() {
        if (parameters.view==="school" || parameters.view==="district") {
          document.getElementById("nav-bar").style.display="none";
        }
+       document.getElementById('walkin-link').href = 'https://script.google.com/a/strongschools.nyc/macros/s/AKfycbz13TA6TRLjXeWWS4UzoZp0Si7VH0DV8Qjhco5ZG2FHe2y7j-Y/exec?instance='+encodeURIComponent(loc.parameter.instance)+"&id="+loc.parameter.eventid+"&walkin=walkin"
        document.getElementById("session-notes-link").href="https://script.google.com/macros/s/AKfycbxgfnlryy7ViDEmNqeYyU3EKOsRnSI6qIJ3EIfoghETw8-NnXHn/exec?instance="+encodeURIComponent(loc.parameter.instance)+"&status="+loc.parameter.status+"&sharing="+loc.parameter.sharing+"&eventid="+loc.parameter.eventid;
        document.getElementById("participant-details-link").href=loc.parameter.pdetails;
        fetchSessionNotes(loc.parameter.instance,loc.parameter.eventid,loc.parameter.status);
@@ -54,7 +55,7 @@ function screenWidth() {
 }
 
 
-function fetchSessionNotes(instance,eventid,status) {
+function fetchSessionNotes(instance, eventid, status) {
   console.log("fetching session notes");
   var withSuccess = google.script.run.withSuccessHandler(function(msg) {
      var callback = JSON.parse(msg);
@@ -269,6 +270,4 @@ function fetchSessionNotes(instance,eventid,status) {
       return element;
     }
   }
-
-
 </script>
