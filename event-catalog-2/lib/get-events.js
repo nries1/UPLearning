@@ -9,10 +9,17 @@ var props = PropertiesService.getScriptProperties().getProperties(); // const ge
 //     return allEvents.concat(ss.data['event creation form responses']);
 // }, []));
 
-var getEvents = function getEvents() {
+var getEvents = function getEvents(instances) {
   var ss = SpreadsheetApp.openById('1fk3wDBZ9hFcpqRGMBBrM58iwxv6nk0hYMIgUavtdv_c');
   var sheet = ss.getSheetByName('Sheet1');
-  return sheet.getRange(1, 1, sheet.getLastRow(), 1).getValues();
+
+  if (instances.length === 9) {
+    return sheet.getRange(1, 1, sheet.getLastRow(), 1).getValues();
+  } else {
+    return sheet.getRange(1, 1, sheet.getLastRow(), 1).getValues().filter(function (row) {
+      return instances.indexOf(JSON.parse(row[0]).borough_office) !== -1;
+    });
+  }
 };
 
 var Spreadsheet =

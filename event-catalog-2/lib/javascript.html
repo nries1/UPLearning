@@ -52,7 +52,6 @@ var displayAfterFilter = function displayAfterFilter(event, filterKey, filterVal
 };
 
 var filterEventsWithWildcard = function filterEventsWithWildcard(filter) {
-
   if (filter.wildcard === '') {
     clearFilters();
   } else {
@@ -91,7 +90,7 @@ var filterEvents = function filterEvents(filters) {
   var _loop = function _loop(i) {
     var eventObj = JSON.parse(eventCards[i].dataset.obj);
     eventCards[i].style.display = filterKeys.reduce(function (display, filter) {
-      if (display === 'none' ) return display;
+      if (display === 'none') return display;
       if (filter === 'end_date') return displayAfterDateFilter(eventObj, filters.start_date, filters.end_date);
       if (filter === 'start_date' || filters[filter] === '') return display;
       return displayAfterFilter(eventObj, filter, filters[filter]);
@@ -116,8 +115,13 @@ function FormObj(form) {
 var fetchEvents = function fetchEvents(instances) {
   if (instances.length === 0) return;
   console.log("fetching event data for ".concat(instances));
+  console.log("".concat(instances.length, " instances"));
+  if (instances[0] === '') {
+      instances = ['Affinity PL System', 'Brooklyn South PL System', 'Brooklyn North PL System', 'Central PL System', 'Bronx PL System', 'Manhattan PL System', 'Queens North PL System', 'Queens South PL System', 'Staten Island PL System']
+  }
   document.getElementById('main-spinner').style.display = '';
   document.getElementById('main-spinner-msg').innerHTML = 'Loading Events...';
+  document.getElementById('event-container').innerHTML = '';
   var withSuccess = google.script.run.withSuccessHandler(renderEvents);
   var withFailure = withSuccess.withFailureHandler(function (error) {
     console.log(error);
@@ -181,7 +185,7 @@ var eventCard = function eventCard(data) {
     tag: 'H5',
     className: 'card-title',
     innerHTML: data.title
-  })); //Event date, time, location
+  })); //Event date, time, location, grade, audience
 
   var eventDetailsContainer = htmlElement({
     className: 'event-details-container'
@@ -226,7 +230,29 @@ var eventCard = function eventCard(data) {
   timesContainer.appendChild(htmlElement({
     innerHTML: data.times
   }));
-  eventDetailsContainer.appendChild(timesContainer); //Event Description
+  eventDetailsContainer.appendChild(timesContainer);
+  var gradeContainer = htmlElement({
+    className: 'event-sub-details-container'
+  });
+  gradeContainer.appendChild(htmlElement({
+    className: 'event-detail-icon',
+    innerHTML: '<i class="material-icons">school</i>'
+  }));
+  gradeContainer.appendChild(htmlElement({
+    innerHTML: data.grade_level
+  }));
+  eventDetailsContainer.appendChild(gradeContainer);
+  var audienceContainer = htmlElement({
+    className: 'event-sub-details-container'
+  });
+  audienceContainer.appendChild(htmlElement({
+    className: 'event-detail-icon',
+    innerHTML: '<i class="material-icons">people_outline</i>'
+  }));
+  audienceContainer.appendChild(htmlElement({
+    innerHTML: data.display_audience
+  }));
+  eventDetailsContainer.appendChild(audienceContainer); //Event Description
 
   var eventDescriptionContainer = htmlElement({
     className: 'event-description-container'

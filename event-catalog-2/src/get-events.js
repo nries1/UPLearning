@@ -5,10 +5,14 @@ var props = PropertiesService.getScriptProperties().getProperties();
 //     return allEvents.concat(ss.data['event creation form responses']);
 // }, []));
 
-const getEvents = () => {
+const getEvents = (instances) => {
   const ss = SpreadsheetApp.openById('1fk3wDBZ9hFcpqRGMBBrM58iwxv6nk0hYMIgUavtdv_c')
   const sheet = ss.getSheetByName('Sheet1')
-  return sheet.getRange(1, 1, sheet.getLastRow(), 1).getValues();
+  if (instances.length === 9) {
+    return sheet.getRange(1, 1, sheet.getLastRow(), 1).getValues();
+  } else {
+    return sheet.getRange(1, 1, sheet.getLastRow(), 1).getValues().filter(row => instances.indexOf(row[0].borough_office) !== -1);
+  }
 }
 
 class Spreadsheet {

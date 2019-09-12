@@ -89,8 +89,13 @@ function FormObj(form) {
 const fetchEvents = instances => {
     if (instances.length === 0) return;
     console.log(`fetching event data for ${instances}`);
+    console.log(`${instances.length} instances`);
+    if (instances[0] === '') {
+      instances = ['Affinity PL System', 'Brooklyn South PL System', 'Brooklyn North PL System', 'Central PL System', 'Bronx PL System', 'Manhattan PL System', 'Queens North PL System', 'Queens South PL System', 'Staten Island PL System']
+    }
     document.getElementById('main-spinner').style.display = '';
     document.getElementById('main-spinner-msg').innerHTML = 'Loading Events...';
+    document.getElementById('event-container').innerHTML = '';
     const withSuccess = google.script.run.withSuccessHandler(renderEvents);
     const withFailure = withSuccess.withFailureHandler(function(error) {
         console.log(error);
@@ -125,7 +130,7 @@ const eventCard = data => {
     //card body
     const body = htmlElement({className: 'card-body'});
     body.appendChild(htmlElement({tag: 'H5', className: 'card-title', innerHTML: data.title}));
-    //Event date, time, location
+    //Event date, time, location, grade, audience
     const eventDetailsContainer = htmlElement({className: 'event-details-container'});
     const datesContainer = htmlElement({className: 'event-sub-details-container'});
     datesContainer.appendChild(htmlElement({className: 'event-detail-icon', innerHTML: '<i class="material-icons">calendar_today</i>'}));
@@ -143,6 +148,14 @@ const eventCard = data => {
     timesContainer.appendChild(htmlElement({className: 'event-detail-icon', innerHTML: '<i class="material-icons">access_time</i>'}));
     timesContainer.appendChild(htmlElement({innerHTML: data.times}));
     eventDetailsContainer.appendChild(timesContainer);
+    const gradeContainer = htmlElement({className: 'event-sub-details-container'});
+    gradeContainer.appendChild(htmlElement({className: 'event-detail-icon', innerHTML: '<i class="material-icons">school</i>'}));
+    gradeContainer.appendChild(htmlElement({innerHTML: data.grade_level}));
+    eventDetailsContainer.appendChild(gradeContainer);
+    const audienceContainer = htmlElement({className: 'event-sub-details-container'});
+    audienceContainer.appendChild(htmlElement({className: 'event-detail-icon', innerHTML: '<i class="material-icons">people_outline</i>'}));
+    audienceContainer.appendChild(htmlElement({innerHTML: data.display_audience}));
+    eventDetailsContainer.appendChild(audienceContainer);
     //Event Description
     const eventDescriptionContainer = htmlElement({className: 'event-description-container'});
     eventDescriptionContainer.appendChild(htmlElement({innerHTML: '<b>Abbout this event:</b>'}));
