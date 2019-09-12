@@ -47,7 +47,7 @@ var displayAfterWildcardFilter = function displayAfterWildcardFilter(event, filt
 };
 
 var displayAfterFilter = function displayAfterFilter(event, filterKey, filterValue) {
-  return event[filterKey].indexOf(filterValue) === -1 ? 'none' : 'flex';
+  return event[filterKey].toString().toLowerCase().indexOf(filterValue.toString().toLowerCase()) === -1 ? 'none' : 'flex';
 };
 
 var filterEventsWithWildcard = function filterEventsWithWildcard(filter) {
@@ -90,12 +90,22 @@ var filterEvents = function filterEvents(filters) {
   var _loop = function _loop(i) {
     var filterKeys = Object.keys(filters);
     var eventObj = JSON.parse(eventCards[i].dataset.obj);
+<<<<<<< HEAD
     eventCards[i].style.display = filterKeys.reduce(function (display, filter) {
       if (filter === 'end_date') return displayAfterDateFilter(eventObj, filters.start_date, filters.end_date);
       if (display === 'none' || filter === 'start_date' || filters[filter] === '') return display;
       console.log('diplay after filter '+filter+' = '+displayAfterFilter(eventObj, filter, filters[filter]));
       
     }, 'flex')[0];
+=======
+    let display = filterKeys.reduce(function (display, filter) {
+       if (display === 'none') return display;
+       if (filter === 'end_date') return displayAfterDateFilter(eventObj, filters.start_date, filters.end_date);
+       if (filter === 'start_date' || filters[filter] === '') return display;
+       return displayAfterFilter(eventObj, filter, filters[filter]);
+    }, 'flex');
+    eventCards[i].style.display = display;
+>>>>>>> f393fe41a9a3659addc8668660e305c052573bf1
   };
 
   for (var i = 0; i < eventCards.length; i++) {
