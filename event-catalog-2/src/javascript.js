@@ -45,6 +45,17 @@ const filterEvents = filters => {
   })
 }
 
+function formObj(form) {
+  const elements = form.elements;
+  let out = []
+  for (let i = 0; i < elements.length; i++) {
+    let obj = {};
+    out[elements[i].name] = elements[i].value;
+    out.push(obj);
+  }
+  return out;
+}
+
 const fetchEvents = instances => {
     if (instances.length === 0) return;
     console.log(`fetching event data for ${instances}`);

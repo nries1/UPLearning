@@ -61,6 +61,17 @@ var filterEvents = function filterEvents(filters) {
   });
 };
 
+function formObj(form) {
+  var elements = form.elements;
+  var out = [];
+  for (var i = 0; i < elements.length; i++) {
+    var obj = {};
+    obj[elements[i].name] = [elements[i].value];
+    out.push(obj);
+  }
+  return out;
+}
+
 var fetchEvents = function fetchEvents(instances) {
   if (instances.length === 0) return;
   console.log("fetching event data for ".concat(instances));

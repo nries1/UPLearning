@@ -120,9 +120,14 @@
                 <div id="modal-body" class="modal-body">
                   <div id="modal-success" class="alert alert-success" role="alert" style="display: none;">Success!</div>
                   <div id="modal-failure" class="alert alert-danger" role="alert" style="display: none;">Failure!</div>
+                <form id='filter-form'>
+                  <div class='form-group'>
+                     <label id='title-filter'>Title</label>
+                     <input type='text' name='title' class='form-control'>
+                   </div>
                    <div class='form-group'>
                       <label for='bco-filter'>BCO</label>
-                      <select id='bco-filter' class='form-control'>
+                      <select id='bco-filter' name='borough_office' class='form-control'>
                         <option value="">Any</option>
                         <option value="Affinity PL System">Affinity</option>
                         <option value="Bronx PL System">Bronx</option>
@@ -136,12 +141,8 @@
                       </select>
                     </div>
                     <div class='form-group'>
-                      <label id='title-filter'>Title</label>
-                      <input type='text' class='form-control'>
-                    </div>
-                    <div class='form-group'>
                       <label for='division-filter'>Division</label>
-                      <select id='division-filter' class='form-control'>
+                      <select id='division-filter' name='division' class='form-control'>
                           <option value="">Any</option>
                           <option value="Academic Policy, Systems, Performance, and Assessment">Academic Policy, Systems, Performance, and Assessment</option>
                           <option value="Advance">Advance</option>
@@ -160,13 +161,13 @@
                     <div class='form-group'>
                       <div class='label'>Occurs between</div>
                       <label for='start-date-filter'>From</label>
-                      <input type='date' id= 'start-date-filter' class='form-control'>
+                      <input type='date' id='start-date-filter' name='start_date' class='form-control'>
                       <label for='start-date-filter'>To</label>
-                      <input type='date' id='end-date-filter' class='form-control'>
+                      <input type='date' id='end-date-filter' name='end_date' class='form-control'>
                     </div>
                     <div class='form-group'>
                       <label for='audience-filter'>Role (Target Audience)</label>
-                      <select id='audience-filter' class='form-control'>
+                      <select id='audience-filter' name='role' class='form-control'>
                           <option value=''>Any</option>
                           <option value='APs'>APs</option>
                           <option value='Coaches'>BCO Staff</option>
@@ -184,7 +185,7 @@
                     </div>
                     <div class='form-group'>
                       <label for='grade-filter'>Grade Level</label>
-                      <select id='grade-filter' class='form-control'>
+                      <select id='grade-filter' name='grade_level' class='form-control'>
                           <option value='(PK-2)'>PK-2</option>
                           <option value='(3-5)'>3-5</option>
                           <option value='(6-8)'>6-8</option>
@@ -194,7 +195,8 @@
                           <option value='(K-12)'>K-12</option>
                       </select>
                     </div>
-                    <button type="button" class="btn btn-primary" style="margin-top: 15px;" data-dismiss="modal">Apply</button>
+                    <button type="submit" class="btn btn-primary" style="margin-top: 15px;" data-dismiss="modal" onclick='filterEvents(formObj(document.getElementById("filter-form")))'>Apply</button>
+                  </form>
                   <div id="modal-filter-spinner" style="text-align: center; display: none;">
                     <div id="modal-filter-spinner-msg">Spinner Message...</div>
                     <div class="spinner-border" role="status" id="modal-filter-spinner-loader">
@@ -202,9 +204,9 @@
                     </div>
                   </div>          
                 </div>
-                <div id="modal-filter-footer" class="modal-footer">
+                <!-- <div id="modal-filter-footer" class="modal-footer">
                   <button id="close-modal-button" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                </div>
+                </div> -->
               </div>
             </div>
           </div>
