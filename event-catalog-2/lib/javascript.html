@@ -34,6 +34,7 @@ var getMultiSelectValues = function getMultiSelectValues(input) {
 };
 
 var clearFilters = function clearFilters() {
+  document.getElementById('quick-search').value = '';
   var eventCards = document.getElementsByClassName('event-card');
 
   for (var i = 0; i < eventCards.length; i++) {
@@ -51,7 +52,6 @@ var displayAfterFilter = function displayAfterFilter(event, filterKey, filterVal
 };
 
 var filterEventsWithWildcard = function filterEventsWithWildcard(filter) {
-  console.log('filters ', filters);
 
   if (filter.wildcard === '') {
     clearFilters();
@@ -86,23 +86,21 @@ var displayAfterDateFilter = function displayAfterDateFilter(event, startDate, e
 var filterEvents = function filterEvents(filters) {
   console.log('filters ', filters);
   var eventCards = document.getElementsByClassName('event-card');
-  console.log('cards before filter '+eventCards.length)
+  var filterKeys = Object.keys(filters);
+
   var _loop = function _loop(i) {
-    var filterKeys = Object.keys(filters);
     var eventObj = JSON.parse(eventCards[i].dataset.obj);
-    let display = filterKeys.reduce(function (display, filter) {
-       if (display === 'none') return display;
-       if (filter === 'end_date') return displayAfterDateFilter(eventObj, filters.start_date, filters.end_date);
-       if (filter === 'start_date' || filters[filter] === '') return display;
-       return displayAfterFilter(eventObj, filter, filters[filter]);
+    eventCards[i].style.display = filterKeys.reduce(function (display, filter) {
+      if (display === 'none' ) return display;
+      if (filter === 'end_date') return displayAfterDateFilter(eventObj, filters.start_date, filters.end_date);
+      if (filter === 'start_date' || filters[filter] === '') return display;
+      return displayAfterFilter(eventObj, filter, filters[filter]);
     }, 'flex');
-    eventCards[i].style.display = display;
   };
 
   for (var i = 0; i < eventCards.length; i++) {
     _loop(i);
   }
-  console.log('cards after filter '+eventCards.length)
 };
 
 function FormObj(form) {
@@ -195,9 +193,17 @@ var eventCard = function eventCard(data) {
     className: 'event-detail-icon',
     innerHTML: '<i class="material-icons">calendar_today</i>'
   }));
-  datesContainer.appendChild(htmlElement({
-    innerHTML: data.dates
-  }));
+
+  if (data.dates.indexOf(',') === -1) {
+    datesContainer.appendChild(htmlElement({
+      innerHTML: new Date(data.dates).toString().slice(0, 15)
+    }));
+  } else {
+    datesContainer.appendChild(htmlElement({
+      innerHTML: data.dates
+    }));
+  }
+
   eventDetailsContainer.appendChild(datesContainer);
   var locationContainer = htmlElement({
     className: 'event-sub-details-container'

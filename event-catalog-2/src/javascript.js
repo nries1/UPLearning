@@ -22,6 +22,7 @@ const getMultiSelectValues = input => {
 }
 
 const clearFilters = () => {
+  document.getElementById('quick-search').value = '';
   const eventCards = document.getElementsByClassName('event-card');
   for (let i = 0; i < eventCards.length; i++) {
         eventCards[i].style.display = 'flex';
@@ -35,7 +36,6 @@ const displayAfterFilter = (event, filterKey, filterValue) =>
   event[filterKey].toString().toLowerCase().indexOf(filterValue.toString().toLowerCase()) === -1 ? 'none' : 'flex';
 
 const filterEventsWithWildcard = filter => {
-  console.log('filters ', filters);
   if (filter.wildcard === '') {
     clearFilters();
   } else {
@@ -69,10 +69,11 @@ const filterEvents = filters => {
   for (let i = 0; i < eventCards.length; i++) {
     const eventObj = JSON.parse(eventCards[i].dataset.obj);
     eventCards[i].style.display = filterKeys.reduce((display, filter) => {
+      if (display === 'none' ) return display;
       if (filter === 'end_date') return displayAfterDateFilter(eventObj, filters.start_date, filters.end_date);
-      if (display === 'none' || filter === 'start_date' || filters[filter] === '') return display;
+      if (filter === 'start_date' || filters[filter] === '') return display;
       return displayAfterFilter(eventObj, filter, filters[filter]);
-    }, 'flex')[0];
+    }, 'flex');
   }
 }
 
