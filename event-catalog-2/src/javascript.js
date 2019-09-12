@@ -31,9 +31,8 @@ const clearFilters = () => {
 // eslint-disable-next-line no-confusing-arrow
 const displayAfterWildcardFilter = (event, filter) => event.indexOf(filter) === -1 ? 'none' : 'flex';
 
-const displayAfterFilter = (event, filterKey, filterValue) => {
-  return event[filterKey].indexOf(filterValue) === -1 ? 'none' : 'flex';
-}
+const displayAfterFilter = (event, filterKey, filterValue) =>
+  event[filterKey].toString().toLowerCase().indexOf(filterValue.toString().toLowerCase()) === -1 ? 'none' : 'flex';
 
 const filterEventsWithWildcard = filter => {
   console.log('filters ', filters);
@@ -129,7 +128,11 @@ const eventCard = data => {
     const eventDetailsContainer = htmlElement({className: 'event-details-container'});
     const datesContainer = htmlElement({className: 'event-sub-details-container'});
     datesContainer.appendChild(htmlElement({className: 'event-detail-icon', innerHTML: '<i class="material-icons">calendar_today</i>'}));
-    datesContainer.appendChild(htmlElement({innerHTML: data.dates}));
+    if (data.dates.indexOf(',') === -1) {
+      datesContainer.appendChild(new Date(data.dates).toLocaleDateString().slice(0, 15));
+    } else {
+      datesContainer.appendChild(htmlElement({innerHTML: data.dates}));
+    }
     eventDetailsContainer.appendChild(datesContainer);
     const locationContainer = htmlElement({className: 'event-sub-details-container'});
     locationContainer.appendChild(htmlElement({className: 'event-detail-icon', innerHTML: '<i class="material-icons">location_city</i>'}));
