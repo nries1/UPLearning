@@ -84,9 +84,10 @@ var displayAfterDateFilter = function displayAfterDateFilter(event, startDate, e
 };
 
 var filterEvents = function filterEvents(filters) {
+  debugger;
   console.log('filters ', filters);
   var eventCards = document.getElementsByClassName('event-card');
-
+  console.log('cards before filter '+eventCards.length)
   var _loop = function _loop(i) {
     var filterKeys = Object.keys(filters);
     var eventObj = JSON.parse(eventCards[i].dataset.obj);
@@ -100,6 +101,7 @@ var filterEvents = function filterEvents(filters) {
   for (var i = 0; i < eventCards.length; i++) {
     _loop(i);
   }
+  console.log('cards after filter '+eventCards.length)
 };
 
 function FormObj(form) {
