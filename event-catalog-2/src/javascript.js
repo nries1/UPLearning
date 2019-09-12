@@ -5,6 +5,12 @@ window.addEventListener('load', function() {
     $('[data-toggle="popover"]').popover()
   })
   $('#modal-vertical').modal({show: true});
+    var forms = document.querySelectorAll('form');
+    for (var i = 0; i < forms.length; i++) {
+      forms[i].addEventListener('submit', function(event) {
+        event.preventDefault();
+      });
+    }
 });
 
 const getMultiSelectValues = input => {
@@ -15,16 +21,28 @@ const getMultiSelectValues = input => {
     }, []);
 }
 
-const filterEvents = filters => {
-  // for (let i = 0; i < filters.length; i++) {
-  //   for (let j = 0; j < allEvents.length; j++) {
-  //     if (filters[i].hasOwnProperty('wildcard')) {
-  //       if (JSON.stringify(allEvents[j]).indexOf(filters[i].wildcard) === -1) {
+const clearFilters = () => {
+  const eventCards = document.getElementsByClassName('event-card');
+  for (let i = 0; i < eventCards.length; i++) {
+        eventCards[i].style.display = 'flex';
+      }
+}
 
-  //       }
-  //     }
-  //   }
-  // }
+const filterEvents = filters => {
+  console.log('filters ', filters);
+  const eventCards = document.getElementsByClassName('event-card')
+  filters.forEach(filter => {
+    for (let i = 0; i < eventCards.length; i++) {
+      if (filter.wildcard) {
+        console.log(typeof (eventCards[i].dataset.obj));
+        if (eventCards[i].dataset.obj.indexOf(filter.wildcard) === -1 ) {
+          eventCards[i].style.display = 'none';
+        } else {
+          eventCards[i].style.display = 'flex';
+        }
+      }
+    }
+  })
 }
 
 const fetchEvents = instances => {
@@ -51,7 +69,7 @@ const renderEvents = eventData => {
 
 const eventCard = data => {
     //card container
-    const container = htmlElement({className: 'card col-12 col-xl-5 event-card'});
+    const container = htmlElement({className: 'card col-12 col-xl-5 event-card', 'data-obj': JSON.stringify(data)});
     const header = htmlElement({className: 'card-header'});
     const headerContentContainer = htmlElement({className: 'header-content-container'});
     headerContentContainer.appendChild(htmlElement({innerHTML: data.borough_office}));

@@ -1,4 +1,6 @@
 <script>
+function _typeof(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof(obj); }
+
 function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
 
 function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
@@ -7,6 +9,7 @@ function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.
 
 function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
 
+/* eslint-disable max-statements */
 window.addEventListener('load', function () {
   $(function () {
     $('[data-toggle="popover"]').popover();
@@ -14,6 +17,13 @@ window.addEventListener('load', function () {
   $('#modal-vertical').modal({
     show: true
   });
+  var forms = document.querySelectorAll('form');
+
+  for (var i = 0; i < forms.length; i++) {
+    forms[i].addEventListener('submit', function (event) {
+      event.preventDefault();
+    });
+  }
 });
 
 var getMultiSelectValues = function getMultiSelectValues(input) {
@@ -23,6 +33,32 @@ var getMultiSelectValues = function getMultiSelectValues(input) {
     if (option.selected) values.push(option.value);
     return values;
   }, []);
+};
+
+var clearFilters = function clearFilters() {
+  var eventCards = document.getElementsByClassName('event-card');
+
+  for (var i = 0; i < eventCards.length; i++) {
+    eventCards[i].style.display = 'flex';
+  }
+};
+
+var filterEvents = function filterEvents(filters) {
+  console.log('filters ', filters);
+  var eventCards = document.getElementsByClassName('event-card');
+  filters.forEach(function (filter) {
+    for (var i = 0; i < eventCards.length; i++) {
+      if (filter.wildcard) {
+        console.log(_typeof(eventCards[i].dataset.obj));
+
+        if (eventCards[i].dataset.obj.indexOf(filter.wildcard) === -1) {
+          eventCards[i].style.display = 'none';
+        } else {
+          eventCards[i].style.display = 'flex';
+        }
+      }
+    }
+  });
 };
 
 var fetchEvents = function fetchEvents(instances) {
@@ -43,15 +79,16 @@ var renderEvents = function renderEvents(eventData) {
   parent.innerHTML = '';
 
   for (var i = 0; i < eventData.length; i++) {
-    console.log(eventData[i][0]);
-    parent.appendChild(eventCard(JSON.parse(eventData[i])));
+    var event = JSON.parse(eventData[i]);
+    parent.appendChild(eventCard(event));
   }
 };
 
 var eventCard = function eventCard(data) {
   //card container
   var container = htmlElement({
-    className: 'card col-12 col-xl-5 event-card'
+    className: 'card col-12 col-xl-5 event-card',
+    'data-obj': JSON.stringify(data)
   });
   var header = htmlElement({
     className: 'card-header'
@@ -135,7 +172,7 @@ var eventCard = function eventCard(data) {
     className: 'event-description-container'
   });
   eventDescriptionContainer.appendChild(htmlElement({
-    innerHTML: '<b>About this event</b>'
+    innerHTML: '<b>Abbout this event:</b>'
   }));
   eventDescriptionContainer.appendChild(htmlElement({
     className: 'event-description',

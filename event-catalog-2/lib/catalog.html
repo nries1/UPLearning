@@ -214,8 +214,8 @@
                 <p class="title-sub-text">Use the search bar for a quick search, or set filters.</p>
                 <p>
                   <form class="form-inline my-2 my-lg-0">
-                    <input id='quick-search' class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit" onclick='filterEvents([{wildcard: document.getElementById("quick-search")}])'>Quick Search</button>
+                    <div id='quick-search-container' class='form-control'><input id='quick-search' class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"><span id='cancel-quick-search' onclick='clearFilters()'>X</span></div>
+                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit" onclick='filterEvents([{wildcard: document.getElementById("quick-search").value}])'>Quick Search</button>
                   </form>
                 </p>
                 <p>
