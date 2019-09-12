@@ -1,8 +1,9 @@
 function createRow(data,dbnList,instance,emailStatus,oldData) {
   var dist = data.dbn.slice(0,2);
-  var hsSups = Object.keys(dbnList).filter(function(sup) {return sup!=="all"});
+  // the dbn ss contains sheets for each district and pl system. we only want the hs dristricts
+  var hsSups = Object.keys(dbnList).filter(function(sup) {return sup !== 'all' && sup.indexOf('PL') === -1});
   hsSups.forEach(function(sup) {
-    if (dbnList[sup].indexOf(data.dbn)!==-1) {dist = sup;}
+    if (dbnList[sup].indexOf(data.dbn) !== -1) dist = sup;
   });
   var arr = [new Date(),
              data.eventName,
