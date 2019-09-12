@@ -129,7 +129,7 @@ const eventCard = data => {
     const datesContainer = htmlElement({className: 'event-sub-details-container'});
     datesContainer.appendChild(htmlElement({className: 'event-detail-icon', innerHTML: '<i class="material-icons">calendar_today</i>'}));
     if (data.dates.indexOf(',') === -1) {
-      datesContainer.appendChild(new Date(data.dates).toLocaleDateString().slice(0, 15));
+      datesContainer.appendChild(htmlElement({innerHTML: new Date(data.dates).toLocaleDateString().slice(0, 15)}));
     } else {
       datesContainer.appendChild(htmlElement({innerHTML: data.dates}));
     }
