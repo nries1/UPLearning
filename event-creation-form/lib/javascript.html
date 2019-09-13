@@ -43,6 +43,11 @@ function fetchEditData(id,instance) {
     }
     eventCreator = data["Event Creator"];
     creationDate = data["TimeStamp"];
+    // // change the submit button to ask poster if she wants to notify regs
+    // document.getElementById('edit-submit-button').style.display = '';
+    // document.getElementById('submit-button').style.display = 'none';
+    // //if form is in edit mode you can't edit the bco
+    // document.getElementById('bco').readOnly = true;
     populateForm(data.form_values, document.getElementById('event-form').elements);
     var session1 = data.sessions.splice(0,1)[0];
     console.log(session1);
@@ -268,6 +273,11 @@ function clearLocs(textarea) {
       numberContainer.innerHTML = numSessions-1;
     }
  
+function submitFormWithNotify(form) {
+  notifyingRegs = true;
+  submitForm(form);
+}
+
  function submitForm(form) {
   validateTimes();
   var formObj = new Formobj(form);

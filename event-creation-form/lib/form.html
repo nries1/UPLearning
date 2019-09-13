@@ -15,7 +15,7 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="modal-title">UPLearning Administrators Portal</h5>
+          <h5 class="modal-title" id="modal-title">Editing Your Event</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>
@@ -23,7 +23,10 @@
         <div id="modal-body" class="modal-body">
           <div id="modal-success" class="alert alert-success" role="alert" style="display: none;">Success!</div>
           <div id="modal-failure" class="alert alert-danger" role="alert" style="display: none;">Failure!</div>
-          <div id="modal-body-msg" style="display: flex; flex-direction: column; align-items: center; width: 100%;">        
+          <div id="modal-body-msg" style="display: flex; flex-direction: column; align-items: center; width: 100%;">
+            <h3>Do you want to send an automated email to registrants notfying them of your changes?</h3>
+            <button data-dismiss="modal" class='btn btn-outline-primary' onclick='submitFormWithNotify(document.getElementById("event-form"))'>Yes</button>
+            <button data-dismiss="modal" class='btn btn-outline-secondary' onclick='submitForm(document.getElementById("event-form"))'>No</button>
           </div>
           <div id="modal-spinner" style="text-align: center; display: none;">
             <div id="modal-spinner-msg">Spinner Message...</div>
@@ -32,14 +35,14 @@
             </div>
           </div>          
         </div>
-        <div id="modal-footer" class="modal-footer">
+        <!-- <div id="modal-footer" class="modal-footer">
           <button id="close-modal-button" type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
   <nav class="navbar navbar-expand-lg navbar-light bg-light">
-          <a class="navbar-brand" href="https://script.google.com/macros/s/AKfycbwJGwjPmf4r06OVPWZWTc-4GodnDyLkStyhsyLCOyNkMvGPXA/exec"><img style="width: 4em; height: 1.5em;" src="https://lh6.googleusercontent.com/kHJcsgfQ3_sts6AVJ5MtDnZoKlhDjTKFWKE3ThlJfZ4wIAIuFo90hQJ24l9bopRppcwPuqdt4W6amK_NUy3ivYW62wa6m2REE-MZSsgsO2halQy-kw=w271" role="img"></a>
+          <a class="navbar-brand" href="https://script.google.com/macros/s/AKfycbwJGwjPmf4r06OVPWZWTc-4GodnDyLkStyhsyLCOyNkMvGPXA/exec"><img style="width: 4.5em; height: 2em;" src="https://drive.google.com/uc?id=1m304fMTFzqR60ahz7t4YyIPmUKcjer1B" role="img"></a>
           <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
           </button>
@@ -88,10 +91,10 @@
      <span class="sr-only">Loading...</span>
     </div>
   </div>
-  <form id='event-form' style='display :none;' onsubmit="submitForm(this)">
+  <form id='event-form' style='display :none;'>
     <div class="form-group">
       <label class='label' for="title">Event Title <span class="required">*</span></label>
-      <textarea class="form-control" placeholder="Event Title" id="title" name="title" required></textarea>
+      <textarea class="form-control" placeholder="Event Title" id="title" name="title" onchange="updateNotify(this)" required></textarea>
     </div>
     <div class="form-group">
         <label class='label' for="description">Event Description <span class="required">*</span></label>
@@ -99,7 +102,7 @@
     </div>
     <div class="form-group">
         <label class='label' for="other_info">Other Information for Participants</label>
-        <textarea class="form-control" placeholder="e.g. bring laptops, parking is difficult, lunch will be provided" id="other_info" name="other_info"></textarea>
+        <textarea class="form-control" placeholder="e.g. bring laptops, parking is difficult, lunch will be provided" id="other_info" name="other_info" onchange="updateNotify(this)"></textarea>
     </div>
     <div class='form-group'>
       <label class='label' for='bco'>Borough / Citywide Office Affiliation<span class='required'>*</span></label>
@@ -518,7 +521,8 @@
       <option value='yes'>Yes</option>
     </select>
   </div>
-  <input type='submit' class='btn btn-primary btn-lg'>                           
+  <input id='submit-button' type='submit' class='btn btn-primary btn-lg' onclick='submitForm(document.getElementById("event-form"))'>
+  <!-- <button id='edit-submit-button' class='btn btn-primary btn-lg' style='display: none;' data-toggle="modal" data-target="#modal-vertical">Next</button>                         -->
   </form>
   <?!= include('javascript') ?>
   </body>
