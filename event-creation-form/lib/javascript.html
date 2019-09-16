@@ -279,7 +279,10 @@ function submitFormWithNotify(form) {
 }
 
  function submitForm(form) {
-  validateTimes();
+  if (!sessionTimesAreValid()) {
+    alert('Check your start and end dates and times and try again.');
+    return;
+  }
   var formObj = new Formobj(form);
   console.log(formObj);
   item('event-form').innerHTML = '';
@@ -386,10 +389,13 @@ function confirmSubmit(response) {
   }
 }
 
-function validateTimes() {
+function sessionTimesAreValid() {
   var endTime = Number(item("end-time1").value.replace(/:/,""));
   var startTime = Number(item("start-time1").value.replace(/:/,""));
-  if (endTime>2000 || startTime > 1700 || endTime<=startTime || startTime < 700 || endTime < 700) {alert("Check your start and end times."); return;}
+  var sessions = document.getElementsByClassName('date');
+  if (new Date(sessions[sessions.length - 1]).getTime() < new Date(sessions[0]).getTime()) return false;
+  if (endTime>2000 || startTime > 1700 || endTime<=startTime || startTime < 700 || endTime < 700) return false;
+  return true;
 }
 
 </script>
