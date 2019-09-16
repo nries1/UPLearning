@@ -305,10 +305,10 @@
     <div class='session-container'>
       <div class='session-number label'>Session 1</div>
       <div class="form-group session-info">
-        <label for='date1'>Date:</label><input type='date' name='date1' id='date1' class='form-control date'>
-        <label for='start_time'>Start Time:</label><input type='time' name='start-time1' id='start-time1' class='form-control start-time'>
-        <label for='end_time'>End Time:</label><input type='time' name='end-time1' id='end-time1' class='form-control end-time'>
-        <label for='location'>Location</label><textarea id='location' name='location' class='form-control location' onkeyup='listLocs(this)' onfocusout='clearLocs(this)' style='position: relative;'></textarea>
+        <label for='date1'>Date:</label><input type='date' name='date1' id='date1' class='form-control date' required>
+        <label for='start_time'>Start Time:</label><input type='time' name='start-time1' id='start-time1' class='form-control start-time' required>
+        <label for='end_time'>End Time:</label><input type='time' name='end-time1' id='end-time1' class='form-control end-time' required>
+        <label for='location'>Location</label><textarea id='location' name='location' class='form-control location' onkeyup='listLocs(this)' onfocusout='clearLocs(this)' style='position: relative;'required></textarea>
         <div class="loc-list" style="display: none;"></div>
       </div>
     </div>
@@ -324,17 +324,17 @@
     <div class='form-group'>
       <label for='fac-1'>Facilitator 1<span class="required"> *</span></label>
       <input type="text" class="form-control" name="fac1" id="fac1" placeholder="Name" required>
-      <input type="email" value='xxxx@strongschools.nyc' class="form-control" name="fac1-email" id="fac1-email" placeholder="Strongschools Email" required>
+      <input type="email" value='xxxx@strongschools.nyc' class="form-control" name="fac1-email" id="fac1-email" placeholder="Strongschools Email" pattern="/\w*@strongschools.nyc/" required>
     </div>
     <div class='form-group'>
         <label for='fac-2'>Facilitator 2</label>
         <input type="text" class="form-control" name="fac2" id="fac2" placeholder="Name">
-        <input type="email" class="form-control" name="fac2-email" id="fac2-email" placeholder="Strongschools Email">
+        <input type="email" class="form-control" name="fac2-email" id="fac2-email" placeholder="Strongschools Email" pattern="/\w*@strongschools.nyc/">
       </div>
       <div class='form-group'>
           <label for='fac-3'>Facilitator 3</label>
           <input type="text" class="form-control" name="fac3" id="fac3" placeholder="Name">
-          <input type="email" class="form-control" name="fac3-email" id="fac3-email" placeholder="Strongschools Email">
+          <input type="email" class="form-control" name="fac3-email" id="fac3-email" placeholder="Strongschools Email" pattern="/\w*@strongschools.nyc/">
       </div>
     </div>
   <div class='form-group section'>
