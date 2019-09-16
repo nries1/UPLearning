@@ -86,6 +86,9 @@ function listDbns(input) {
       item("dbn-list").appendChild(newDiv);
     }
   });
+  if (dbns[reqParameters.instance].indexOf(item('dbnin').valu) && reqParameters.instance !== 'Central PL System') {
+        item('dbn-warning').innerHTML = '*This DBN is not within the '+reqParameters.instance+'. You will be added to the waitlist.'
+  }
   if (input!=="" && document.getElementById("dbn-list").children.length<1) {
       wildcards.forEach(function(w) {
        newDiv = document.createElement("div");
