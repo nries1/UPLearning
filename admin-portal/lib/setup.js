@@ -19,7 +19,6 @@ function setScriptProperties() {
       }
     });
   }
-
   PropertiesService.getScriptProperties().setProperties(properties, true);
 }
 
