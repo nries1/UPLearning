@@ -17,8 +17,9 @@ var instance;
 function getLoadState() {
   console.log("getting load state");
   console.log(window.location);
-  var withSuccess = google.script.run.withSuccessHandler(function (instance) {
-    fetchAllEvents(instance);
+  var withSuccess = google.script.run.withSuccessHandler(function (bco) {
+    instance = bco;
+    fetchAllEvents(bco);
   });
   var withFailure = withSuccess.withFailureHandler(function (error) {
     console.log(error);

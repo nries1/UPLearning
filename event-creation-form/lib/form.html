@@ -93,7 +93,8 @@
   </div>
   <form id='event-form' style='display :none;'>
     <div class="form-group">
-      <label class='label' for="title">Event Title <span class="required">*</span></label>
+      <label class='label' for="title">Event Title <span class="required">*</span></label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Title" data-content="Enter the title for your Professional Learning opportunity. The title should be clear and concise. Do not include any carriage returns or line breaks.
+      Similar events serving different cohorts of participants must include distinguishing information in each title.">?</a>
       <textarea class="form-control" placeholder="Event Title" id="title" name="title" onchange="updateNotify(this)" required></textarea>
     </div>
     <div class="form-group">
@@ -101,7 +102,7 @@
         <textarea class="form-control" placeholder="Event description" id="description" name="description" required></textarea>
     </div>
     <div class="form-group">
-        <label class='label' for="other_info">Other Information for Participants</label>
+        <label class='label' for="other_info">Other Information for Participants</label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Other Information" data-content="Use this field to cover any miscellaneous information, including room number for locations, items that you wish for participants to bring/prepare prior to a session, parking information, etc. Information entered in this field will show up on the event flier, event catalog, event web page, as well as in confirmation and reminder emails sent to participants.">?</a>
         <textarea class="form-control" placeholder="e.g. bring laptops, parking is difficult, lunch will be provided" id="other_info" name="other_info" onchange="updateNotify(this)"></textarea>
     </div>
     <div class='form-group'>
@@ -119,7 +120,7 @@
       </select>
     </div>
     <div class="form-group">
-        <label class='label' for="division">Division or Functional Area <span class="required">*</span></label>
+        <label class='label' for="division">Division or Functional Area <span class="required">*</span></label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Division" data-content="Choose the most applicable option; you may select only one. For multi-divisional collaborations, please choose one functional area to list in this field and utilize the content area check boxes (below), as well as the event description fields to reflect the different divisions/content areas being covered. This field is utilized as one of the filter options in the public-facing catalog.">?</a>
         <select class="form-control" placeholder="Event description" id="division" name="division" required>
             <option value="">None Selected</option>
             <option value="Academic Policy, Systems, Performance, and Assessment">Academic Policy, Systems, Performance, and Assessment</option>
