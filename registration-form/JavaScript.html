@@ -81,12 +81,17 @@ function listDbns(input) {
       newDiv.className="dbn-select";
       newDiv.onmousedown = function() {
         item("dbnin").value=dbn;
+        if (dbns[reqParameters.instance].indexOf(dbn) === -1 && reqParameters.instance !== 'Central PL System') {
+          item('dbn-warning').innerHTML = '*This DBN is not within the '+reqParameters.instance+'. You will be added to the waitlist.'
+        } else {
+          item('dbn-warning').innerHTML = '';
+        }
       }
       newDiv.onmouseup = function() {item("dbn-list").style.display = "none";}
       item("dbn-list").appendChild(newDiv);
     }
   });
-  if (dbns[reqParameters.instance].indexOf(item('dbnin').value) && reqParameters.instance !== 'Central PL System') {
+  if (dbns[reqParameters.instance].indexOf(item('dbnin').value) === -1 && item('dbnin').value.length === 6 && reqParameters.instance !== 'Central PL System') {
         item('dbn-warning').innerHTML = '*This DBN is not within the '+reqParameters.instance+'. You will be added to the waitlist.'
   } else {
       item('dbn-warning').innerHTML = '';
