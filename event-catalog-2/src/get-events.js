@@ -11,7 +11,7 @@ const getEvents = (instances) => {
   if (instances.length === 9) {
     return sheet.getRange(1, 1, sheet.getLastRow(), 1).getValues();
   } else {
-    return sheet.getRange(1, 1, sheet.getLastRow(), 1).getValues().filter(row => instances.indexOf(row[0].borough_office) !== -1);
+    return sheet.getRange(1, 1, sheet.getLastRow(), 1).getValues().filter(row => instances.indexOf(JSON.parse(row[0]).borough_office) !== -1);
   }
 }
 

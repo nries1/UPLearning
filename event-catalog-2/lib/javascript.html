@@ -9,19 +9,30 @@ function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr
 
 /* eslint-disable max-statements */
 window.addEventListener('load', function () {
+  // JQuery to add popover functionality
   $(function () {
     $('[data-toggle="popover"]').popover();
-  });
-  $('#modal-vertical').modal({
-    show: true
-  });
+  }); //prevent forms from loading a new page on submit
+
   var forms = document.querySelectorAll('form');
 
   for (var i = 0; i < forms.length; i++) {
     forms[i].addEventListener('submit', function (event) {
       event.preventDefault();
     });
-  }
+  } // look for url parameters
+
+
+  google.script.url.getLocation(function (loc) {
+    if (loc.parameters.instance) {
+      fetchEvents(loc.parameters.instance);
+    } else {
+      // show the first modal box to allow users to select their Bco
+      $('#modal-vertical').modal({
+        show: true
+      });
+    }
+  });
 });
 
 var getMultiSelectValues = function getMultiSelectValues(input) {
@@ -116,9 +127,11 @@ var fetchEvents = function fetchEvents(instances) {
   if (instances.length === 0) return;
   console.log("fetching event data for ".concat(instances));
   console.log("".concat(instances.length, " instances"));
+
   if (instances[0] === '') {
-      instances = ['Affinity PL System', 'Brooklyn South PL System', 'Brooklyn North PL System', 'Central PL System', 'Bronx PL System', 'Manhattan PL System', 'Queens North PL System', 'Queens South PL System', 'Staten Island PL System']
+    instances = ['Affinity PL System', 'Brooklyn South PL System', 'Brooklyn North PL System', 'Central PL System', 'Bronx PL System', 'Manhattan PL System', 'Queens North PL System', 'Queens South PL System', 'Staten Island PL System'];
   }
+
   document.getElementById('main-spinner').style.display = '';
   document.getElementById('main-spinner-msg').innerHTML = 'Loading Events...';
   document.getElementById('event-container').innerHTML = '';
@@ -138,6 +151,7 @@ var renderEvents = function renderEvents(eventData) {
     var event = JSON.parse(eventData[i]);
     parent.appendChild(eventCard(event));
   }
+  document.getElementById('total-events-badge').innerHTML = eventData.length;
 };
 
 var eventCard = function eventCard(data) {
@@ -258,7 +272,7 @@ var eventCard = function eventCard(data) {
     className: 'event-description-container'
   });
   eventDescriptionContainer.appendChild(htmlElement({
-    innerHTML: '<b>About this event:</b>'
+    innerHTML: '<b>Abbout this event:</b>'
   }));
   eventDescriptionContainer.appendChild(htmlElement({
     className: 'event-description',

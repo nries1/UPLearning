@@ -1,16 +1,26 @@
 /* eslint-disable max-statements */
 
 window.addEventListener('load', function() {
+  // JQuery to add popover functionality
   $(function () {
     $('[data-toggle="popover"]').popover()
   })
-  $('#modal-vertical').modal({show: true});
+  //prevent forms from loading a new page on submit
     var forms = document.querySelectorAll('form');
     for (var i = 0; i < forms.length; i++) {
       forms[i].addEventListener('submit', function(event) {
         event.preventDefault();
       });
     }
+    // look for url parameters
+    google.script.url.getLocation(loc => {
+      if (loc.parameters.instance) {
+        fetchEvents(loc.parameters.instance);
+      } else {
+        // show the first modal box to allow users to select their Bco
+        $('#modal-vertical').modal({show: true});
+      }
+    });
 });
 
 const getMultiSelectValues = input => {
@@ -111,6 +121,7 @@ const renderEvents = eventData => {
       let event = JSON.parse(eventData[i]);
       parent.appendChild(eventCard(event));
     }
+    document.getElementById('total-events-badge').innerHTML = eventData.length;
 }
 
 const eventCard = data => {
