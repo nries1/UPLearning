@@ -62,6 +62,18 @@ function fetchEditData(id,instance) {
   withFailure.getEditData(id,instance); 
 }
 
+function toggleOnSiteDescriptors(element) {
+  if (element.dataset.active === 'false') {
+    document.getElementById('description').value = 'Targeted Support in the areas indicated below:';
+    document.getElementById('description').innerHTML = 'Targeted Support in the areas indicated below:';
+    element.dataset.active = 'true';
+    document.getElementById('max-label').innerHTML = 'Expected Number of Participants';
+  } else {
+    element.dataset.active = 'false';
+    document.getElementById('max-label').innerHTML = 'Maximum number of Participants (limit = 1000)';
+  }
+}
+
 function populateForm(formValues, formElements) {
   //recursively map the array of form values to the nodelist of form elements
   if (formValues.length === 0) return;

@@ -92,19 +92,6 @@
     </div>
   </div>
   <form id='event-form' style='display :none;'>
-    <div class="form-group">
-      <label class='label' for="title">Event Title <span class="required">*</span></label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Title" data-content="Enter the title for your Professional Learning opportunity. The title should be clear and concise. Do not include any carriage returns or line breaks.
-      Similar events serving different cohorts of participants must include distinguishing information in each title.">?</a>
-      <textarea class="form-control" placeholder="Event Title" id="title" name="title" onchange="updateNotify(this)" required></textarea>
-    </div>
-    <div class="form-group">
-        <label class='label' for="description">Event Description <span class="required">*</span></label>
-        <textarea class="form-control" placeholder="Event description" id="description" name="description" required></textarea>
-    </div>
-    <div class="form-group">
-        <label class='label' for="other_info">Other Information for Participants</label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Other Information" data-content="Use this field to cover any miscellaneous information, including room number for locations, items that you wish for participants to bring/prepare prior to a session, parking information, etc. Information entered in this field will show up on the event flier, event catalog, event web page, as well as in confirmation and reminder emails sent to participants.">?</a>
-        <textarea class="form-control" placeholder="e.g. bring laptops, parking is difficult, lunch will be provided" id="other_info" name="other_info" onchange="updateNotify(this)"></textarea>
-    </div>
     <div class='form-group'>
       <label class='label' for='bco'>Borough / Citywide Office Affiliation<span class='required'>*</span></label>
       <select class='form-control' name='bco' id='bco' onchange='fetchInstanceDetails(this.value)' required>
@@ -118,6 +105,31 @@
         <option value='Queens North PL System'>Queens North</option>
         <option value='Queens South PL System'>Queens South</option>
       </select>
+    </div>
+    <div class='form-group section'>
+      <label class='label' for='support'>Type of Support<span class="required"> *</span></label>
+      <select class='form-control' id='support' name='support' multiple required>
+        <option value='Off-Site Informational Sessions (No Turnkey expectations)'>Off-Site Informational Sessions (No 'Turnkey' expectations)</option>
+        <option value='Off-Site Turn-Key Professional Learning'>Off-Site Turn-Key Professional Learning</option>
+        <option value='School-based Informational Sessions'>School-based Informational Sessions</option>
+        <option onclick='toggleOnSiteDescriptors(this)' data-active='false' value='School-based Targeted Coaching or Support'>School-based Targeted Coaching or Support</option>
+        <option value='Inter-school Support'>Inter-school Support</option>
+        <option value='One-to-one Support'>One-to-one Support</option>
+        <option value='Web-Based Training'>Web-Based Training</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class='label' for="title">Event Title <span class="required">*</span></label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Title" data-content="Enter the title for your Professional Learning opportunity. The title should be clear and concise. Do not include any carriage returns or line breaks.
+      Similar events serving different cohorts of participants must include distinguishing information in each title.">?</a>
+      <textarea class="form-control" placeholder="Event Title" id="title" name="title" onchange="updateNotify(this)" required></textarea>
+    </div>
+    <div class="form-group">
+        <label class='label' for="description">Event Description <span class="required">*</span></label>
+        <textarea class="form-control" placeholder="Event description" id="description" name="description" required></textarea>
+    </div>
+    <div class="form-group">
+        <label class='label' for="other_info">Other Information for Participants</label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Other Information" data-content="Use this field to cover any miscellaneous information, including room number for locations, items that you wish for participants to bring/prepare prior to a session, parking information, etc. Information entered in this field will show up on the event flier, event catalog, event web page, as well as in confirmation and reminder emails sent to participants.">?</a>
+        <textarea class="form-control" placeholder="e.g. bring laptops, parking is difficult, lunch will be provided" id="other_info" name="other_info" onchange="updateNotify(this)"></textarea>
     </div>
     <div class="form-group">
         <label class='label' for="division">Division or Functional Area <span class="required">*</span></label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Division" data-content="Choose the most applicable option; you may select only one. For multi-divisional collaborations, please choose one functional area to list in this field and utilize the content area check boxes (below), as well as the event description fields to reflect the different divisions/content areas being covered. This field is utilized as one of the filter options in the public-facing catalog.">?</a>
@@ -137,7 +149,6 @@
             <option value="Student Services">Student Services</option>
         </select>
     </div>
-    
     <div class='section container-fluid'>
     <div class='label' style='margin-bottom: 25px;'>Select up to 3 Content Areas <span class="required">*</span></div>
       <div class='content-row row'>
@@ -426,7 +437,7 @@
     <div class='form-check' style='margin-left: 25px;'><input class='form-check-input' id="ctle-non-eligible" type="radio" name="ctle" value="This offering is NOT CTLE eligible" checked><label for='ctle-non-eligible' class='form-check-label'>This offering is NOT CTLE eligible</label></div>
   </div>
   <div class='form-group section'>
-    <label class='label' for='max'>Maximum number of Participants (limit = 1000)<span class="required"> *</span></label>
+    <label class='label' id='max-label' for='max'>Maximum number of Participants (limit = 1000)<span class="required"> *</span></label>
     <input type='number' class='form-control' name='max' id='max' min='0' max='1000' required>
   </div>
   <div class='form-group section'>
@@ -503,17 +514,6 @@
     <div class='form-check' style='margin-left: 25px;'><input type="checkbox" class='form-check-input' name="guskey" value="V-Cohort Data">V-Cohort Data</div>
     <div class='form-check' style='margin-left: 25px;'><input type="checkbox" class='form-check-input' name="guskey" value="V-MOSL Data">V-MOSL Data</div>
     <div class='form-check' style='margin-left: 25px;'><input type="checkbox" class='form-check-input' name="guskey" value="V-Attendance Data">V-Attendance Data</div>
-  </div>
-  <div class='form-group section'>
-    <label class='label' for='support'>Type of Support<span class="required"> *</span></label>
-    <select class='form-control' id='support' name='support' required>
-      <option value='Off-Site Informational Sessions (No Turnkey expectations)'>Off-Site Informational Sessions (No 'Turnkey' expectations)</option>
-      <option value='Off-Site Turn-Key Professional Learning'>Off-Site Turn-Key Professional Learning</option>
-      <option value='School-based Informational Sessions'>School-based Informational Sessions</option>
-      <option value='School-based Targeted Coaching or Support'>School-based Targeted Coaching or Support</option>
-      <option value='Inter-school Support'>Inter-school Support</option>
-      <option value='One-to-one Support'>One-to-one Support</option>
-    </select>
   </div>
   <div class='form-group section'>
     <label class='label' for='allow_non_doe'>Do you want to allow registrations from non-DOE staff?<span class="required"> *</span></label>
