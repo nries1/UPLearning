@@ -91,7 +91,7 @@ function listDbns(input) {
       item("dbn-list").appendChild(newDiv);
     }
   });
-  if (dbns[reqParameters.instance].indexOf(item('dbnin').value) === -1 && item('dbnin').value.length === 6 && reqParameters.instance !== 'Central PL System') {
+  if (dbns[reqParameters.instance].indexOf(item('dbnin').value.toUpperCase()) === -1 && item('dbnin').value.length === 6 && reqParameters.instance !== 'Central PL System') {
         item('dbn-warning').innerHTML = '*This DBN is not within the '+reqParameters.instance+'. You will be added to the waitlist.'
   } else {
       item('dbn-warning').innerHTML = '';
@@ -359,7 +359,7 @@ function Formobj(formdata,urlData) {
   //waitlistReg is gets added as a parameter to reqParameters when the regOk function runs
   this.waitlist = urlData.waitlistReg;
   //add the registrant to the waitlist if their dbn is not a member of this event's instance
-  if (dbns[reqParameters.instance].indexOf(this.dbn) === -1 && reqParameters.instance !== 'Central PL System') {
+  if (dbns[reqParameters.instance].indexOf(this.dbn.toUpperCase()) === -1 && reqParameters.instance !== 'Central PL System') {
         this.waitlist = true;
         this.outside_dbn = true;
   }
