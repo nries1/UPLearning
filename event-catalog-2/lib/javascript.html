@@ -51,6 +51,7 @@ var clearFilters = function clearFilters() {
   for (var i = 0; i < eventCards.length; i++) {
     eventCards[i].style.display = 'flex';
   }
+  document.getElementById('total-events-badge').innerHTML = eventCards.length;
 }; // eslint-disable-next-line no-confusing-arrow
 
 
@@ -63,15 +64,21 @@ var displayAfterFilter = function displayAfterFilter(event, filterKey, filterVal
 };
 
 var filterEventsWithWildcard = function filterEventsWithWildcard(filter) {
+  var events = 0;
+
   if (filter.wildcard === '') {
     clearFilters();
   } else {
     var eventCards = document.getElementsByClassName('event-card');
 
     for (var i = 0; i < eventCards.length; i++) {
-      eventCards[i].style.display = displayAfterWildcardFilter(eventCards[i].dataset.obj, filter.wildcard);
+      var filteredDisplay = displayAfterWildcardFilter(eventCards[i].dataset.obj, filter.wildcard);
+      eventCards[i].style.display = filteredDisplay;
+      if (filteredDisplay === 'flex') events++;
     }
   }
+
+  document.getElementById('total-events-badge').innerHTML = events;
 };
 
 var displayAfterDateFilter = function displayAfterDateFilter(event, startDate, endDate) {
@@ -95,22 +102,27 @@ var displayAfterDateFilter = function displayAfterDateFilter(event, startDate, e
 
 var filterEvents = function filterEvents(filters) {
   console.log('filters ', filters);
+  var displayedEvents = 0;
   var eventCards = document.getElementsByClassName('event-card');
   var filterKeys = Object.keys(filters);
 
   var _loop = function _loop(i) {
     var eventObj = JSON.parse(eventCards[i].dataset.obj);
-    eventCards[i].style.display = filterKeys.reduce(function (display, filter) {
+    var eventDisplay = filterKeys.reduce(function (display, filter) {
       if (display === 'none') return display;
       if (filter === 'end_date') return displayAfterDateFilter(eventObj, filters.start_date, filters.end_date);
       if (filter === 'start_date' || filters[filter] === '') return display;
       return displayAfterFilter(eventObj, filter, filters[filter]);
     }, 'flex');
+    eventCards[i].style.display = eventDisplay;
+    if (eventDisplay === 'flex') displayedEvents++;
   };
 
   for (var i = 0; i < eventCards.length; i++) {
     _loop(i);
   }
+
+  document.getElementById('total-events-badge').innerHTML = displayedEvents;
 };
 
 function FormObj(form) {
@@ -151,6 +163,7 @@ var renderEvents = function renderEvents(eventData) {
     var event = JSON.parse(eventData[i]);
     parent.appendChild(eventCard(event));
   }
+
   document.getElementById('total-events-badge').innerHTML = eventData.length;
 };
 
@@ -167,7 +180,7 @@ var eventCard = function eventCard(data) {
     className: 'header-content-container'
   });
   headerContentContainer.appendChild(htmlElement({
-    innerHTML: data.borough_office
+    innerHTML: data.borough_office.replace(/ PL System/, '')
   }));
   headerContentContainer.appendChild(htmlElement({
     innerHTML: "Division of ".concat(data.division)
@@ -272,7 +285,7 @@ var eventCard = function eventCard(data) {
     className: 'event-description-container'
   });
   eventDescriptionContainer.appendChild(htmlElement({
-    innerHTML: '<b>Abbout this event:</b>'
+    innerHTML: '<b>About this event:</b>'
   }));
   eventDescriptionContainer.appendChild(htmlElement({
     className: 'event-description',
