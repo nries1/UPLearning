@@ -359,7 +359,7 @@ function Formobj(formdata,urlData) {
   //waitlistReg is gets added as a parameter to reqParameters when the regOk function runs
   this.waitlist = urlData.waitlistReg;
   //add the registrant to the waitlist if their dbn is not a member of this event's instance
-  if (dbns[reqParameters.instance].indexOf(this.dbn) && reqParameters.instance !== 'Central PL System') {
+  if (dbns[reqParameters.instance].indexOf(this.dbn) === -1 && reqParameters.instance !== 'Central PL System') {
         this.waitlist = true;
         this.outside_dbn = true;
   }
