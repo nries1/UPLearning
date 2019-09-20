@@ -19,6 +19,7 @@ function setScriptProperties() {
       }
     });
   }
+
   PropertiesService.getScriptProperties().setProperties(properties, true);
 }
 
@@ -29,6 +30,11 @@ var boMap = {
     "prefix": "bks"
   },
   "rdecaul3@strongschools.nyc": {
+    "system": "Affinity PL System",
+    "dm": "Robert",
+    "prefix": "afn"
+  },
+  "affinityfsc@strongschools.nyc": {
     "system": "Affinity PL System",
     "dm": "Robert",
     "prefix": "afn"
@@ -112,7 +118,7 @@ var boMap = {
 };
 
 function getUserPermissions() {
-  var user = Session.getActiveUser().getEmail();
+  var user = Session.getActiveUser().getEmail().toLowerCase();
 
   if (Object.keys(boMap).indexOf(user) !== -1 || user === "professionallearning@strongschools.nyc") {
     return "dm";
