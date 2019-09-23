@@ -39,7 +39,7 @@ function fetchAllEvents(instances) {
   var withSuccess = google.script.run.withSuccessHandler(renderEvents);
   var withFailure = withSuccess.withFailureHandler(function (error) {
     console.log("error handler for fetchParticipantDetails message: " + error);
-    document.getElementById("main-spinner").innerHTML = "Something went wrong...";
+    document.getElementById("main-spinner").innerHTML = "Something went wrong. Are you logged into a Google Strongschools account with permission to access the dashboard?";
   });
   withFailure.getAllEvents(instances);
 }
