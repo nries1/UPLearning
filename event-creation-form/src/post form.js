@@ -112,7 +112,8 @@ function postForm(form,instance) {
     s.appendRow(row);
     output.confirmations.push({msg: 'Saved Your Event', success: true});
     saveEventObj(eventDataObj);
-    saveUserPermissions([eventCreator, facEmails.join(', ')]);
+    facEmails.push(eventCreator);
+    saveUserPermissions(facEmails);
   } catch(error) {
     output.confirmations.push({msg: 'FAILED TO SAVE YOUR EVENT. '+error, success: false});
   }
