@@ -28,14 +28,9 @@ var boMap = {"bksouthpd@strongschools.nyc": {"system": "Brooklyn South PL System
         
 function getUserPermissions() {
   const userMail = Session.getActiveUser().getEmail().toLowerCase();
-  // const userPermissions = new Spreadsheet('1gnL2-wUXBJuGdh8wv1QhQyKsU8Jit4cO7_4m-FYlFDo', ['Admin_Portal']).data.Admin_Portal;
-  // // a list of the borough offices that the user has permission to view
-  // return userPermissions.filter(user => {
-  //   return user[4] === userMail ? user[1] : false;
-  // });
-  if (Object.keys(boMap).indexOf(user) !== -1 || user==="professionallearning@strongschools.nyc") {
-    return "dm";
-  } else {
-    return "basic";
-  }
+  const userPermissions = new Spreadsheet('1gnL2-wUXBJuGdh8wv1QhQyKsU8Jit4cO7_4m-FYlFDo', ['admin_portal']).data.admin_portal;
+   // a list of the borough offices that the user has permission to view
+   return userPermissions.filter(user => {
+     return user[0] === userMail ? user : false;
+   });
 }

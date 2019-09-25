@@ -20,7 +20,9 @@ function hideTab(hideTabId,revealTabId) {
 
 function welcome() {
   google.script.run.withSuccessHandler(function(msg) {
-    userPermissions = msg
+    console.log(msg);
+    userPermissions = msg[0][1];
+    if (msg.length === 0) document.getElementById('modal-body').innerHTML = "You don't have permission to view the admin portal. <a target='_blank' href='https://docs.google.com/forms/d/e/1FAIpQLSf8v6AcwkGMFtd3r7VKl2-az7zUQrYI1kBP5s02R0AjeX9oKg/viewform'>Request Permission</a>"
     if (userPermissions === "dm") document.getElementById("main-dropdown-menu").appendChild(htmlElement({tag: "A", className: "dropdown-item", href: "https://script.google.com/a/macros/strongschools.nyc/s/AKfycbzQHjynpgMQaOH6nHh-u3DygHPgiBbuKq_9Di5-BQLdxTGS8dI/exec?base=true", target: "_blank", innerHTML: "APLSS"}));
     console.log("Running as "+userPermissions);
   }).getUserPermissions()
@@ -289,7 +291,7 @@ function card(event) {
   var linksDropDown = htmlElement({tag: "DIV", className: "dropdown-menu"});
   linksDropDown.appendChild(htmlElement({tag: "DIV", innerHTML: "Show Attendance Table", className: "dropdown-item", eventListener: {"event": "click", "function": function(e) {showDbnTable(e.target,event.id)}}}));
   linksDropDown.appendChild(htmlElement({tag: "A", className: "dropdown-item", href: event.feedback_link, innerHTML: "View Feedback", target: "_blank"}));
-  linksDropDown.appendChild(htmlElement({tag: "A", className: "dropdown-item", href: event.session_notes_link, innerHTML: "View Session Notes", target: "_blank"}));
+  if (userPermissions === "dm" || userPermissions === "notes") linksDropDown.appendChild(htmlElement({tag: "A", className: "dropdown-item", href: event.session_notes_link, innerHTML: "View Session Notes", target: "_blank"}));
   if (userPermissions === "dm") {
     if (event.status === "active") {
       linksDropDown.appendChild(htmlElement({tag: "DIV", className: "dropdown-item", onclick: function () {initArchiveEvent(event.id)}, innerHTML: "Archive Event", target: "_blank", "data-toggle": "modal", "data-target": "#modal-vertical"}));
