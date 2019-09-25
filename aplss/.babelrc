@@ -1,0 +1,5 @@
+//we use sourceType script so that babel doesn't insert 'use strict' at the top of every file
+{
+  "presets": ["@babel/preset-env"],
+  "sourceType": "script"
+}

@@ -37,6 +37,7 @@ function showSpinnerProgress(progress, callCount, speed, message, displayContain
         alert('You need to select a borough office.');
         return;
       }
+      instance = document.getElementById('bco-select').value
       document.getElementById("main-spinner").style.display="";
       document.getElementById("main-spinner-msg").innerHTML="Searching for events associated with that email address"
       //document.getElementById("event-display").innerHTML = "Searching for events associated with that email address";
@@ -45,7 +46,7 @@ function showSpinnerProgress(progress, callCount, speed, message, displayContain
           document.getElementById("event-display").innerHTML = "Something went wrong.";
           console.log(error);
         });
-        withFailure.getEventIds(email, document.getElementById('bco-select').value);
+        withFailure.getEventIds(email, instance);
       }
       
       function fetchEventDetails(events) {

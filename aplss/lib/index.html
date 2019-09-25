@@ -31,7 +31,7 @@
       <div id="platform-select-container" style="display: none;">
         <a id="setup" class="custom-buttons platform-select" href="https://script.google.com/macros/s/AKfycbzQHjynpgMQaOH6nHh-u3DygHPgiBbuKq_9Di5-BQLdxTGS8dI/dev?setup=true">Set Up a New PL Instance</a>
         <a id="globals" class="custom-buttons platform-select" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbzQHjynpgMQaOH6nHh-u3DygHPgiBbuKq_9Di5-BQLdxTGS8dI/exec?globals=true">Manage Globals</a>
-        <a id="updates" class="custom-buttons platform-select" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbzQHjynpgMQaOH6nHh-u3DygHPgiBbuKq_9Di5-BQLdxTGS8dI/exec?updates=true">Check for Updates</a>
+        <a id="updates" class="custom-buttons platform-select" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbzQHjynpgMQaOH6nHh-u3DygHPgiBbuKq_9Di5-BQLdxTGS8dI/exec?users=true">View User Permissions</a>
         <a id="enhancements" class="custom-buttons platform-select" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbzQHjynpgMQaOH6nHh-u3DygHPgiBbuKq_9Di5-BQLdxTGS8dI/exechttps://script.google.com/macros/s/AKfycbzQHjynpgMQaOH6nHh-u3DygHPgiBbuKq_9Di5-BQLdxTGS8dI/dev?enhancements=true">Request Enhancements</a>
         <a id="bugs" class="custom-buttons platform-select" href="https://script.google.com/a/strongschools.nyc/macros/s/AKfycbzQHjynpgMQaOH6nHh-u3DygHPgiBbuKq_9Di5-BQLdxTGS8dI/exec?bugs=true">Report Bugs</a>
       </div>
@@ -62,18 +62,8 @@
     </form>
     <div class="section-container" id="bug-container" style="display: none;">This page is under construction. Just email &nbsp;<a href="mailto:nries@schools.nyc.gov"> nries@schools.nyc.gov </a>&nbsp; to report a bug for now.</div>
     <div class="section-container" id="enhancement-container" style="display: none;">This page is under construction. Just email &nbsp;<a href="mailto:nries@schools.nyc.gov"> nries@schools.nyc.gov</a>&nbsp; to request an enhancement.</div>
-    <div class="section-container" id="updates-container" style="display: none;">
-      <div id="updates-callback"></div>
-      <div id="update-table" style="display: none;">
-        <div class="update-row">
-          <div class="update-cell">App name</div>
-          <div class="update-cell">Your Version</div>
-          <div class="update-cell">Last Update</div>
-          <div class="update-cell">Latest Version</div>
-          <div class="update-cell">Update Description</div>
-          <div class="update-cell">Update Now</div>
-        </div>
-      </div>
+    <div class="section-container" id="users-container" style="display: none;">
+      
     </div>
     <?!= include('javascript'); ?>
   </body>

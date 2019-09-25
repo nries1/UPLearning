@@ -23,7 +23,7 @@ function setGlobals(folderId) {
     var file = files.next();
     out.numFiles++;
     data.forEach(function(row,index) {
-      if (row[3]===file.getName()){
+      if (row[3]===file.getName()) {
         if (file.getDescription()) {
           sheet.getRange(Number(index)+1,7,1,2).setValues([[date,file.getDescription().split(";")[0]]])
         } else {

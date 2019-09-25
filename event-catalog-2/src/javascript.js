@@ -37,6 +37,7 @@ const clearFilters = () => {
   for (let i = 0; i < eventCards.length; i++) {
         eventCards[i].style.display = 'flex';
       }
+  document.getElementById('total-events-badge').innerHTML = eventCards.length;
 }
 
 // eslint-disable-next-line no-confusing-arrow
@@ -46,14 +47,18 @@ const displayAfterFilter = (event, filterKey, filterValue) =>
   event[filterKey].toString().toLowerCase().indexOf(filterValue.toString().toLowerCase()) === -1 ? 'none' : 'flex';
 
 const filterEventsWithWildcard = filter => {
+  let events = 0;
   if (filter.wildcard === '') {
     clearFilters();
   } else {
     const eventCards = document.getElementsByClassName('event-card')
     for (let i = 0; i < eventCards.length; i++) {
-      eventCards[i].style.display = displayAfterWildcardFilter(eventCards[i].dataset.obj, filter.wildcard)
+      const filteredDisplay = displayAfterWildcardFilter(eventCards[i].dataset.obj, filter.wildcard)
+      eventCards[i].style.display = filteredDisplay;
+      if (filteredDisplay === 'flex') events++;
     }
   }
+  document.getElementById('total-events-badge').innerHTML = events;
 }
 const displayAfterDateFilter  = (event, startDate, endDate) => {
   if (startDate === '') {
@@ -74,17 +79,21 @@ const displayAfterDateFilter  = (event, startDate, endDate) => {
 
 const filterEvents = filters => {
   console.log('filters ', filters);
+  let displayedEvents = 0;
   const eventCards = document.getElementsByClassName('event-card');
   const filterKeys = Object.keys(filters);
   for (let i = 0; i < eventCards.length; i++) {
     const eventObj = JSON.parse(eventCards[i].dataset.obj);
-    eventCards[i].style.display = filterKeys.reduce((display, filter) => {
+    let eventDisplay = filterKeys.reduce((display, filter) => {
       if (display === 'none' ) return display;
       if (filter === 'end_date') return displayAfterDateFilter(eventObj, filters.start_date, filters.end_date);
       if (filter === 'start_date' || filters[filter] === '') return display;
       return displayAfterFilter(eventObj, filter, filters[filter]);
     }, 'flex');
+    eventCards[i].style.display = eventDisplay;
+    if (eventDisplay === 'flex') displayedEvents++;
   }
+  document.getElementById('total-events-badge').innerHTML = displayedEvents;
 }
 
 function FormObj(form) {
@@ -129,7 +138,7 @@ const eventCard = data => {
     const container = htmlElement({className: 'card col-12 col-xl-5 event-card', 'data-obj': JSON.stringify(data)});
     const header = htmlElement({className: 'card-header'});
     const headerContentContainer = htmlElement({className: 'header-content-container'});
-    headerContentContainer.appendChild(htmlElement({innerHTML: data.borough_office}));
+    headerContentContainer.appendChild(htmlElement({innerHTML: data.borough_office.replace(/ PL System/, '')}));
     headerContentContainer.appendChild(htmlElement({innerHTML: `Division of ${data.division}`}));
     //evnet card header
     const headerButtonsContainer = htmlElement({className: 'header-buttons-conainer'});

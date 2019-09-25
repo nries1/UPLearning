@@ -19,6 +19,7 @@ function getLoadState() {
   console.log(window.location);
   var withSuccess = google.script.run.withSuccessHandler(function (bco) {
     instance = bco;
+    console.log('access granted to '+bco);
     fetchAllEvents(bco);
   });
   var withFailure = withSuccess.withFailureHandler(function (error) {
