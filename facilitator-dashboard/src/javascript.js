@@ -13,22 +13,20 @@
 function getLoadState() {
   console.log("getting load state");
   console.log(window.location);
-  const withSuccess = google.script.run.withSuccessHandler(function(instance) {
-    fetchAllEvents(instance);
-  })
-  const withFailure = withSuccess.withFailureHandler(function(error) {
-    console.log(error)
-  })
-  withFailure.getUserPermissions();
-  // google.script.url.getLocation(function(loc) {
-  //   instance = loc.parameter.instance;
-  //   if (!instance) {
-  //     document.getElementById("main-spinner").innerHTML = "Bad URL";
-  //     return;
-  //   } else {
-  //     fetchAllEvents(instance);
-  //   }
-  // });
+  google.script.url.getLocation(function(loc) {
+    if (loc.parameter.instance && loc.parameter.sysoverride === 'admin') {
+      instance = loc.parameter.instance;
+      fetchAllEvents(instance);
+    } else {
+      const withSuccess = google.script.run.withSuccessHandler(function(instance) {
+        fetchAllEvents(instance);
+      })
+      const withFailure = withSuccess.withFailureHandler(function(error) {
+        console.log(error)
+      })
+      withFailure.getUserPermissions();
+    }
+  });
 }
 
 function fetchAllEvents(instances) {

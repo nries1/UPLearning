@@ -6,7 +6,7 @@ const getUserPermissions = () => {
                                          .getDataRange()
                                          .getValues();
     for (let i = 0; i < permissionData.length; i++) {
-        if (permissionData[i][0] === email) {
+        if (permissionData[i][0].toLowerCase() === email.toLowerCase()) {
             return permissionData[i][1];
         }
     }

@@ -17,30 +17,27 @@ var instance;
 function getLoadState() {
   console.log("getting load state");
   console.log(window.location);
-  var withSuccess = google.script.run.withSuccessHandler(function (bco) {
-    instance = bco;
-    console.log('access granted to '+bco);
-    fetchAllEvents(bco);
+  google.script.url.getLocation(function (loc) {
+    if (loc.parameter.instance && loc.parameter.sysoverride === 'admin') {
+      instance = loc.parameter.instance;
+      fetchAllEvents(instance);
+    } else {
+      var withSuccess = google.script.run.withSuccessHandler(function (instance) {
+        fetchAllEvents(instance);
+      });
+      var withFailure = withSuccess.withFailureHandler(function (error) {
+        console.log(error);
+      });
+      withFailure.getUserPermissions();
+    }
   });
-  var withFailure = withSuccess.withFailureHandler(function (error) {
-    console.log(error);
-  });
-  withFailure.getUserPermissions(); // google.script.url.getLocation(function(loc) {
-  //   instance = loc.parameter.instance;
-  //   if (!instance) {
-  //     document.getElementById("main-spinner").innerHTML = "Bad URL";
-  //     return;
-  //   } else {
-  //     fetchAllEvents(instance);
-  //   }
-  // });
 }
 
 function fetchAllEvents(instances) {
   var withSuccess = google.script.run.withSuccessHandler(renderEvents);
   var withFailure = withSuccess.withFailureHandler(function (error) {
     console.log("error handler for fetchParticipantDetails message: " + error);
-    document.getElementById("main-spinner").innerHTML = "Something went wrong. Are you logged into a Google Strongschools account with permission to access the dashboard?";
+    document.getElementById("main-spinner").innerHTML = "Something went wrong Are you logged into a Google Strongschools account with permission to access the dashboard?";
   });
   withFailure.getAllEvents(instances);
 }

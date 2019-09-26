@@ -31,6 +31,6 @@ function getUserPermissions() {
   const userPermissions = new Spreadsheet('1gnL2-wUXBJuGdh8wv1QhQyKsU8Jit4cO7_4m-FYlFDo', ['admin_portal']).data.admin_portal;
    // a list of the borough offices that the user has permission to view
    return userPermissions.filter(user => {
-     return user[0] === userMail ? user : false;
+     return user[0].toLowerCase() === userMail.toLowerCase() ? user : false;
    });
 }
