@@ -18,7 +18,8 @@ function getLoadState() {
       instance = loc.parameter.instance;
       fetchAllEvents(instance);
     } else {
-      const withSuccess = google.script.run.withSuccessHandler(function(instance) {
+      const withSuccess = google.script.run.withSuccessHandler(function(userInstance) {
+        instance = userInstance;
         fetchAllEvents(instance);
       })
       const withFailure = withSuccess.withFailureHandler(function(error) {
