@@ -4,11 +4,9 @@ function createRegSs(events, instances, filters) {
   var dbnData = [["Event ID", "Event Title", "Sessions", "DBN", "Registered", "Attended Session 1", "Attended Session 2", "Attended Session 3", "Attended Session 4", "Attended Session 5", "Attended Session 6", "Attended Session 7", "Attended Session 8", "Attended Session 9", "Attended Session 10", "Attended Session 11"]];
   var newSs = SpreadsheetApp.openById(DriveApp.getFileById("11DH-IOs0mU0fVanEInBqQlnceJZDegcxGFEzQkr-QD8").makeCopy("Registrant info Report on " + new Date()).setSharing(DriveApp.Access.DOMAIN_WITH_LINK, DriveApp.Permission.EDIT).getId());
 
-  for (var x = 0; x < instances.length; x++) {
-    var prefix = boMap[instances[x]].prefix;
     events.forEach(function (event, index) {
       var eventRow = [];
-      eventRow.push(instances[x], event.id, event.title, event.description, event["public"], event.max_regs, event.facilitators, event.audience, event.grade, event.division, event.content, event.times, event.location, event.ctle_eligible, event.funding, event.resource_folder, event.districts, event.support_type, event.feedback, event.duration, event.countDates, event.attendanceInfo.registered, event.attendanceInfo.regRate, event.attendanceInfo.attended1day, event.attendanceInfo.sessions_attended, event.attendanceInfo.attendanceRate || "NULL", event.attendanceInfo.attendanceTrackRate || "NULL");
+      eventRow.push(event.instance, event.id, event.title, event.description, event["public"], event.max_regs, event.facilitators, event.audience, event.grade, event.division, event.content, event.times, event.location, event.ctle_eligible, event.funding, event.resource_folder, event.districts, event.support_type, event.feedback, event.duration, event.countDates, event.attendanceInfo.registered, event.attendanceInfo.regRate, event.attendanceInfo.attended1day, event.attendanceInfo.sessions_attended, event.attendanceInfo.attendanceRate || "NULL", event.attendanceInfo.attendanceTrackRate || "NULL");
       eventsData.push(eventRow);
       if (!event.attendanceInfo.dbns) return;
       event.attendanceInfo.dbns.forEach(function (dbn) {
@@ -30,7 +28,6 @@ function createRegSs(events, instances, filters) {
         dbnData.push(dbnRow);
       });
     });
-  }
 
   newSs.getSheets()[0].setName("Registrants").getRange(1, 1, dbnData.length, dbnData[0].length).setValues(dbnData);
   newSs.insertSheet("Events", 1).getRange(1, 1, eventsData.length, eventsData[0].length).setValues(eventsData);
