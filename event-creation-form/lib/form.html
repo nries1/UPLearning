@@ -107,7 +107,44 @@
       </select>
     </div>
     <div class='form-group section'>
-      <label class='label' for='support'>Type of Support<span class="required"> *</span></label>
+      <label class='label' for='support'>Type of Support<span class="required"> *</span></label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Types of Support" data-content=
+      "OFF-SITE INFORMATIONAL 
+      <br/>
+      (No 'Turn-Key' Expectations)
+      <br/>
+      The purpose of this support is to educate about new or revised policies, procedures, curricula, and guidance from Central divisions for school personnel. There is no expectation for participants to turnkey the skills or content learned within their respective schools.
+      <br/>
+      <br/>
+      OFF-SITE TURNKEY
+      <br/>
+      Turnkey professional learning focuses on the development of content, skills and best practices on a given subject over the course of one or multiple sessions. Participants receive the resources and support to effectively turn-key these ideas, practices and skills back in their schools.
+      <br/>
+      <br/>
+      SCHOOL-BASED INFORMATIONAL
+      <br/>
+      This support is intended to build capacity within a single school through intensive support for administrators and/or teachers that involves several touch-points over a number of weeks. These job-embedded supports are focused around specific problems of practice.
+      <br/>
+      <br/>
+      SCHOOL-BASED TARGETED COACHING OR SUPPORT
+      <br/>
+      This support is intended to build capacity within a single school through intensive support for administrators and/or teachers that involves several touch-points over a number of weeks. These job-embedded supports are focused around specific problems of practice.
+      <br/>
+      <br/>
+      INTER-SCHOOL SUPPORT
+      <br/>
+      Inter-school support provides an opportunity to highlight strong practices or allow for support around a problem of practice through inter-school visits, instructional rounds, and/or other types of partnering between schools. The intention of these supports is to share techniques among and between schools that further schools’ capacity to implement best practices in a particular area.
+      <br/>
+      <br/>
+      ONE-ON-ONE SUPPORT
+      <br/>
+      OFDC and B/CO staff also offer one-on-one, individualized support both electronically and in-person to individually discuss clarifying guidance, policy, strategies, and process.
+      <br/>
+      <br/>
+      WEB-BASED TRAINING
+      <br/>
+      Select this option for trainings that include webinar or online instructional components."
+      data-html="true"
+      data-placement="bottom">?</a>
       <select class='form-control' id='support' name='support' multiple required>
         <option value='Off-Site Informational Sessions (No Turnkey expectations)'>Off-Site Informational Sessions (No 'Turnkey' expectations)</option>
         <option value='Off-Site Turn-Key Professional Learning'>Off-Site Turn-Key Professional Learning</option>
@@ -120,11 +157,33 @@
     </div>
     <div class="form-group">
       <label class='label' for="title">Event Title <span class="required">*</span></label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Title" data-content="Enter the title for your Professional Learning opportunity. The title should be clear and concise. Do not include any carriage returns or line breaks.
-      Similar events serving different cohorts of participants must include distinguishing information in each title.">?</a>
+      <br/>
+      <br/>
+      Similar events serving different cohorts of participants (see above) must include distinguishing information in each title. This will help avoid duplicative and confusing titles for end users. Wherever possible, use standardized formatting for such items (see Appendix C of Facilitator Guide) For example: 
+      <br/>
+      <br/>
+      GOOD >> Spring 2019 Programming Bootcamp  
+      <br/>
+      <br/>
+      GREAT! >> STARS Open Lab [09-18-2019 Morning]
+      <br/>
+      <br/>
+      GREAT! >> [K-5] Therapeutic Crisis Intervention Strategies
+      <br/>
+      <br/>
+      OK >> 11/19 Programming Bootcamp  ← date format may be confusing
+      <br/>
+      <br/>
+      OK if... >> Programming Bootcamp  ← ok if only one such event / series w/in your B/CO
+      <br/>
+      <br/>
+      OK >> Programming Bootcamp for Elementary Grades ← clear, but standardized approach is preferred"
+      data-html="true"
+      data-placement="bottom">?</a>
       <textarea class="form-control" placeholder="Event Title" id="title" name="title" onchange="updateNotify(this)" required></textarea>
     </div>
     <div class="form-group">
-        <label class='label' for="description">Event Description <span class="required">*</span></label>
+        <label class='label' for="description">Event Description <span class="required">*</span></label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Event Description" data-content="Briefly describe this event or PL, including an overview of activities and objectives using only plain text and line breaks. Formatting such as bullets, bold, and underlining, etc. cannot be entered here, nor can HTML markup. The description shows on the event flier, event catalog, event web page, as well as in confirmations and reminder emails sent to participants.">?</a>
         <textarea class="form-control" placeholder="Event description" id="description" name="description" required></textarea>
     </div>
     <div class="form-group">
@@ -132,7 +191,9 @@
         <textarea class="form-control" placeholder="e.g. bring laptops, parking is difficult, lunch will be provided" id="other_info" name="other_info" onchange="updateNotify(this)"></textarea>
     </div>
     <div class="form-group">
-        <label class='label' for="division">Division or Functional Area <span class="required">*</span></label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Division" data-content="Choose the most applicable option; you may select only one. For multi-divisional collaborations, please choose one functional area to list in this field and utilize the content area check boxes (below), as well as the event description fields to reflect the different divisions/content areas being covered. This field is utilized as one of the filter options in the public-facing catalog.">?</a>
+        <label class='label' for="division">Division or Functional Area <span class="required">*</span></label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Division or Functional Area" data-content="Choose the most applicable option; you may select only one. For multi-divisional collaborations, please choose one functional area to list in this field and utilize the content area check boxes (below), as well as the event description fields to reflect the different divisions/content areas being covered. This field is utilized as one of the filter options in the public-facing catalog.
+        
+        Options are aligned to the functional areas within a BCO. Central users should choose the option most closely aligned to their respective workflows.">?</a>
         <select class="form-control" placeholder="Event description" id="division" name="division" required>
             <option value="">None Selected</option>
             <option value="Academic Policy, Systems, Performance, and Assessment">Academic Policy, Systems, Performance, and Assessment</option>
@@ -151,7 +212,7 @@
         </select>
     </div>
     <div class='section container-fluid'>
-    <div class='label' style='margin-bottom: 25px;'>Select up to 3 Content Areas <span class="required">*</span></div>
+    <div class='label' style='margin-bottom: 25px;'>Select up to 3 Content Areas <span class="required">*</span><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Content Area Tags" data-content="Choose up to 3 content areas that are most applicable. For multi-divisional collaborations, utilize the check boxes to reflect the different divisions/content areas being covered. This field is utilized as one of the filter options in the public-facing catalog. Note that selecting an item within a content area grouping tags this PL with both the header of that area (content area) and the selected tag (content sub-area). ">?</a></div>
       <div class='content-row row'>
           <div class='content-category col-12 col-md-6 col-lg-4 col-xl-4'>
           <div class='content-header'><span class="content-header-text">Instructional Leadership Framework</span></div>
@@ -356,9 +417,11 @@
     </div>
   </div>
   <div id='all-sessions-container' class='section'>
-    <div class='label'>Enter Dates, Times and Locations for Each Session<span class='required'>*</span></div>
+    <div class='label'>Enter Dates, Times and Locations for Each Session<span class='required'>*</span><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Dates, Times, and Locations" data-content="Choose a start time, an end time, a location, and a date. Locations are pre-populated based on what you type. If a specific location is not populating, you can type it into the box. Please enter a full and complete address, including city and zip code (87 characters max). You may choose to add up to 11 sessions. Use the + / - signs to toggle the number of sessions. The location and time entered in the first session will be copied to each added session. While the location can vary for each date, the time must stay the same for all sessions.">?</a></div>
     <div id="total_sessions">Total Sessions: <span id='count_dates'>1</span></div>
-    <div id='add-remove-sessions'><span style='margin-right: 25px;'>Add / Remove Session </span><button type='button' style='margin-right: 15px;' class='btn btn-outline-secondary btn-sm' onclick="addSession(document.getElementById('all-sessions-container'), document.getElementById('count_dates'), document.getElementById('start-time1').value, document.getElementById('end-time1').value, document.getElementById('location').value)">+</button><button type='button' class='btn btn-outline-secondary btn-sm' onclick='removeSession(document.getElementById("all-sessions-container"), document.getElementById("count_dates"))'>&minus;</button></div>
+    <div id='add-remove-sessions'><span style='margin-right: 25px;'>Add / Remove Session </span><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Multiple Sessions Limitations" data-content="UP Learning offers a maximum of 11 sessions for each event. Some series may require additional sessions. Facilitators are advised to break such series into 2 events, and include a marker in the title of each to differentiate. 
+      
+      For example, If I you expect 'In-School Support for PS 001' to occur across 16 sessions, consider re-titling your event 'In-School Support for PS 001 (Sessions 1-8)'. You can then duplicate this event with one click from the facilitator dashboard and update the title and dates to create 'In-School Support for PS 001 (Sessions 9-16)'.">?</a><button type='button' style='margin-right: 15px;' class='btn btn-outline-secondary btn-sm' onclick="addSession(document.getElementById('all-sessions-container'), document.getElementById('count_dates'), document.getElementById('start-time1').value, document.getElementById('end-time1').value, document.getElementById('location').value)">+</button><button type='button' class='btn btn-outline-secondary btn-sm' onclick='removeSession(document.getElementById("all-sessions-container"), document.getElementById("count_dates"))'>&minus;</button></div>
     <div class='session-container'>
       <div class='session-number label'>Session 1</div>
       <div class="form-group session-info">
@@ -371,13 +434,15 @@
     </div>
   </div>
   <div class='form-group'>
-    <div class='label'>Do you want to display this event on the catalog?<span class="required"> *</span></div>
+    <div class='label'>Do you want to display this event on the catalog?<span class="required"> *</span><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Public or Private?" data-content="This question determines how your catalog is populated. For events that are invite-only, and for events that require supervisor approval prior to publishing, select 'No, keep this event private.' Once approved, events can be edited and published to the catalog by changing your response to this question.
+      
+      Note that facilitators will receive shareable links to their event page and registration form regardless of what is selected here. This selection only impacts whether a session can be found on the public-facing catalog.">?</a></div>
     <div class='form-check' style='margin-left: 25px;'><input class='form-check-input' id="public" type="radio" name="public" value="Yes, publish for registration" required checked><label for="public" class='form-check-label' required>Yes, publish for registration</label></div>
     <div class='form-check' style='margin-left: 25px;'><input class='form-check-input' id="public" type="radio" name="public" value="No, keep this event private"><label for="public" class='form-check-label'>No, keep this event private</label></div>
   </div>
   
   <div class='form-group section'>
-    <div class='label'>List your facilitators</div>
+    <div class='label'>List your facilitators <a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Listing Facilitators" data-content="While only one facilitator is required, you may list up to three. Only strongschools emails are permitted in the email field, as each event must have a B/CO employee listed as a facilitator. This field determines who will be listed on the event flyer, as well as who will have access to the event in the Facilitator Interfaces. For events co-facilitated by a vendor, please feel free to list them in the event description, while entering the B/CO contact in the facilitator fields. Please contact your data manager / system administrator if a strongschools account needs to be created.">?</a></div>
     <div class='form-group'>
       <label for='fac-1'>Facilitator 1<span class="required"> *</span></label>
       <input type="text" class="form-control" name="fac1" id="fac1" placeholder="Name" required>
@@ -395,12 +460,12 @@
       </div>
     </div>
   <div class='form-group section'>
-    <div class='label'>List anyone else who should be able to edit and manage this event</div>
+    <div class='label'>List anyone else who should be able to edit and manage this event<a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Additional Event Managers" data-content="In addition to the facilitators listed above, the event creator, as well as any persons listed below will have access to manage and edit this event. This may be helpful for situations where administrative support staff is tasked with entering attendance.">?</a></div>
     <input type="email" class="form-control" name="event-affiliate1" id="event-affiliate1" placeholder="Strongschools Email">
     <input type="email" class="form-control" name="event-affiliate2" id="event-affiliate2" placeholder="Strongschools Email">
   </div>
   <div class='form-group section'>
-    <label for='audience' class='label'>Target Audience<span class="required"> *</span></label>
+    <label for='audience' class='label'>Target Audience<span class="required"> *</span><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Target Audience for Reporting" data-content="Specify the audience categories that the event targets (i.e. Administrators, Teachers, etc). This field is used primarily for reporting purposes, and will not be displayed to end users.">?</a></label>
     <select id='audience' name='audience' class='form-control' multiple>
         <option value='APs'>APs</option>
         <option value='Coaches'>BCO Staff</option>
@@ -416,12 +481,12 @@
         <option value='Teachers'>Teachers</option>
     </select>
   <div class='form-group section'>
-      <label for='display_audience' class='label'>Audience for Display Purposes<span class="required"> *</span></label>
+      <label for='display_audience' class='label'>Audience for Display Purposes<span class="required"> *</span><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Target Audience for Display" data-content="While only one facilitator is required, you may list up to three. Only strongschools emails are permitted in the email field, as each event must have a B/CO employee listed as a facilitator. This field determines who will be listed on the event flyer, as well as who will have access to the event in the Facilitator Interfaces. For events co-facilitated by a vendor, please feel free to list them in the event description, while entering the B/CO contact in the facilitator fields.">?</a></label>
       <textarea class='form-control' name='display_audience' id='display_audience' placeholder='e.g. New Principals' maxlength="100"></textarea>
   </div>
   </div>
   <div class='form-group section'>
-    <div class='label'>Grade Level<span class="required"> *</span></div>
+    <div class='label'>Grade Level<span class="required"> *</span><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Banded Grade Levels" data-content="Select one grade band that the content for this event covers. This information will be utilized in the catalog filter to help participants find targeted PL sessions.">?</a></div>
     <div class='form-check' style='margin-left: 25px;'><input class='form-check-input' id="(PK-2)" type="radio" name="grade_level" value="(PK-2)" required><label for="(PK-2)" class='form-check-label' required>(PK-2)</label></div>
     <div class='form-check' style='margin-left: 25px;'><input class='form-check-input' id="(3-5)" type="radio" name="grade_level" value="(3-5)"><label for="(3-5)" class='form-check-label' required>(3-5)</label></div>
     <div class='form-check' style='margin-left: 25px;'><input class='form-check-input' id="(6-8)" type="radio" name="grade_level" value="(6-8)"><label for="(6-8)" class='form-check-label' required>(6-8)</label></div>
@@ -431,7 +496,19 @@
     <div class='form-check' style='margin-left: 25px;'><input class='form-check-input' id="(K-12)" type="radio" name="grade_level" value="(K-12)" checked><label for="(K-12)" class='form-check-label' required>(K-12)</label></div>
   </div>
   <div class='form-group section'>
-    <div class='label'>Select Target District(s)<span class="required"> *</span></div>
+    <div class='label'>Select Target District(s)<span class="required"> *</span><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Districts in UP Learning" data-content="Select the superintendencies that the event covers. Each option should be selected if the event is B/CO-wide. Note that High School superintendencies are referenced by their superintendent code:
+      HS01 - Queens North HS Districts
+      HS02 - Bronx HS Districts (8, 10, 11)
+      HS03 - CUNY & Urban Assembly
+      HS04 - Manhattan HS Districts
+      HS05 - Brooklyn North HS Districts
+      HS06 - Brooklyn South HS Districts
+      HS07 - New Visions
+      HS08 - Queens South HS Districts
+      HS09 - Bronx HS Districts (7, 9, 12)
+      HS10 - Transfer Schools
+      HS11 - District 79/ Adult & Continuing Ed
+      HS12 - Consortium, International & Outward Bound Schools">?</a></div>
       <div id="districts-container">
         <select class='form-control' name='districts' id='districts' multiple>
         <option value="01" id="01">01</option>
@@ -475,7 +552,7 @@
       </div>
   </div>
   <div class='form-group section'>
-    <div class='label'>Select the NYSED area of CTLE Eligibility<span class="required"> *</span></div>
+    <div class='label'>Select the NYSED area of CTLE Eligibility<span class="required"> *</span><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="CTLE Eligibility" data-content="This field denotes an event’s eligibility for Continuing Leader and Teacher Education (CTLE). Teachers and school leaders within New York State must accumulate a minimum of 100 hours of CTLE credit every five years in order to renew their teaching license. Courses eligible for CTLE are subject to rigorous eligibility standards. Kindly do not indicate CTLE eligibility unless all NYSED-articulated standards and documentation requirements are met. Documentation requirements include filing of event agenda, outcomes, and course materials, as well as the resume or CV of a qualified facilitator and detailed event attendance information. Please reference the OFDC CTLE Policy Guide for details, available at http://bit.ly/UPLearning-CTLE.">?</a></div>
     <div class='form-check' style='margin-left: 25px;'><input class='form-check-input' id="Content" type="radio" name="ctle" value="Content" required><label for='Content' class='form-check-label'>Content</label></div>
     <div class='form-check' style='margin-left: 25px;'><input class='form-check-input' id="Pedagogy" type="radio" name="ctle" value="Pedagogy"><label for='Pedagogy' class='form-check-label'>Pedagogy</label></div>
     <div class='form-check' style='margin-left: 25px;'><input class='form-check-input' id="Language Acquisition" type="radio" name="ctle" value="Language Acquisition"><label for='Language Acquisition' class='form-check-label'>Language Acquisition</label></div>
@@ -483,11 +560,13 @@
     <div class='form-check' style='margin-left: 25px;'><input class='form-check-input' id="ctle-non-eligible" type="radio" name="ctle" value="This offering is NOT CTLE eligible" checked><label for='ctle-non-eligible' class='form-check-label'>This offering is NOT CTLE eligible</label></div>
   </div>
   <div class='form-group section'>
-    <label class='label' id='max-label' for='max'>Maximum number of Participants (limit = 1000)<span class="required"> *</span></label>
+    <label class='label' id='max-label' for='max'>Maximum number of Participants (limit = 1000)<span class="required"> *</span><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Number of Participants" data-content="For In-School Targeted Support, this field is used to capture the expected number of participants. For all other types of support, please select the maximum number of registrants. This will cap registrations at the selected number. Once the maximum number of participants has been reached, the system will either cease accepting new registrants for this event OR open the waitlist for events in which a waitlist has been set up. This number does not cap the walk-ins, which are entered by the facilitator.">?</a></label>
     <input type='number' class='form-control' name='max' id='max' min='0' max='1000' required>
   </div>
   <div class='form-group section'>
-    <div class='label'>Do you want to make a waitlist available when your event reaches capacity?</div>
+    <div class='label'>Do you want to make a waitlist available when your event reaches capacity?<a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Waitlist" data-content="UP Learning allows facilitators to set up automatic waitlists once the registrations reach max capacity. If “Yes” is selected, the system sets up a waitlist, meaning that anyone who tries to register when an event reaches capacity will be able to ‘Join the Waitlist’ but will not be able to register. Upon completing the form, they will be notified that they have not been registered and have instead been added to a waitlist. Facilitators must register waitlisted individuals using the facilitator dashboard, as they will not be added automatically to the list of registrants. 
+
+      Note that UP Learning also has a feature that automatically waitlists would-be registrants from districts not belonging to the organizing BCO. Facilitators of these sessions have the option of accepting these individuals off of their waitlist, and are encouraged to do so, provided their participation does not prevent the participation of intended audience members.">?</a></div>
     <div class='form-check' style='margin-left: 25px;'><input class='form-check-input' onclick='document.getElementById("waitlist").style.display=""; document.getElementById("wl-size").required=true;' type="radio" name="waitlist" id="waitlist-yes" value="Yes" required><label for='waitlist-yes' class='form-check-label'>Yes</label></div>
     <div class='form-check' style='margin-left: 25px;'><input class='form-check-input' onclick='document.getElementById("wl-size").required=false; document.getElementById("waitlist").style.display="none";'  type="radio" name="waitlist" id="waitlist-no" value="No" checked><label for='waitlist-yes' class='form-check-label'>No</label></div>
   </div>
@@ -496,24 +575,26 @@
     <input type='number' class='form-control' name='wl-size' id='wl-size' min='0' max='500'>
   </div>
   <div class='form-group section'>
-    <div class='label'>How often do you want the system to request feedback fromy your participants?<span class="required"> *</span></div>
+    <div class='label'>How often do you want the system to request feedback fromy your participants?<span class="required"> *</span><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="In-System Feedback" data-content="Facilitators have the option of leveraging a common event feedback form (jump to feedback form), which will automatically be emailed to participants on the morning of their attended sessions. For events with more than one date, facilitators can decide whether they prefer feedback forms to be sent after (1) Every Session or (2) The Last Session Only. Facilitators selecting one of these options will be able to see the number of attendees who have completed feedback in the facilitator dashboard, and will also be able to view the anonymous feedback results.
+
+      Facilitators who choose not to use the common feedback form can select the third option (3) No In-System Feedback.">?</a></div>
     <div class='form-check' style='margin-left: 25px;'><input class='form-check-input' id="every-session" type="radio" name="feedback" value="every session" required><label for='every-session' class='form-check-label'>Every Session</label></div>
     <div class='form-check' style='margin-left: 25px;'><input class='form-check-input' id="last-session" type="radio" name="feedback" value="last session only" checked><label for='last-session' class='form-check-label'>Last Session Only</label></div>
     <div class='form-check' style='margin-left: 25px;'><input class='form-check-input' id="no-feedback" type="radio" name="feedback" value="no feedback"><label for='no-feedback' class='form-check-label'>No In-System Feedback</label></div>
   </div>
   <div class='form-group section'>
-    <label class='label' for='resource_folder'>Resource Folder for Participants</label>
+    <label class='label' for='resource_folder'>Resource Folder for Participants<a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Link to Folder or Agenda" data-content="Please enter a link to materials for participants. This can lead to a Google Drive or Sharepoint folder, or simply a link to an agenda. Facilitators of CTLE-eligible events are required to link course materials to their listed events.">?</a></label>
     <input type='text' class='form-control' placeholder="e.g: Google / OneDrive folder link">
   </div>
   <div class='form-group section'>
-    <div class='label'>What type of funding is available for this event?<span class="required"> *</span></div>
+    <div class='label'>What type of funding is available for this event?<span class="required"> *</span><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Funding for Events" data-content="Select whether or not the participants will be compensated for this session or the school will be eligible for per-diem reimbursement. You may be asked to confirm this as budgeting reports are run.">?</a></div>
     <div class='form-check' style='margin-left: 25px;'><input class='form-check-input' id="Per Diem" type="radio" name='funding' value='Per Diem' required><label for='Per Diem' class='form-check-label'>Per Diem</label></div>
     <div class='form-check' style='margin-left: 25px;'><input class='form-check-input' id="Per Session" type="radio" name='funding' value='Per Session'><label for='Per Session' class='form-check-label'>Per Session</label></div>
     <div class='form-check' style='margin-left: 25px;'><input class='form-check-input' id="Training Rate" type="radio" name='funding' value='Training Rate'><label for='Training Rate' class='form-check-label'>Training Rate</label></div>
     <div class='form-check' style='margin-left: 25px;'><input class='form-check-input' id="None" type="radio" name='funding' value='None' checked><label for='None' class='form-check-label'>None</label></div>
   </div>
   <div class='form-group section'>
-    <label for='framework' class='label'>Framwork for Great Schools Alignment</label>
+    <label for='framework' class='label'>Framwork for Great Schools Alignment<a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Framework Alignment" data-content="Select the components of the Framework for Great Schools that align directly with this event. This is not a required question, and may be left blank.">?</a></label>
     <div>
       <select id='framework' name='framework' multiple>
         <option value='Rigorous Instruction'>Rigorous Instruction</option>
@@ -525,7 +606,7 @@
     </div>
   </div>
   <div class='form-group section'>
-    <div class='label'>(If applicable) Which Guskey-related artifacts will you use to evaluate the impact of your PL?</div>
+    <div class='label'>(If applicable) Which Guskey-related artifacts will you use to evaluate the impact of your PL?<a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Evidencing the Impact of PL" data-content="Use this field only if you intend to collect evidence to evaluate the impact of your professional learning. Dr. Thomas R. Guskey is considered the foremost expert in evaluating the impact of adult learning in an educational setting. By selecting the artifacts we expect to use to evaluate our PL (only for select PL offerings), we can begin to study and discuss which methods of evaluating our efforts are effective and efficient, and whether our planned supports are achieving their expected outcomes.  For more information on Guskey’s critical levels of evaluation, visit http://bit.ly/nycdoe-guskey.">?</a></div>
     <div class='form-check' style='margin-left: 25px;'><input type="checkbox" class='form-check-input' name="guskey" value="I-End of PL Evaluation">I-End of PL Evaluation</div>
     <div class='form-check' style='margin-left: 25px;'><input type="checkbox" class='form-check-input' name="guskey" value="II-End of PL Evaluation">II-End of PL Evaluation</div>
     <div class='form-check' style='margin-left: 25px;'><input type="checkbox" class='form-check-input' name="guskey" value="III-Teacher Team documentation – agenda/minutes/notes">III-Teacher Team documentation – agenda/minutes/notes</div>
@@ -562,7 +643,7 @@
     <div class='form-check' style='margin-left: 25px;'><input type="checkbox" class='form-check-input' name="guskey" value="V-Attendance Data">V-Attendance Data</div>
   </div>
   <div class='form-group section'>
-    <label class='label' for='allow_non_doe'>Do you want to allow registrations from non-DOE staff?<span class="required"> *</span></label>
+    <label class='label' for='allow_non_doe'>Do you want to allow registrations from non-DOE staff?<span class="required"> *</span><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="" data-content="Please select 'No' for events designed for DOE personnel. Ensuring that DOE participants use their @schools.nyc.gov email address allows us to keep a transcript of training in which an individual has participated.">?</a></label>
     <select class='form-control' id='allow_non_doe' name='allow_non_doe' style='width: 100px;' required>
       <option value='no' selected>No</option>
       <option value='yes'>Yes</option>
