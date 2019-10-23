@@ -30,7 +30,7 @@
               <li class="list-group-item" id="Brooklyn North PL System" onclick='selectBco(this)'>Brooklyn North</li>
               <li class="list-group-item" id="Brooklyn South PL System" onclick='selectBco(this)'>Brooklyn South</li>
               <li class="list-group-item" id="Manhattan PL System" onclick='selectBco(this)'>Manhattan</li>
-              <li class="list-group-item" id="Central PL System" onclick='selectBco(this)'>OFDC</li>
+              <li class="list-group-item" id="Central PL System" onclick='selectBco(this)'>OFDC / Central</li>
               <li class="list-group-item" id="Queens North PL System" onclick='selectBco(this)'>Queens North</li>
               <li class="list-group-item" id="Queens South PL System" onclick='selectBco(this)'>Queens South</li>
               <li class="list-group-item" id="Staten Island PL System" onclick='selectBco(this)'>Staten Island</li>
@@ -102,20 +102,21 @@
   <div id="body-container">
       <div class="card" style="width: 85%; margin-bottom: 25px;">
       <div class="card-body">
-        <div style="display: flex; width: 100%;"><h5 style="font-weight: 700; width: 95%; text-align: center; margin-bottom: 12px;">Filters</h5><canvas onclick="toggleFilters(this)" id="filter-expander" style='width: 20px; height: 20px; border-right:2px solid black; border-bottom:2px solid black; transform: rotate(45deg)' data-expanded='false'></canvas></div>
+        <div style="display: flex; width: 100%;"><h5 style="font-weight: 700; width: 95%; text-align: center; margin-bottom: 12px;">Filters</h5>
+        <canvas onclick="toggleFilters(this)" id="filter-expander" style='width: 20px; height: 20px; border-right:2px solid black; border-bottom:2px solid black; transform: rotate(45deg)' data-expanded='false'></canvas></div>
         <form id="filters-container" style="display: none;">
           <div class="form-row">
             <div class="form-group col-md-4">
-              <label>Event Title</label>
+              <label>Event Title</label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Title" data-content="Enter the title of the Professional Learning opportunity you are looking for (can include keywords).">?</a>
               <input type="text" class="form-control" name="title" id="title" placeholder="Event Title" onkeyup="filterTable(this)">
             </div>
             <div class="form-group col-md-4">
-              <label for="division">Division</label>
+              <label for="division">Division</label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Division" data-content="Choose the most applicable option; you may select only one.">?</a>
               <select  class="form-control" name="division" id="division" onchange="filterTable(this)">
                 <option value="">All</option>
                 <option value="Academic Policy, Systems, Performance, and Assessment">APPA</option>
                 <option value="Data Managers">Data Managers</option>
-                <option value="ELL">ELL</option>
+                <option value="English Language Learners">ELL</option>
                 <option value="Finance">Finance</option>
                 <option value="Human Resources">Human Resources</option>
                 <option value="Instruction">Instruction</option>
@@ -126,7 +127,7 @@
               </select>
             </div>
             <div class="form-group col-md-4">
-              <label>Event ID</label>
+              <label>Event ID</label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Event ID" data-content="Reference number which has been provided by the event's facilitator.">?</a>
               <input type="text" class="form-control" name="id" id="id" placeholder="Event ID" onkeyup="filterTable(this)">              
             </div>            
           </div>
@@ -140,7 +141,7 @@
               </select>
             </div>
             <div class="form-group col-md-4">
-              <label>Content</label>
+              <label>Content</label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Content" data-content="Choose the most applicable option; you may select only one.">?</a>
               <input type="text" class="form-control" style="position: relative;" name="content" id="content" placeholder="Select a Content Area" onfocusout="setTimeout(function() {document.getElementById('content-list').style.display='none'},500)" onfocusin="document.getElementById('content-list').style.display=''" onkeyup="filterContentList(this)">  
               <ul class="list-group" id="content-list" style="display: none; position: absolute; z-index: 5; overflow-y: scroll; height: 350px; background-color: white;">
                 <li class="list-group-item" onclick="setContent(this)">Advanced Literacy:Placing Data at the Core</li>
@@ -231,14 +232,14 @@
               </select>
             </div>
             <div class="form-group col-md-4">
-              <label for="has_registrants">Has Registrants</label>
+              <label for="has_registrants">Has Registrants</label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Has Registrants" data-content="Select all events or only events with at least one person registered.">?</a>
               <select data-rendered="false" class="form-control" name="has_registrants" id="has_registrants" onchange="filterTable(this)" >
                 <option value="">All Events</option>
                 <option value="has_registrants">Events with Registrants</option>
               </select>
             </div>
             <div class="form-group col-md-4">
-              <label for="ctle_eligible">CTLE Eligibility</label>
+              <label for="ctle_eligible">CTLE Eligibility</label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="CTLE Eligibility" data-content="Select all events or events that are CTLE eligible or events that are not CTLE eligible.">?</a>
               <select data-rendered="false" class="form-control" name="ctle_eligible" id="ctle_eligible">
                 <option value="">All Events</option>
                 <option value="eligible">CTLE Eligible</option>
@@ -248,7 +249,7 @@
           </div>
           <div class="form-row">
             <div class="form-group col-md-4">
-              <label for="bco">Borough Office</label>
+              <label for="bco">Borough Office</label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Borough Office" data-content="Select the borough office(s) that are hosting the event(s).">?</a>
               <select multiple class="form-control" id="instance" onchange="filterTable(this)">
                 <option value="">All</option>
                 <option value="Affinity PL System">Affinity</option>
@@ -263,7 +264,7 @@
               </select>
             </div>
             <div class="form-group col-md-4">
-              <label for="support_type">Support Type</label>
+              <label for="support_type">Support Type</label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Support Type" data-content="Select the type of support that is provided during this professional learning.">?</a>
               <select class="form-control" id="support_type" onchange="filterTable(this)">
                 <option value="">All</option>
                 <option value="Off-Site Informational Sessions (No 'Turnkey' expectations)">Off-Site Informational Sessions (No 'Turnkey' expectations)</option>
@@ -275,7 +276,7 @@
               </select>
             </div>
             <div class="form-group col-md-4">
-              <label for="view">Funding</label>
+              <label for="view">Funding</label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Funding" data-content="Select to filter by the type of funding made available to participants / schools who participated in this event (as selected by the facilitator).">?</a>
               <select class="form-control" id="funding" onchange="filterTable(this)">
                 <option value="">All Events</option>
                 <option value="Funded">Funded Events</option>
@@ -285,7 +286,7 @@
           </div>
           <div class="form-row">
             <div class="form-group col-md-4">
-              <label for="audience">Target Audience</label><a tabindex="7" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Target Audience" data-content="Facilitators choose the target audience when they creaate their events.">?</a>
+              <label for="audience">Target Audience</label><a tabindex="7" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Target Audience" data-content="Facilitators choose the target audience when they create their events.">?</a>
               <select class="form-control" id="audience" onchange="filterTable(this)">
                 <option value="">All Audiences</option>
                 <option value="Coaches">Coaches</option>
@@ -300,7 +301,7 @@
               </select>
             </div>
             <div class="form-group col-md-4">
-              <label for="grade">Grade Level</label>
+              <label for="grade">Grade Level</label><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Grade Level" data-content="Select the grade levels that your intended audience supports.">?</a>
               <select class="form-control" id="grade" onchange="filterTable(this)">
                 <option value="">All Grades</option>
                 <option value="(PK-2)">(PK-2)</option>
@@ -321,7 +322,7 @@
           </div>
           <div class="form-row">
             <div class="form-group col-md-4">
-              <label for="date">Date</label>
+              <label for="date">Date</label><a tabindex="9" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Date" data-content="Select the date to view the professional learnings offered during that time.">?</a>
               <input type="date" class="form-control" name="date" id="date" oninput="filterTable(this)">
             </div>
           </div>
@@ -344,8 +345,8 @@
     </div>
     <div style="width: 100%; display: none; flex-direction: column; align-items: center; justify-content: space-around; margin-bottom: 25px;" id="data-summary">
       <div class="summary-row">
-        <div><span><b>Total Events: </b></span><span id="total-events">0</span></div>
-        <div><span><b>Registered Events: </b></span><span id="registered">0</span><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Registered Events" data-content="This is the total number of people who registered for the events listed on the screen">?</a></div>
+        <div><span><b>Total Events: </b></span><span id="total-events">0</span><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Total Events" data-content="This is the total number of created events listed on the screen.">?</a></div>
+        <div><span><b>Registered Events: </b></span><span id="registered">0</span><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Registered Events" data-content="This is the total number of people who registered for the events listed on the screen.">?</a></div>
         <div><span><b>Attended Events: </b></span><span id="attended">0</span><a tabindex="0" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Attended Events" data-content="An event is a planned professional learning offering that may contain up to 11 sessions. Events attended tells you how many registrants attended AT LEAST ONE session from one of the events listed below.">?</a></div>
         <div><span><b>Attendance Rate: </b></span><span id="attn-rate">...</span><a tabindex="10" class="filter-help" role="button" data-toggle="popover" data-trigger="focus" title="Attendance Rate" data-content="attendance rate = total sessions attended divided by total sessions hosted. Remember that events may have more than one session. So, if an event has 10 sessions and registrants only attend the first session, then the attendance rate would be 1/10 (10%). ">?</a></div>    
       </div>
