@@ -16,7 +16,6 @@
      .box {
        height: 200px;
        background-color: aqua;
-       margin: 10px;
      }
      .nav-link:hover {
        cursor: pointer;
@@ -80,9 +79,10 @@
                   <div id="modal-success" class="alert alert-success" role="alert" style="display: none;">Success!</div>
                   <div id="modal-failure" class="alert alert-danger" role="alert" style="display: none;">Failure!</div>
                   <div id="modal-body-msg" style="display: flex; flex-direction: column; align-items: center; width: 100%;">        
-                    <p><b>To get started, select the borough or citywide offices for which you want to view events</b></p>
+                    <p><b>To get started, select the borough or citywide offices for which you want to view events. Non-Affinity Transfer may select both ACCESS and their regional BCO.</b></p>
                     <select id='bco-select' class='form-control' multiple>
                         <option value="">All</option>
+                       <!-- <option value="ACCESS PL System">ACCESS (Non-Affinity Transfer HS, D79, D88)</option> -->
                         <option value="Affinity PL System">Affinity (Citywide)</option>
                         <option value="Bronx PL System">Bronx (Districts 7, 8, 9, 10, 11, 12)</option>
                         <option value="Brooklyn North PL System">Brooklyn North (Districts 13, 14, 15, 16, 19, 23, 32)</option>
@@ -129,6 +129,7 @@
                       <label for='bco-filter'>BCO</label>
                       <select id='bco-filter' name='borough_office' class='form-control'>
                         <option value="">Any</option>
+                        <option value="ACCESS PL System">ACCESS</option>
                         <option value="Affinity PL System">Affinity</option>
                         <option value="Bronx PL System">Bronx</option>
                         <option value="Brooklyn North PL System">Brooklyn North</option>

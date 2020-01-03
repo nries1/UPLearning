@@ -1,328 +1,330 @@
 <script>
-function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
-
-function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
-
-function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
-
-function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
-
-/* eslint-disable max-statements */
-window.addEventListener('load', function () {
-  // JQuery to add popover functionality
-  $(function () {
-    $('[data-toggle="popover"]').popover();
-  }); //prevent forms from loading a new page on submit
-
-  var forms = document.querySelectorAll('form');
-
-  for (var i = 0; i < forms.length; i++) {
-    forms[i].addEventListener('submit', function (event) {
-      event.preventDefault();
-    });
-  } // look for url parameters
-
-
-  google.script.url.getLocation(function (loc) {
-    if (loc.parameters.instance) {
-      fetchEvents(loc.parameters.instance);
-    } else {
-      // show the first modal box to allow users to select their Bco
-      $('#modal-vertical').modal({
-        show: true
+  function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }
+  
+  function _nonIterableSpread() { throw new TypeError("Invalid attempt to spread non-iterable instance"); }
+  
+  function _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter); }
+  
+  function _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }
+  
+  /* eslint-disable max-statements */
+  window.addEventListener('load', function () {
+    // JQuery to add popover functionality
+    $(function () {
+      $('[data-toggle="popover"]').popover();
+    }); //prevent forms from loading a new page on submit
+  
+    var forms = document.querySelectorAll('form');
+  
+    for (var i = 0; i < forms.length; i++) {
+      forms[i].addEventListener('submit', function (event) {
+        event.preventDefault();
       });
-    }
+    } // look for url parameters
+  
+  
+    google.script.url.getLocation(function (loc) {
+      if (loc.parameters.instance) {
+        fetchEvents(loc.parameters.instance);
+      } else {
+        // show the first modal box to allow users to select their Bco
+        $('#modal-vertical').modal({
+          show: true
+        });
+      }
+    });
   });
-});
-
-var getMultiSelectValues = function getMultiSelectValues(input) {
-  var options = _toConsumableArray(input.getElementsByTagName('OPTION'));
-
-  return options.reduce(function (values, option) {
-    if (option.selected) values.push(option.value);
-    return values;
-  }, []);
-};
-
-var clearFilters = function clearFilters() {
-  document.getElementById('quick-search').value = '';
-  var eventCards = document.getElementsByClassName('event-card');
-
-  for (var i = 0; i < eventCards.length; i++) {
-    eventCards[i].style.display = 'flex';
-  }
-  document.getElementById('total-events-badge').innerHTML = eventCards.length;
-}; // eslint-disable-next-line no-confusing-arrow
-
-
-var displayAfterWildcardFilter = function displayAfterWildcardFilter(event, filter) {
-  return event.indexOf(filter) === -1 ? 'none' : 'flex';
-};
-
-var displayAfterFilter = function displayAfterFilter(event, filterKey, filterValue) {
-  return event[filterKey].toString().toLowerCase().indexOf(filterValue.toString().toLowerCase()) === -1 ? 'none' : 'flex';
-};
-
-var filterEventsWithWildcard = function filterEventsWithWildcard(filter) {
-  var events = 0;
-
-  if (filter.wildcard === '') {
-    clearFilters();
-  } else {
-    var eventCards = document.getElementsByClassName('event-card');
-
-    for (var i = 0; i < eventCards.length; i++) {
-      var filteredDisplay = displayAfterWildcardFilter(eventCards[i].dataset.obj, filter.wildcard);
-      eventCards[i].style.display = filteredDisplay;
-      if (filteredDisplay === 'flex') events++;
-    }
-  }
-
-  document.getElementById('total-events-badge').innerHTML = events;
-};
-
-var displayAfterDateFilter = function displayAfterDateFilter(event, startDate, endDate) {
-  if (startDate === '') {
-    startDate = 0;
-  } else {
-    startDate = new Date(startDate).getTime();
-  }
-
-  if (endDate === '') {
-    endDate = Infinity;
-  } else {
-    endDate = new Date(endDate).getTime();
-  }
-
-  var dates = event.dates.split(',');
-  var firstDate = new Date(dates[0]).getTime();
-  var lastDate = new Date(dates[dates.length - 1]).getTime();
-  return firstDate >= startDate && lastDate <= endDate ? 'flex' : 'none';
-};
-
-var filterEvents = function filterEvents(filters) {
-  console.log('filters ', filters);
-  var displayedEvents = 0;
-  var eventCards = document.getElementsByClassName('event-card');
-  var filterKeys = Object.keys(filters);
-
-  var _loop = function _loop(i) {
-    var eventObj = JSON.parse(eventCards[i].dataset.obj);
-    var eventDisplay = filterKeys.reduce(function (display, filter) {
-      if (display === 'none') return display;
-      if (filter === 'end_date') return displayAfterDateFilter(eventObj, filters.start_date, filters.end_date);
-      if (filter === 'start_date' || filters[filter] === '') return display;
-      return displayAfterFilter(eventObj, filter, filters[filter]);
-    }, 'flex');
-    eventCards[i].style.display = eventDisplay;
-    if (eventDisplay === 'flex') displayedEvents++;
+  
+  var getMultiSelectValues = function getMultiSelectValues(input) {
+    var options = _toConsumableArray(input.getElementsByTagName('OPTION'));
+  
+    return options.reduce(function (values, option) {
+      if (option.selected) values.push(option.value);
+      return values;
+    }, []);
   };
-
-  for (var i = 0; i < eventCards.length; i++) {
-    _loop(i);
-  }
-
-  document.getElementById('total-events-badge').innerHTML = displayedEvents;
-};
-
-function FormObj(form) {
-  var elements = form.elements;
-
-  for (var i = 0; i < elements.length; i++) {
-    if (elements[i].name !== '') {
-      this[elements[i].name] = elements[i].value;
+  
+  var clearFilters = function clearFilters() {
+    document.getElementById('quick-search').value = '';
+    var eventCards = document.getElementsByClassName('event-card');
+  
+    for (var i = 0; i < eventCards.length; i++) {
+      eventCards[i].style.display = 'flex';
     }
-  }
-}
-
-var fetchEvents = function fetchEvents(instances) {
-  if (instances.length === 0) return;
-  console.log("fetching event data for ".concat(instances));
-  console.log("".concat(instances.length, " instances"));
-
-  if (instances[0] === '') {
-    instances = ['Affinity PL System', 'Brooklyn South PL System', 'Brooklyn North PL System', 'Central PL System', 'Bronx PL System', 'Manhattan PL System', 'Queens North PL System', 'Queens South PL System', 'Staten Island PL System'];
-  }
-
-  document.getElementById('main-spinner').style.display = '';
-  document.getElementById('main-spinner-msg').innerHTML = 'Loading Events...';
-  document.getElementById('event-container').innerHTML = '';
-  var withSuccess = google.script.run.withSuccessHandler(renderEvents);
-  var withFailure = withSuccess.withFailureHandler(function (error) {
-    console.log(error);
-  });
-  withFailure.getEvents(instances);
-};
-
-var renderEvents = function renderEvents(eventData) {
-  document.getElementById('main-spinner').style.display = 'none';
-  var parent = document.getElementById('event-container');
-  parent.innerHTML = '';
-
-  for (var i = 0; i < eventData.length; i++) {
-    var event = JSON.parse(eventData[i]);
-    parent.appendChild(eventCard(event));
-  }
-
-  document.getElementById('total-events-badge').innerHTML = eventData.length;
-};
-
-var eventCard = function eventCard(data) {
-  //card container
-  var container = htmlElement({
-    className: 'card col-12 col-xl-5 event-card',
-    'data-obj': JSON.stringify(data)
-  });
-  var header = htmlElement({
-    className: 'card-header'
-  });
-  var headerContentContainer = htmlElement({
-    className: 'header-content-container'
-  });
-  headerContentContainer.appendChild(htmlElement({
-    innerHTML: data.borough_office.replace(/ PL System/, '')
-  }));
-  headerContentContainer.appendChild(htmlElement({
-    innerHTML: "Division of ".concat(data.division)
-  })); //evnet card header
-
-  var headerButtonsContainer = htmlElement({
-    className: 'header-buttons-conainer'
-  });
-  headerButtonsContainer.appendChild(htmlElement({
-    tag: 'A',
-    className: 'btn btn-outline-primary btn-sm',
-    innerHTML: 'More Info',
-    href: data.event_page
-  }));
-  headerButtonsContainer.appendChild(htmlElement({
-    tag: 'A',
-    className: 'btn btn-primary btn-sm',
-    innerHTML: 'Register',
-    href: data.reg_url
-  }));
-  header.appendChild(headerContentContainer);
-  header.appendChild(headerButtonsContainer);
-  container.appendChild(header); //card body
-
-  var body = htmlElement({
-    className: 'card-body'
-  });
-  body.appendChild(htmlElement({
-    tag: 'H5',
-    className: 'card-title',
-    innerHTML: data.title
-  })); //Event date, time, location, grade, audience
-
-  var eventDetailsContainer = htmlElement({
-    className: 'event-details-container'
-  });
-  var datesContainer = htmlElement({
-    className: 'event-sub-details-container'
-  });
-  datesContainer.appendChild(htmlElement({
-    className: 'event-detail-icon',
-    innerHTML: '<i class="material-icons">calendar_today</i>'
-  }));
-
-  if (data.dates.indexOf(',') === -1) {
-    datesContainer.appendChild(htmlElement({
-      innerHTML: new Date(data.dates).toString().slice(0, 15)
-    }));
-  } else {
-    datesContainer.appendChild(htmlElement({
-      innerHTML: data.dates
-    }));
-  }
-
-  eventDetailsContainer.appendChild(datesContainer);
-  var locationContainer = htmlElement({
-    className: 'event-sub-details-container'
-  });
-  locationContainer.appendChild(htmlElement({
-    className: 'event-detail-icon',
-    innerHTML: '<i class="material-icons">location_city</i>'
-  }));
-  locationContainer.appendChild(htmlElement({
-    innerHTML: data.location
-  }));
-  eventDetailsContainer.appendChild(locationContainer);
-  var timesContainer = htmlElement({
-    className: 'event-sub-details-container'
-  });
-  timesContainer.appendChild(htmlElement({
-    className: 'event-detail-icon',
-    innerHTML: '<i class="material-icons">access_time</i>'
-  }));
-  timesContainer.appendChild(htmlElement({
-    innerHTML: data.times
-  }));
-  eventDetailsContainer.appendChild(timesContainer);
-  var gradeContainer = htmlElement({
-    className: 'event-sub-details-container'
-  });
-  gradeContainer.appendChild(htmlElement({
-    className: 'event-detail-icon',
-    innerHTML: '<i class="material-icons">school</i>'
-  }));
-  gradeContainer.appendChild(htmlElement({
-    innerHTML: data.grade_level
-  }));
-  eventDetailsContainer.appendChild(gradeContainer);
-  var audienceContainer = htmlElement({
-    className: 'event-sub-details-container'
-  });
-  audienceContainer.appendChild(htmlElement({
-    className: 'event-detail-icon',
-    innerHTML: '<i class="material-icons">people_outline</i>'
-  }));
-  audienceContainer.appendChild(htmlElement({
-    innerHTML: data.display_audience
-  }));
-  eventDetailsContainer.appendChild(audienceContainer); //Event Description
-
-  var eventDescriptionContainer = htmlElement({
-    className: 'event-description-container'
-  });
-  eventDescriptionContainer.appendChild(htmlElement({
-    innerHTML: '<b>About this event:</b>'
-  }));
-  eventDescriptionContainer.appendChild(htmlElement({
-    className: 'event-description',
-    innerHTML: data.description
-  }));
-  body.appendChild(eventDetailsContainer);
-  body.appendChild(eventDescriptionContainer);
-  container.appendChild(body);
-  return container;
-};
-
-function htmlElement(obj, parent) {
-  if (obj.tag) {
-    var element = document.createElement(obj.tag);
-  } else {
-    var element = document.createElement("DIV");
-  }
-
-  var keys = Object.keys(obj);
-  keys.forEach(function (key) {
-    if (key === "tag") {
-      return;
-    }
-
-    if (key.indexOf("data-") !== -1) {
-      element.setAttribute(key, obj[key]);
-    } else if (key === "eventListener") {
-      element.addEventListener(obj[key].event, obj[key]["function"]);
+    document.getElementById('total-events-badge').innerHTML = eventCards.length;
+  }; // eslint-disable-next-line no-confusing-arrow
+  
+  
+  var displayAfterWildcardFilter = function displayAfterWildcardFilter(event, filter) {
+    return event.toLowerCase().indexOf(filter.toLowerCase()) === -1 ? 'none' : 'flex';
+  };
+  
+  var displayAfterFilter = function displayAfterFilter(event, filterKey, filterValue) {
+    return event[filterKey].toString().toLowerCase().indexOf(filterValue.toString().toLowerCase()) === -1 ? 'none' : 'flex';
+  };
+  
+  var filterEventsWithWildcard = function filterEventsWithWildcard(filter) {
+    var events = 0;
+  
+    if (filter.wildcard === '') {
+      clearFilters();
     } else {
-      element[key] = obj[key];
+      var eventCards = document.getElementsByClassName('event-card');
+  
+      for (var i = 0; i < eventCards.length; i++) {
+        var filteredDisplay = displayAfterWildcardFilter(eventCards[i].dataset.obj, filter.wildcard);
+        eventCards[i].style.display = filteredDisplay;
+        if (filteredDisplay === 'flex') events++;
+      }
     }
-  });
-
-  if (parent) {
-    parent.appendChild(element);
-  } else {
-    return element;
+  
+    document.getElementById('total-events-badge').innerHTML = events;
+  };
+  
+  
+  var displayAfterDateFilter = function displayAfterDateFilter(event, startDate, endDate) {
+    if (startDate === '') {
+      startDate = 0;
+    } else {
+      startDate = new Date(startDate).getTime();
+    }
+  
+    if (endDate === '') {
+      endDate = Infinity;
+    } else {
+      endDate = new Date(endDate).getTime() + 5*60*60*1000;
+    }
+    var dates = event.dates.split(',');
+    for (let i = 1; i < dates.length; i++) {
+      let thisDate = new Date(dates[i]).getTime();
+      if (thisDate >= startDate && thisDate <= endDate) return 'flex';
+    }
+    return 'none';
+  };
+  
+  var filterEvents = function filterEvents(filters) {
+    console.log('filters ', filters);
+    var displayedEvents = 0;
+    var eventCards = document.getElementsByClassName('event-card');
+    var filterKeys = Object.keys(filters);
+  
+    var _loop = function _loop(i) {
+      var eventObj = JSON.parse(eventCards[i].dataset.obj);
+      var eventDisplay = filterKeys.reduce(function (display, filter) {
+        if (display === 'none') return display;
+        if (filter === 'end_date') return displayAfterDateFilter(eventObj, filters.start_date, filters.end_date);
+        if (filter === 'start_date' || filters[filter] === '') return display;
+        return displayAfterFilter(eventObj, filter, filters[filter]);
+      }, 'flex');
+      eventCards[i].style.display = eventDisplay;
+      if (eventDisplay === 'flex') displayedEvents++;
+    };
+  
+    for (var i = 0; i < eventCards.length; i++) {
+      _loop(i);
+    }
+  
+    document.getElementById('total-events-badge').innerHTML = displayedEvents;
+  };
+  
+  function FormObj(form) {
+    var elements = form.elements;
+  
+    for (var i = 0; i < elements.length; i++) {
+      if (elements[i].name !== '') {
+        this[elements[i].name] = elements[i].value;
+      }
+    }
   }
-}
-</script>
+  
+  var fetchEvents = function fetchEvents(instances) {
+    if (instances.length === 0) return;
+    console.log("fetching event data for ".concat(instances));
+    console.log("".concat(instances.length, " instances"));
+  
+    if (instances[0] === '') {
+      instances = ['ACCESS PL System', 'Affinity PL System', 'Brooklyn South PL System', 'Brooklyn North PL System', 'Central PL System', 'Bronx PL System', 'Manhattan PL System', 'Queens North PL System', 'Queens South PL System', 'Staten Island PL System'];
+    }
+  
+    document.getElementById('main-spinner').style.display = '';
+    document.getElementById('main-spinner-msg').innerHTML = 'Loading Events...';
+    document.getElementById('event-container').innerHTML = '';
+    var withSuccess = google.script.run.withSuccessHandler(renderEvents);
+    var withFailure = withSuccess.withFailureHandler(function (error) {
+      console.log(error);
+    });
+    withFailure.getEvents(instances);
+  };
+  
+  var renderEvents = function renderEvents(eventData) {
+    document.getElementById('main-spinner').style.display = 'none';
+    var parent = document.getElementById('event-container');
+    parent.innerHTML = '';
+  
+    for (var i = 0; i < eventData.length; i++) {
+      var event = JSON.parse(eventData[i]);
+      parent.appendChild(eventCard(event));
+    }
+  
+    document.getElementById('total-events-badge').innerHTML = eventData.length;
+  };
+  
+  var eventCard = function eventCard(data) {
+    //card container
+    var container = htmlElement({
+      className: 'card col-12 col-xl-5 event-card',
+      'data-obj': JSON.stringify(data)
+    });
+    var header = htmlElement({
+      className: 'card-header'
+    });
+    var headerContentContainer = htmlElement({
+      className: 'header-content-container'
+    });
+    headerContentContainer.appendChild(htmlElement({
+      innerHTML: data.borough_office.replace(/ PL System/, '')
+    }));
+    headerContentContainer.appendChild(htmlElement({
+      innerHTML: "Division of ".concat(data.division)
+    })); //evnet card header
+  
+    var headerButtonsContainer = htmlElement({
+      className: 'header-buttons-conainer'
+    });
+    headerButtonsContainer.appendChild(htmlElement({
+      tag: 'A',
+      className: 'btn btn-outline-primary btn-sm',
+      innerHTML: 'More Info',
+      href: data.event_page
+    }));
+    headerButtonsContainer.appendChild(htmlElement({
+      tag: 'A',
+      className: 'btn btn-primary btn-sm',
+      innerHTML: 'Register',
+      href: data.reg_url
+    }));
+    header.appendChild(headerContentContainer);
+    header.appendChild(headerButtonsContainer);
+    container.appendChild(header); //card body
+  
+    var body = htmlElement({
+      className: 'card-body'
+    });
+    body.appendChild(htmlElement({
+      tag: 'H5',
+      className: 'card-title',
+      innerHTML: data.title
+    })); //Event date, time, location, grade, audience
+  
+    var eventDetailsContainer = htmlElement({
+      className: 'event-details-container'
+    });
+    var datesContainer = htmlElement({
+      className: 'event-sub-details-container'
+    });
+    datesContainer.appendChild(htmlElement({
+      className: 'event-detail-icon',
+      innerHTML: '<i class="material-icons">calendar_today</i>'
+    }));
+  
+    if (data.dates.indexOf(',') === -1) {
+      datesContainer.appendChild(htmlElement({
+        innerHTML: new Date(data.dates).toString().slice(0, 15)
+      }));
+    } else {
+      datesContainer.appendChild(htmlElement({
+        innerHTML: data.dates
+      }));
+    }
+  
+    eventDetailsContainer.appendChild(datesContainer);
+    var locationContainer = htmlElement({
+      className: 'event-sub-details-container'
+    });
+    locationContainer.appendChild(htmlElement({
+      className: 'event-detail-icon',
+      innerHTML: '<i class="material-icons">location_city</i>'
+    }));
+    locationContainer.appendChild(htmlElement({
+      innerHTML: data.location
+    }));
+    eventDetailsContainer.appendChild(locationContainer);
+    var timesContainer = htmlElement({
+      className: 'event-sub-details-container'
+    });
+    timesContainer.appendChild(htmlElement({
+      className: 'event-detail-icon',
+      innerHTML: '<i class="material-icons">access_time</i>'
+    }));
+    timesContainer.appendChild(htmlElement({
+      innerHTML: data.times
+    }));
+    eventDetailsContainer.appendChild(timesContainer);
+    var gradeContainer = htmlElement({
+      className: 'event-sub-details-container'
+    });
+    gradeContainer.appendChild(htmlElement({
+      className: 'event-detail-icon',
+      innerHTML: '<i class="material-icons">school</i>'
+    }));
+    gradeContainer.appendChild(htmlElement({
+      innerHTML: data.grade_level
+    }));
+    eventDetailsContainer.appendChild(gradeContainer);
+    var audienceContainer = htmlElement({
+      className: 'event-sub-details-container'
+    });
+    audienceContainer.appendChild(htmlElement({
+      className: 'event-detail-icon',
+      innerHTML: '<i class="material-icons">people_outline</i>'
+    }));
+    audienceContainer.appendChild(htmlElement({
+      innerHTML: data.display_audience
+    }));
+    eventDetailsContainer.appendChild(audienceContainer); //Event Description
+  
+    var eventDescriptionContainer = htmlElement({
+      className: 'event-description-container'
+    });
+    eventDescriptionContainer.appendChild(htmlElement({
+      innerHTML: '<b>About this event:</b>'
+    }));
+    eventDescriptionContainer.appendChild(htmlElement({
+      className: 'event-description',
+      innerHTML: data.description
+    }));
+    body.appendChild(eventDetailsContainer);
+    body.appendChild(eventDescriptionContainer);
+    container.appendChild(body);
+    return container;
+  };
+  
+  function htmlElement(obj, parent) {
+    if (obj.tag) {
+      var element = document.createElement(obj.tag);
+    } else {
+      var element = document.createElement("DIV");
+    }
+  
+    var keys = Object.keys(obj);
+    keys.forEach(function (key) {
+      if (key === "tag") {
+        return;
+      }
+  
+      if (key.indexOf("data-") !== -1) {
+        element.setAttribute(key, obj[key]);
+      } else if (key === "eventListener") {
+        element.addEventListener(obj[key].event, obj[key]["function"]);
+      } else {
+        element[key] = obj[key];
+      }
+    });
+  
+    if (parent) {
+      parent.appendChild(element);
+    } else {
+      return element;
+    }
+  }
+  </script>
