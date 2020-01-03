@@ -1,122 +1,323 @@
 <style>
-      body {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        align-content: center;
-      }
-      .navbar {
-        width: 100%;
-      }
-      form {
-        width: 80%;
-        margin-bottom: 30px;
-      }
-      .required {
-        color: red;
-      }
-      .form-check {
-        padding: 0px;
-      }
-      input[type=checkbox] {
-        margin-right: 2px;
-      }
-      .section {
-        margin: 30px 0px 30px 0px;
-      }
-      .divider {
-        width: 95%;
-        border: 1px solid;
-        margin: 10px 0px 10px 0px;
-      }
-      .label {
-        font-weight: 600;
-      }
-      #add-remove-sessions {
-        display: flex;
-        align-content: center;
-        align-items: center;
-        margin-bottom: 25px;
-      }
-      input[type=time], input[type=number] {
-        width: 135px;
-      }
-      input[type=date] {
-        width: 185px;
-      }
-      .location {
-        width: 270px;
-      }
-      #target_audience {
-        height: 320px;
-      }
-      .loc-list {
-  border: 1px solid black;
-  z-index: 5;
-  position: absolute;
-  height: 200px;
-  width: 350px;
-  overflow: scroll;
-  background-color: white;
-}
-.loc-select:hover {
-  cursor: pointer;
-  background-color: lightgray;
-}
-.content-header-text {
-  font-weight: 550;
-}
-.content-row {
-  margin-bottom: 20px;
-}
-.content-category {
-  margin-bottom: 15px;
-  border: 0.5px solid gainsboro;
-  border-radius: 5px;
-}
-.success-badge {
- margin-right: 15px;
- color: #28a745;
- width: 1em;
- height: 1em; 
-}
-.fail-badge {
- margin-right: 15px;
- color: #dc3545;
- width: 1em;
- height: 1em;
-}
-#confirmation-container {
+  body {
+    margin: 0;
+    height: 100%;
+    width: 100%;
+    font-family: Roboto;
     display: flex;
     flex-direction: column;
-    height: 400px;
+    align-items: center;
+    align-content: center;
+  }
+  #display {
+    width: 100%;
+    text-align:center;
+  }
+  form {
+    /*display: flex;*/
+    flex-direction: column;
+    width: 70%;
+    /*margin-left: 15%;*/
+    align-items: center;
+  }
+  #header {
+    display: flex;
+    width: 100%;
+    padding: 1%;
+    align-items: center;
+  }
+  #header-text {
+    width: 100%;
+    font-size: 2em;
+    text-align: center;
+  }
+  .logos {
+    width: 9.5%;
+    height: 5%;
+  }
+  select, textarea, fieldset {
+    border-radius: 8px;
+    margin-bottom: 1.5%;
+  }
+  input[type=email], input[type=number], input[type=time], input[type=date] {
+    height: 2em;
+    font-size: 1.25em;
+  }
+  select {
+    height: 2em;
+    width: 80%;
+    font-size: 1.1em;
+  }
+  input[type=radio], input[type=checkbox] {
+    height: 1.5em;
+    width: 1.5em;
+  }
+  legend {
+    text-align: center;
+    font-weight: 700;
+    margin-bottom: 10px;
+  }
+  .section {
+    margin-bottom: 50px;
+    font-size: 1.25em;
+  }
+  ::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: black;
+    font-weight: 500;
+    opacity: 1; /* Firefox */
+    text-align: center;
+  }
+  
+  :-ms-textarea-placeholder { /* Internet Explorer 10-11 */
+    color: black;
+    font-weight: 500;
+    text-align: center;
+  }
+  
+  ::-ms-textarea-placeholder { /* Microsoft Edge */
+    color: black;
+    font-weight: 500;
+    text-align: center;
+  }
+  #title {
+    width: 70%;
+    margin-left: 15%;
+  }
+  #description, #other-info {
+    height: 5em;
+    width: 70%;
+    margin-left: 15%;
+  }
+  #division {
+    width: 60%;
+    margin-left: 20%;
+  }
+  #content-area {
+   display: grid;
+   grid-template-columns: auto auto;
+   grid-gap: 5px;
+  }
+  #time-space1 {
+    width: 85%;
+    
+  }
+  .time-space {
+   text-align: center;
+   display: grid;
+   grid-template-columns: auto auto;
+   grid-gap: 5px;
+  }
+  .location {
+    width: 70%;
+    height: 3.5em;
+  }
+  #time-space-container {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+  }
+  #first-time-space-container {
+    display: flex;
+    width: 75%;
+    align-items: center;
+  }
+  /*
+  #location1-container {
+    grid-column: 1 / 3;
+  }*/
+  #add-session {
+    height: 25%;
+    width: 10%;
+  }
+  .field {
+   text-align: center;
+   position: relative;
+  }
+  #facilitators {
+    display: grid;
+    grid-template-columns: 100%;
+    text-align: center;
+  }
+  .email-placeholder {
+    font-size: 1rem;
+    height: 100%;
+    display: flex;
+    align-items: center;
+  }
+  .fac-email {
+    margin: 0;
+    font-size: 1rem;
+    text-align: right;
+    width: 54%;
+  }
+  .fac-input {
+    font-size: 1rem;
+    border-style: none;
+  }
+  .fac-email-container {
+    display: flex;
+    align-items: center;
+    align-content: center;
+    border-bottom: 1px solid;
+  }
+  .fac-input-container {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+  }
+  .fac-name {
+    border-bottom: 1px solid;
+    width: 44%;
+  }
+  #ctle-select {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
     justify-content: space-around;
+    /*display: grid;
+    grid-template-columns: auto auto;*/ 
+  }
+  #plus-symbol {
+          color: black;
+          border: 1px solid grey;
+          padding: 0;
+          width: 40px;
+          height: 40px;
+          background-color: white;
+          border-radius: 8px;
+          margin-left: 5px;
+          box-shadow: 2px 2px grey;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+  }
+  #plus-symbol:hover {
+    cursor: pointer;
+    background-color: rgb(239, 245, 255);
+  }
+  #plus-symbol:active {
+    box-shadow: 0px;
+  }
+  .custom-button {
+    width: 7em;
+    height: 5em;
+  }
+  .custom-button:hover {
+    cursor: pointer;
+  }
+  .long-response {
+    width: 80%;
+  }
+  
+  #progress-box {
+    flex-direction: column;
+    border: 1px solid black;
+    box-shadow: 3px 3px 3px;
+    width: 30%;
+    height: 175px;
+    text-align: center;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 10px 10px 10px;
+    background-color: white;
+  }
+  .progress-bit {
+    width: 10%;
+    height: 50%;
+    background-color: black;
+  }
+  #form-callback {
+    width: 100%;
+    text-align: center;
+  }
+  .required {
+    color: red;
+  }
+  .loc-list {
+    border: 1px solid black;
+    z-index: 5;
+    position: absolute;
+    height: 200px;
+    width: 350px;
+    overflow: scroll;
+    background-color: white;
+  }
+  .loc-select:hover {
+    cursor: pointer;
+    background-color: lightgray;
+  }
+  .loc-select {
+    font-size: 14px;
+  }
+  #notify {
+    flex-direction: column;
+    height: 150px;
+    justify-content: space-around;
+    align-items: center;
+    text-align: center;
+    border: 1px solid black;
     width: 50%;
-}
-.session-title-container {
-  display: flex;
-  align-items: center;
-  align-content: center;
-}
-.session-number {
-  margin-right: 9em;
-}
-.confirmation-sub-msg {
-  margin-left: 1.5em
-}
-.confirmation-sub-container {
-  display: flex;
-  align-content: center;
-  align-items: center;
-}
-#title-text-container {
-  display: flex;
-  align-items: center;
-}
-#title-text {
-  margin-right: 25px;
-}
-a:hover {
-  cursor: pointer;
-}
-</style>
+    margin-bottom: 3%;
+  }
+  #notify-buttons {
+   display: flex;
+   width: 50%;
+   justify-content: space-around;
+  }
+      .blue-button  {
+        /*background-color: rgba(50,50,50,1);*/
+        background-color: rgba(0,123,191,1);
+        box-shadow:  2px 2px grey;
+        color: rgba(255,255,255,1);
+        font-family: Lato, sans-serif;
+        text-decoration: none;
+        font-size: 12px;
+        padding: 5px;
+        border-color: none;
+        border-width: 0;
+        border-image: none;
+        border-style: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        width: 
+      }
+      
+      .blue-button:active:hover {
+        box-shadow:  0px 0px;
+      }
+      
+        
+        .blue-button:hover {
+          background-color: lightgrey;
+          cursor: pointer;
+        }
+  .delete-session {
+    position: absolute;
+    top: 10px;
+    left: 96%;
+    padding: 0px 4px 0px 4px;
+  }
+  .delete-session:hover {
+    cursor: pointer;
+    background-color: black;
+    color: white;
+  }
+  #audience {
+    display: flex;
+  }
+  #public-container,.audience-sub  {
+    display: flex;
+    flex-direction: column;
+  }
+  .audience-sub {
+    align-items: flex-start;
+    padding: 5px;
+  }
+  #guskey-section {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  </style>
