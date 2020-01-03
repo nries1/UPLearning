@@ -21,6 +21,7 @@ function activateEvent(eventid, instance) {
       event[0].pop();
       event[0].pop();
       archiveEventSheet.deleteRow(Number(i) + 1);
+      mainEventsSheet.appendRow(event[0]);
       break;
     }
   }
@@ -31,23 +32,8 @@ function activateEvent(eventid, instance) {
       registrants[registrants.length - 1].pop();
       registrants[registrants.length - 1].pop();
       archiveRegSheet.deleteRow(Number(j) + 1);
+      mainRegSheet.appendRow(registrants[registrants.length - 1]);
     }
-  }
-
-  try {
-    mainEventsSheet.appendRow(event[0]);
-    registrants.forEach(function (reg) {
-      mainRegSheet.appendRow(reg);
-    });
-  } catch (err) {
-    event[0].push('=COUNTIF(Registrants!S:S,AY' + Number(archiveEventSheet.getLastRow() + 1) + ')');
-    event[0].push(0);
-    archiveEventSheet.appendRow(event[0]);
-    registrants.forEach(function (reg) {
-      archiveRegSheet.appendRow(reg);
-    });
-    out.msg = err;
-    return out;
   }
 
   out.success = true;
