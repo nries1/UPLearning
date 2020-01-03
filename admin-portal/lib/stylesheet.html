@@ -1,135 +1,87 @@
 <style>
-    body {
-      font-size: 14px;
-      /*background-color: rgb(244, 244, 244);*/
-    }
-    .dropdown-item:hover {
-      cursor: pointer;
-    }
-    .btn:hover {
-      cursor: pointer;
-    }
-    canvas:hover {
-      cursor: pointer;
-    }
-    .list-group-item:hover {
-      cursor: pointer;
-    }
-
-      #body-container {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        font-family: Nunito, sans-seriff;
-        font-size: 16px;
-      }
-      
-      #event-details {
-        width: 100%;
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        font-size: 14px;
-      }
-      
-      
-      #focusElement {
-        width: 0px;
-        height: 0px;
-        display: inline;
-        opacity: 0;
-        border: 0.1px solid white;
-      }
-      
-   .list-group-item.active {
-      z-index: 2;
-      color: #fff;
-      background-color: #007bff;
-      border-color: #007bff;
-   }
-   .triangle-right {
-    color: lightgray;
-	width: 0;
-	height: 0;
-	border-top: 10px solid transparent;
-	border-left: 20px solid #555;
-	border-bottom: 10px solid transparent;
-   }
-   
-   .triangle-left {
-    color: lightgray;
-	width: 0;
-	height: 0;
-	border-top: 10px solid transparent;
-	border-right: 20px solid #555;
-	border-bottom: 10px solid transparent;
+.nav-link:hover {
+       cursor: pointer;
+     }
+.jumbotron {
+       padding: 0.5em;
+     }
+#bco-select {
+       height: 235px;
+     }
+.page-title {
+  font-size: 2em;
 }
-
-.triangle-right-active:hover {
-  cursor: pointer;
+.title-sub-text {
+  font-size: 1em;
 }
-
-.triangle-left-active:hover {
-  cursor: pointer;
-}
-
-.triangle-right-active{
-  color: grey;
-	width: 0;
-	height: 0;
-	border-top: 10px solid transparent;
-	border-left: 20px solid #555;
-	border-bottom: 10px solid transparent;
-}.triangle-left-active {
-  color: grey;
-	width: 0;
-	height: 0;
-	border-top: 10px solid transparent;
-	border-right: 20px solid #555;
-	border-bottom: 10px solid transparent;
-}
-
-.header{
-  font-weight: 700;
-}
-
-.displayed-attn-col {
-  border: 1px solid grey;
-  border-radius: 5px; 
-  padding: 5px; 
-}
-
-.overflow {
- display: none;
-}
-
-#dbn-list {
-  border: 1px solid black;
-  z-index: 5;
-  position: absolute;
-  top: 2em;
-  width: 100%;
-  background-color: white;
-  height: 200px;
-  overflow: scroll;
-}
-.dbn-select:hover {
-  cursor: pointer;
-  background-color: lightgray;
-}
-.filter-help {
-  margin-left: 15px;
-}
-.filter-help:hover {
-  cursor: pointer;
-}
-.summary-row {
-  width: 100%;
-  margin: 10px 0 10px 0;
+.card-header {
   display: flex;
-  justify-content: space-around;
+  justify-content: space-between;
   align-items: center;
 }
+.header-content-container {
+  display: flex;
+  flex-direction: column;
+}
+.header-buttons-conainer {
+  display: flex;
+  justify-content: space-around;
+  width: 175px;
+}
+.event-card {
+  margin-bottom: 25px;
+  margin-right: 25px;
+  padding: 0;
+}
+.event-details-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%
+}
+.event-sub-details-container {
+  display: flex;
+  width: 95%;
+  align-items: flex-start;
+}
+.event-detail-icon {
+  margin-right: 10px;
+}
+.event-description {
+  width: 100%;
+  height: 150px;
+  overflow: scroll;
+  padding: 8px 0px 5px 0px;
+}
+.event-description-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 95%;
+  margin-top: 15px;
+}
+.label {
+  font-weight: 600;
+}
+#quick-search {
+  border-right: none;
+}
+#quick-search-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding-right: 10px;
+    padding-left: 0;
+    border-left: none;
+    margin-right: 10px;
+}
+#cancel-quick-search {
+  font-weight: 600;
+}
+#cancel-quick-search:hover {
+  cursor: pointer;
+}
+#badge-container {
+  margin-bottom: 1rem;
+}
 </style>
-
-
