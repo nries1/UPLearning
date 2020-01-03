@@ -34,10 +34,10 @@ function getEventData(id,instance) {
       eventObj["fac1email"]=data[i][fac1EmailIndex];
       eventObj["display-times"] = data[i][timesIndex];
       eventObj["display-description"]=encodeURIComponent(data[i][descriptionIndex]).replace(/%23/g,"#").replace(/%20/g," ").replace(/%0A/g,"<br>").replace(/%22/g,'""').replace(/%2F/g,"/").replace(/%2C/g,",").replace(/%E2%80%99/g,"'").replace(/%3A/g,":").replace(/%3Cbr%3E/g,"<br>").replace(/%09/g," ")
-      .replace(/%3B/g,";").replace(/%E2%80%A2/g," - ").replace(/%E2%80%9C/g,'"').replace(/%E2%80%9D/g,'"').replace(/%EF%82%A0/g, " - ").replace(/%25/g,"%").replace(/%3F/g,"?").replace(/%40/g,"@");  
+      .replace(/%3B/g,";").replace(/%E2%80%A2/g," - ").replace(/%E2%80%9C/g,'"').replace(/%E2%80%9D/g,'"').replace(/%EF%82%A0/g, " - ").replace(/%25/g,"%").replace(/%3F/g,"?").replace(/%40/g,"@").replace(/%E2%80%93/g,' ');  
       if (data[i][otherInfoIndex]!=="") {
         eventObj["display-description"]+="<br><br><strong>Additional Info:</strong><br>"+encodeURIComponent(data[i][otherInfoIndex]).replace(/%23/g,"#").replace(/%20/g," ").replace(/%0A/g,"<br>").replace(/%22/g,'""').replace(/%2F/g,"/").replace(/%2C/g,",").replace(/%E2%80%99/g,"'").replace(/%3A/g,":").replace(/%3Cbr%3E/g,"<br>").replace(/%09/g," ")
-        .replace(/%3B/g,";").replace(/%E2%80%A2/g," - ").replace(/%E2%80%9C/g,'"').replace(/%E2%80%9D/g,'"').replace(/%EF%82%A0/g, " - ").replace(/%25/g,"%").replace(/%3F/g,"?").replace(/%40/g,"@");
+        .replace(/%3B/g,";").replace(/%E2%80%A2/g," - ").replace(/%E2%80%9C/g,'"').replace(/%E2%80%9D/g,'"').replace(/%EF%82%A0/g, " - ").replace(/%25/g,"%").replace(/%3F/g,"?").replace(/%40/g,"@").replace(/%E2%80%93/g,' ');
       }
       eventObj["id"]=id;
       eventObj["display-location"]=data[i][locationIndex];
