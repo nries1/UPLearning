@@ -1,367 +1,369 @@
 <script>
-window.addEventListener('load', getData);
-window.addEventListener('load', fetchDbns);
-window.addEventListener('load', preventFormSubmit);
-var reqParameters;
-var plNeedsForm = "https://docs.google.com/forms/d/e/1FAIpQLScwk8s4HqCRwYbaGUFz9SBcFhE1I3dv4Kys58jN3G2QtSB6VQ/viewform?usp=pp_url&entry.1010073282=email&entry.1031216330=role&entry.1795213153=yearsexp";
-//var eventParameters;
-//var regData;
-
-var dbns = [];
-var wildcards = ['AF-Affinity Citywide Office','BX-Bronx Borough Office','KN-Brooklyn North Borough Office','KS-Brooklyn South Borough Office','MN-Manhattan Borough Office','QN-Queens North Borough Office','QS-Queens South Borough Office','SI-Staten Island Borough Office','Central Office','District Office','Non DOE','Other'];
-
-      function fetchDbns() {
-      //support for Microsoft
-        var withSuccess = google.script.run.withSuccessHandler(function(msg) {
-          console.log("dbns = ",msg);
-          dbns = msg;
-        });
-        var withFailure = withSuccess.withFailureHandler(function(error) { console.log(error)});
-        withFailure.getDbns();
-      }
-
-function fetchEditData(id,instance) {
-  console.log("fetching edit data with id "+id);
-  var withSuccess = google.script.run.withSuccessHandler(editForm);
-  var withFailure = withSuccess.withFailureHandler(function(error) {console.log(error)});
-  withFailure.getEditData(id,instance);
-}
-
-      
-function editForm(participantInfo) {
- if (!participantInfo) {
-   item("event-title").innerHTML = "Unable to locate your registration.";
-   return;
- }
- console.log("participant info: \n",participantInfo);
- item("event-title").innerHTML = participantInfo.title;
- item('display').innerHTML = "You are editing this registration.";
- item('content-container').style.display = "flex";
- item("reg-form").style.display = "";
-  if (participantInfo.ctley) {item("section6").style.display = ""}
-  var keys = Object.keys(participantInfo);
-  keys.forEach(function(x) {
-    reqParameters[x]=participantInfo[x];
-    if (x==="comfort") {
-      var formComfortItems = document.getElementById("comfort").getElementsByTagName("option");
-      for (var k=0;k<formComfortItems.length;k++) {
-        if (formComfortItems[k].value===participantInfo[x]) {
-          formComfortItems[k].selected=true;
-        }
-      }
-    }
-    if (x==="sub" && participantInfo[x]!=="") {
-      var subjects  = participantInfo[x].split(",");
-      //var subjectFormItems = document.getElementsByName("subject");
-      var subjectFormItems = document.getElementById("subject").getElementsByTagName("option");
-      for (var i=0;i<subjectFormItems.length;i++) {
-        if (subjects.indexOf(subjectFormItems[i].value)!==-1) {
-          //subjectFormItems[i].checked=true;
-          subjectFormItems[i].selected=true;
-        }
-      }
-    }
-    if (item(x)) {
-        item(x).value = participantInfo[x];
-        if (x.indexOf("ctle")!==-1) {item(x).checked=true;}
-        if (x.indexOf("comf")!==-1) {item(x).checked=true;}
-    }
-  })
-};
-
-function listDbns(input) {
-  item("dbn-list").innerHTML = "";
-  item("dbn-list").style.display = "";
-    var newDiv;
-  dbns.all.forEach(function(dbn) {
-    //if (dbn.substring(0,input.length).toUpperCase()===input.trim().toUpperCase()) {
-    if (dbn.toUpperCase().indexOf(input.trim().toUpperCase())!==-1) {
-      newDiv = document.createElement("div");
-      newDiv.innerHTML = dbn;
-      newDiv.className="dbn-select";
-      newDiv.onmousedown = function() {
-        item("dbnin").value=dbn;
-        if (dbns[reqParameters.instance].indexOf(dbn) === -1 && reqParameters.instance !== 'Central PL System') {
-          item('dbn-warning').innerHTML = '*This DBN is not within the '+reqParameters.instance+'. You will be added to the waitlist.'
-        } else {
-          item('dbn-warning').innerHTML = '';
-        }
-      }
-      newDiv.onmouseup = function() {item("dbn-list").style.display = "none";}
-      item("dbn-list").appendChild(newDiv);
-    }
-  });
-  if (dbns[reqParameters.instance].indexOf(item('dbnin').value.toUpperCase()) === -1 && item('dbnin').value.length === 6 && reqParameters.instance !== 'Central PL System') {
-        item('dbn-warning').innerHTML = '*This DBN is not within the '+reqParameters.instance+'. You will be added to the waitlist.'
-  } else {
-      item('dbn-warning').innerHTML = '';
-  }
-  if (input!=="" && document.getElementById("dbn-list").children.length<1) {
-      wildcards.forEach(function(w) {
-       newDiv = document.createElement("div");
-       newDiv.innerHTML = w;
-       newDiv.className="dbn-select";
-       newDiv.style.fontSize = "11px";
-        newDiv.onmousedown = function() {
-          document.getElementById("dbnin").value=w;
-        }
-        newDiv.onmouseup = function() {
-          document.getElementById("dbn-list").style.display = "none";
-        }
-        item("dbn-list").appendChild(newDiv);       
-      });  
-  }
-}
-
-function hideDbns() {setTimeout(function() {item("dbn-list").style.display="none";},100)}
-
-function item(element) {return document.getElementById(element);}
-
-function preventFormSubmit() {
-        var forms = document.querySelectorAll('form');
-        for (var i = 0; i < forms.length; i++) {
-          forms[i].addEventListener('submit', function(event) {
-            event.preventDefault();
+  window.addEventListener('load', getData);
+  window.addEventListener('load', fetchDbns);
+  window.addEventListener('load', preventFormSubmit);
+  var reqParameters;
+  var plNeedsForm = "https://docs.google.com/forms/d/e/1FAIpQLScwk8s4HqCRwYbaGUFz9SBcFhE1I3dv4Kys58jN3G2QtSB6VQ/viewform?usp=pp_url&entry.1010073282=email&entry.1031216330=role&entry.1795213153=yearsexp";
+  //var eventParameters;
+  //var regData;
+  
+  var dbns = [];
+  var wildcards = ['AF-Affinity Citywide Office','BX-Bronx Borough Office','KN-Brooklyn North Borough Office','KS-Brooklyn South Borough Office','MN-Manhattan Borough Office','QN-Queens North Borough Office','QS-Queens South Borough Office','SI-Staten Island Borough Office','Central Office','District Office','Non DOE','Other'];
+  
+        function fetchDbns() {
+        //support for Microsoft
+          var withSuccess = google.script.run.withSuccessHandler(function(msg) {
+            console.log("dbns = ",msg);
+            dbns = msg;
           });
+          var withFailure = withSuccess.withFailureHandler(function(error) { console.log(error)});
+          withFailure.getDbns();
         }
-}
-
-function browserWidth() {
-  return Math.max(
-    document.body.scrollWidth,
-    document.documentElement.scrollWidth,
-    document.body.offsetWidth,
-    document.documentElement.offsetWidth,
-    document.documentElement.clientWidth
-  );
-}
-
-function browserHeight() {
-  return Math.max(
-    document.body.scrollHeight,
-    document.documentElement.scrollHeight,
-    document.body.offsetHeight,
-    document.documentElement.offsetHeight,
-    document.documentElement.clientHeight
-  );
-}
-
-function showProgress(progress, speed, message,baseCaseElement) {
-  if (baseCaseElement.innerHTML !== "") {item('progress-box').style.display = "none"; return;}
-  item('progress-box').style.display = "flex";
-  //item('progress-box').style.position = "absolute";
-  item('progress-box').style.top = Number(browserHeight()*0.25)+"px";
-  //displayContainer.style.left = Number(browserWidth()*0.25)+"px";
-  //item('spinner').style.display = "";
-  item('progress-msg').innerHTML = message;
-  //var canvas = item('spinner').getContext("2d");
-  //canvas.lineWidth = 5;
-  //if(progress>2) {canvas.clearRect(0,0,item('spinner').width, item('spinner').height); progress=0.5;}
-  //canvas.beginPath();
-  //canvas.arc(25,25,20,0*Math.PI,progress*Math.PI);
-  //canvas.stroke();
-  setTimeout(function() {showProgress(progress+0.5,speed,message,baseCaseElement)},speed);  
-}
-
-function getData() {
-  google.script.url.getLocation(function(loc) {
-    reqParameters = loc.parameter;
-    if (reqParameters.edit) {
-      console.log("editing");
-      fetchEditData(reqParameters.ptid,reqParameters.instance);
-    } else {
-      console.log("new submit");
-      fetchEventData(reqParameters.id,reqParameters.instance);
-    }
-  });
-  showProgress(0,450,"Getting your event information. Hang on...",item('display'));  
-}
-
-function regOk(eventInfo) {
-  console.log("event Info ",eventInfo);
-  console.log("regs: "+eventInfo.regs);
-  console.log(eventInfo.regs >= eventInfo.max);
-  if (eventInfo.regs >= eventInfo.max) {
-    if (eventInfo.waitlist < eventInfo.wl_size) {
-      console.log("waitlist smaller than wl size");
-      reqParameters["waitlistReg"] = true;
-      return true;
-    }
-    return false;
+  
+  function fetchEditData(id,instance) {
+    console.log("fetching edit data with id "+id);
+    var withSuccess = google.script.run.withSuccessHandler(editForm);
+    var withFailure = withSuccess.withFailureHandler(function(error) {console.log(error)});
+    withFailure.getEditData(id,instance);
   }
-  reqParameters["waitlistReg"] = false;
-  return true;
-}
-
-
-function display(eventInfo) {
-  if (eventInfo.walkin==="walkin") {displayForm(item('display'),eventInfo); return;}
-  if (regOk(eventInfo)) {displayForm(item('display'),eventInfo)} else {blockReg(item('display'));}
-}
-
-function displayForm(displayElement,eventInfo) {
-    item("event-title").innerHTML = eventInfo.title;
-    item("event-info-link").href = eventInfo.event_page;
-    item("event-info-link").innerHTML = "Event Information"
-    item('content-container').style.display = "flex";
-    item("reg-form").style.display = "";
-    displayElement.innerHTML = "You are editing this registration.";
-    if (reqParameters.edit) {editForm(); return;}
-    if (eventInfo.regs >= eventInfo.max && !reqParameters.walkin) {
-      displayElement.innerHTML = "This event is currently at capacity.<br>You are signing up for the <strong>waitlist</strong><br><br><strong>Current Registrants: </strong>"+eventInfo.regs+"/"+eventInfo.max+"<br><strong>Current Waitlist: </strong>"+eventInfo.waitlist+"/"+eventInfo.wl_size;
+  
+        
+  function editForm(participantInfo) {
+   if (!participantInfo) {
+     item("event-title").innerHTML = "Unable to locate your registration.";
+     return;
+   }
+   console.log("participant info: \n",participantInfo);
+   item("event-title").innerHTML = participantInfo.title;
+   item('display').innerHTML = "You are editing this registration.";
+   item('content-container').style.display = "flex";
+   item("reg-form").style.display = "";
+    if (participantInfo.ctley) {item("section6").style.display = ""}
+    var keys = Object.keys(participantInfo);
+    keys.forEach(function(x) {
+      reqParameters[x]=participantInfo[x];
+      if (x==="comfort") {
+        var formComfortItems = document.getElementById("comfort").getElementsByTagName("option");
+        for (var k=0;k<formComfortItems.length;k++) {
+          if (formComfortItems[k].value===participantInfo[x]) {
+            formComfortItems[k].selected=true;
+          }
+        }
+      }
+      if (x==="sub" && participantInfo[x]!=="") {
+        var subjects  = participantInfo[x].split(",");
+        //var subjectFormItems = document.getElementsByName("subject");
+        var subjectFormItems = document.getElementById("subject").getElementsByTagName("option");
+        for (var i=0;i<subjectFormItems.length;i++) {
+          if (subjects.indexOf(subjectFormItems[i].value)!==-1) {
+            //subjectFormItems[i].checked=true;
+            subjectFormItems[i].selected=true;
+          }
+        }
+      }
+      if (item(x)) {
+          item(x).value = participantInfo[x];
+          if (x.indexOf("ctle")!==-1) {item(x).checked=true;}
+          if (x.indexOf("comf")!==-1) {item(x).checked=true;}
+      }
+    })
+  };
+  
+  function listDbns(input) {
+    item("dbn-list").innerHTML = "";
+    item("dbn-list").style.display = "";
+      var newDiv;
+    dbns.all.forEach(function(dbn) {
+      //if (dbn.substring(0,input.length).toUpperCase()===input.trim().toUpperCase()) {
+      if (dbn.toUpperCase().indexOf(input.trim().toUpperCase())!==-1) {
+        newDiv = document.createElement("div");
+        newDiv.innerHTML = dbn;
+        newDiv.className="dbn-select";
+        newDiv.onmousedown = function() {
+          item("dbnin").value=dbn;
+          if (dbns[reqParameters.instance].indexOf(dbn) === -1 && item('dbnin').value.length === 6 &&  reqParameters.instance !== 'Central PL System') {
+            item('dbn-warning').innerHTML = '*This DBN is not within the '+reqParameters.instance+'. You will be added to the waitlist.'
+          } else {
+            item('dbn-warning').innerHTML = '';
+          }
+        }
+        newDiv.onmouseup = function() {item("dbn-list").style.display = "none";}
+        item("dbn-list").appendChild(newDiv);
+      }
+    });
+    if (dbns[reqParameters.instance].indexOf(item('dbnin').value.toUpperCase()) === -1 && item('dbnin').value.length === 6 && reqParameters.instance !== 'Central PL System') {
+          item('dbn-warning').innerHTML = '*This DBN is not within the '+reqParameters.instance+'. You will be added to the waitlist.'
     } else {
-      displayElement.innerHTML = "Current Registrants: "+eventInfo.regs+"/"+eventInfo.max;
+        item('dbn-warning').innerHTML = '';
     }
-    if (!eventInfo.ctle) {item("section5").innerHTML = "<div>Sorry, CTLE credit is not available for this event.</div>"}
-    if (!eventInfo.allow_non_doe) {item("email").pattern="[a-zA-Z0-9-]+@schools\.nyc\.gov"; item("email").title="Use a valid schools.nyc.gov account"}
-    if (reqParameters.walkin) {
-      document.getElementById("role").required=false;
-      document.getElementById("exp").required=false;
-      document.getElementById("subject").required=false;
-      document.getElementById("comfort").required=false;
-      document.getElementById("goal").required=false;
+    if (input!=="" && document.getElementById("dbn-list").children.length<1) {
+        wildcards.forEach(function(w) {
+         newDiv = document.createElement("div");
+         newDiv.innerHTML = w;
+         newDiv.className="dbn-select";
+         newDiv.style.fontSize = "11px";
+          newDiv.onmousedown = function() {
+            document.getElementById("dbnin").value=w;
+          }
+          newDiv.onmouseup = function() {
+            document.getElementById("dbn-list").style.display = "none";
+          }
+          item("dbn-list").appendChild(newDiv);       
+        });  
     }
-}
-
-function blockReg(displayElement) {
-  item('content-container').style.display = "flex";
-  displayElement.innerHTML = "Sorry, this event is at capacity.";
-}
-
-function fetchEventData(id,instance) {
-  var withSuccess = google.script.run.withSuccessHandler(function(eventData) {
-    if (!eventData) {
+  }
+  
+  function hideDbns() {setTimeout(function() {item("dbn-list").style.display="none";},100)}
+  
+  function item(element) {return document.getElementById(element);}
+  
+  function preventFormSubmit() {
+          var forms = document.querySelectorAll('form');
+          for (var i = 0; i < forms.length; i++) {
+            forms[i].addEventListener('submit', function(event) {
+              event.preventDefault();
+            });
+          }
+  }
+  
+  function browserWidth() {
+    return Math.max(
+      document.body.scrollWidth,
+      document.documentElement.scrollWidth,
+      document.body.offsetWidth,
+      document.documentElement.offsetWidth,
+      document.documentElement.clientWidth
+    );
+  }
+  
+  function browserHeight() {
+    return Math.max(
+      document.body.scrollHeight,
+      document.documentElement.scrollHeight,
+      document.body.offsetHeight,
+      document.documentElement.offsetHeight,
+      document.documentElement.clientHeight
+    );
+  }
+  
+  function showProgress(progress, speed, message,baseCaseElement) {
+    if (baseCaseElement.innerHTML !== "") {item('progress-box').style.display = "none"; return;}
+    item('progress-box').style.display = "flex";
+    //item('progress-box').style.position = "absolute";
+    item('progress-box').style.top = Number(browserHeight()*0.25)+"px";
+    //displayContainer.style.left = Number(browserWidth()*0.25)+"px";
+    //item('spinner').style.display = "";
+    item('progress-msg').innerHTML = message;
+    //var canvas = item('spinner').getContext("2d");
+    //canvas.lineWidth = 5;
+    //if(progress>2) {canvas.clearRect(0,0,item('spinner').width, item('spinner').height); progress=0.5;}
+    //canvas.beginPath();
+    //canvas.arc(25,25,20,0*Math.PI,progress*Math.PI);
+    //canvas.stroke();
+    setTimeout(function() {showProgress(progress+0.5,speed,message,baseCaseElement)},speed);  
+  }
+  
+  function getData() {
+    google.script.url.getLocation(function(loc) {
+      reqParameters = loc.parameter;
+      if (reqParameters.edit) {
+        console.log("editing");
+        fetchEditData(reqParameters.ptid,reqParameters.instance);
+      } else {
+        console.log("new submit");
+        fetchEventData(reqParameters.id,reqParameters.instance);
+      }
+    });
+    showProgress(0,450,"Getting your event information. Hang on...",item('display'));  
+  }
+  
+  function regOk(eventInfo) {
+    console.log("event Info ",eventInfo);
+    console.log("regs: "+eventInfo.regs);
+    console.log(eventInfo.regs >= eventInfo.max);
+    if (eventInfo.regs >= eventInfo.max) {
+      if (eventInfo.waitlist < eventInfo.wl_size) {
+        console.log("waitlist smaller than wl size");
+        reqParameters["waitlistReg"] = true;
+        return true;
+      }
+      return false;
+    }
+    reqParameters["waitlistReg"] = false;
+    return true;
+  }
+  
+  
+  function display(eventInfo) {
+    if (eventInfo.walkin==="walkin") {displayForm(item('display'),eventInfo); return;}
+    if (regOk(eventInfo)) {displayForm(item('display'),eventInfo)} else {blockReg(item('display'));}
+  }
+  
+  function displayForm(displayElement,eventInfo) {
+      item("event-title").innerHTML = eventInfo.title;
+      item("event-info-link").href = eventInfo.event_page;
+      item("event-info-link").innerHTML = "Event Information"
       item('content-container').style.display = "flex";
-      item('reg-form').style.display = "none";
-      item("display").innerHTML = "This event is no longer being offered.";
+      item("reg-form").style.display = "";
+      displayElement.innerHTML = "You are editing this registration.";
+      if (reqParameters.edit) {editForm(); return;}
+      if (eventInfo.regs >= eventInfo.max && !reqParameters.walkin) {
+        displayElement.innerHTML = "This event is currently at capacity.<br>You are signing up for the <strong>waitlist</strong><br><br><strong>Current Registrants: </strong>"+eventInfo.regs+"/"+eventInfo.max+"<br><strong>Current Waitlist: </strong>"+eventInfo.waitlist+"/"+eventInfo.wl_size;
+      } else {
+        displayElement.innerHTML = "Current Registrants: "+eventInfo.regs+"/"+eventInfo.max;
+      }
+      if (!eventInfo.ctle) {item("section5").innerHTML = "<div>Sorry, CTLE credit is not available for this event.</div>"}
+      if (!eventInfo.allow_non_doe) {item("email").pattern="[a-zA-Z0-9-]+@schools\.nyc\.gov"; item("email").title="Use a valid schools.nyc.gov account"}
+      if (reqParameters.walkin) {
+        document.getElementById("role").required=false;
+        document.getElementById("exp").required=false;
+        document.getElementById("subject").required=false;
+        document.getElementById("comfort").required=false;
+        document.getElementById("goal").required=false;
+      }
+  }
+  
+  function blockReg(displayElement) {
+    item('content-container').style.display = "flex";
+    displayElement.innerHTML = "Sorry, this event is at capacity.";
+  }
+  
+  function fetchEventData(id,instance) {
+    var withSuccess = google.script.run.withSuccessHandler(function(eventData) {
+      if (!eventData) {
+        item('content-container').style.display = "flex";
+        item('reg-form').style.display = "none";
+        item("display").innerHTML = "This event is no longer being offered.";
+        return;
+      }
+      var keys = Object.keys(eventData);
+      for (var i in keys) {
+        reqParameters[keys[i]]=eventData[keys[i]];
+      }
+      display(reqParameters);
+    });
+    var withFailure = withSuccess.withFailureHandler(function(error){
+    document.body.innerHTML = "<div style='height: 100%; width: 100%; display: flex; justify-content: center;'>Oops. Something went wrong. Check the url.</div>";
+    console.log(error)});
+    withFailure.getEventData(id,instance);
+  }
+  
+  function getId(email) {
+          var newId = email.toLowerCase();
+          var possibleChars="abcdefghjklmnopqrstvwxyz";
+          var i=4;
+          while(i>0) {
+            newId+=possibleChars.charAt(Math.floor(Math.random()*possibleChars.length));
+            i--;
+          }
+          return newId;
+  }
+  
+  function submitForm(formBlob) {
+    if (dbns.all.indexOf(formBlob.dbn.value)===-1 && wildcards.indexOf(formBlob.dbn.value)===-1) {alert("Please enter a valid DBN. For Borough office staff, enter Borough Office. District staff, enter district. Central staff enter Central."); item('dbnin').focus(); return;}
+    var formObj = new Formobj(formBlob,reqParameters);
+    if (formObj.ctle==="yes" && (formObj.day==="" || formObj.month==="" || formObj.year==="" || formObj.ssNum==="")) {
+      alert("You must provide your birth date and the last 4 digits of social security number in order to be eligible for CTLE.");
       return;
     }
-    var keys = Object.keys(eventData);
-    for (var i in keys) {
-      reqParameters[keys[i]]=eventData[keys[i]];
+    plNeedsForm = plNeedsForm.replace(/email/,formObj.email).replace(/role/,formObj.role).replace(/yearsexp/,formObj.experience);
+    console.log(formObj);
+    item("reg-form").style.display = "none";
+    var withSuccess = google.script.run.withSuccessHandler(confirmRegistration);
+    var withFailure = withSuccess.withFailureHandler(confirmRegistration);
+    withFailure.register(formObj,dbns,reqParameters.instance);
+    if (reqParameters.edit) {
+      var progMsg = "Editing your registration. Please wait for confirmation before closing this page."
+    } else {
+      var progMsg ="Submitting your registration. Please wait for confirmation before closing this page."
     }
-    display(reqParameters);
-  });
-  var withFailure = withSuccess.withFailureHandler(function(error){
-  document.body.innerHTML = "<div style='height: 100%; width: 100%; display: flex; justify-content: center;'>Oops. Something went wrong. Check the url.</div>";
-  console.log(error)});
-  withFailure.getEventData(id,instance);
-}
-
-function getId(email) {
-        var newId = email.toLowerCase();
-        var possibleChars="abcdefghjklmnopqrstvwxyz";
-        var i=4;
-        while(i>0) {
-          newId+=possibleChars.charAt(Math.floor(Math.random()*possibleChars.length));
-          i--;
-        }
-        return newId;
-}
-
-function submitForm(formBlob) {
-  if (dbns.all.indexOf(formBlob.dbn.value)===-1 && wildcards.indexOf(formBlob.dbn.value)===-1) {alert("Please enter a valid DBN. For Borough office staff, enter Borough Office. District staff, enter district. Central staff enter Central."); item('dbnin').focus(); return;}
-  var formObj = new Formobj(formBlob,reqParameters);
-  if (formObj.ctle==="yes" && (formObj.day==="" || formObj.month==="" || formObj.year==="" || formObj.ssNum==="")) {
-    alert("You must provide your birth date and the last 4 digits of social security number in order to be eligible for CTLE.");
-    return;
+    showProgress(0,450,progMsg,item('reg-callback'));
   }
-  plNeedsForm = plNeedsForm.replace(/email/,formObj.email).replace(/role/,formObj.role).replace(/yearsexp/,formObj.experience);
-  console.log(formObj);
-  item("reg-form").style.display = "none";
-  var withSuccess = google.script.run.withSuccessHandler(confirmRegistration);
-  var withFailure = withSuccess.withFailureHandler(confirmRegistration);
-  withFailure.register(formObj,dbns,reqParameters.instance);
-  if (reqParameters.edit) {
-    var progMsg = "Editing your registration. Please wait for confirmation before closing this page."
-  } else {
-    var progMsg ="Submitting your registration. Please wait for confirmation before closing this page."
+  
+  function confirmRegistration(msg) {
+  console.log("callback msg ",msg);
+    item('display').innerHTML = "";
+    if (msg.message) {
+      item('reg-callback').innerHTML = msg.message+"<br><br><br><br><br><a class='btn btn-success' style='font-size: 1.4em;' href='"+plNeedsForm+"' target='_blank'>Submit feedback to help plan future professional learning offerings.</a><br><br><br><br><br>"
+    } else {
+      item('reg-callback').innerHTML = "Oops, something went wrong.";
+    }
   }
-  showProgress(0,450,progMsg,item('reg-callback'));
-}
-
-function confirmRegistration(msg) {
-console.log("callback msg ",msg);
-  item('display').innerHTML = "";
-  if (msg.message) {
-    item('reg-callback').innerHTML = msg.message+"<br><br><br><br><br><a class='btn btn-success' style='font-size: 1.4em;' href='"+plNeedsForm+"' target='_blank'>Submit feedback to help plan future professional learning offerings.</a><br><br><br><br><br>"
-  } else {
-    item('reg-callback').innerHTML = "Oops, something went wrong.";
-  }
-}
-
-function Formobj(formdata,urlData) {
-  var elements = formdata.elements;
-  for (var i=0; i<elements.length; i++) {
-    //these are the element types that microsoft browsers can handle
-    if (elements[i].type==="text" || elements[i].type==="textarea" || elements[i].type==="email") {
-      this[elements[i].name]=elements[i].value;
-    } else if (elements[i].type==="checkbox") {
-      this[elements[i].name]=[];
-      var selector = document.getElementsByName(elements[i].name);
-      for (var j=0; j<selector.length;j++) {
-        if (selector[j].checked===true) {
-          this[elements[i].name].push(selector[j].value);
+  
+  function Formobj(formdata,urlData) {
+    var elements = formdata.elements;
+    for (var i=0; i<elements.length; i++) {
+      //these are the element types that microsoft browsers can handle
+      if (elements[i].type==="text" || elements[i].type==="textarea" || elements[i].type==="email") {
+        this[elements[i].name]=elements[i].value;
+      } else if (elements[i].type==="checkbox") {
+        this[elements[i].name]=[];
+        var selector = document.getElementsByName(elements[i].name);
+        for (var j=0; j<selector.length;j++) {
+          if (selector[j].checked===true) {
+            this[elements[i].name].push(selector[j].value);
+          }
         }
-      }
-    } else if (elements[i].type==="radio") {
-      var radioButtons = document.getElementsByName(elements[i].name);
-      for (var l=0;l<radioButtons.length;l++) {
-        if (radioButtons[l].checked===true) {
-           this[elements[i].name]=radioButtons[l].value;
+      } else if (elements[i].type==="radio") {
+        var radioButtons = document.getElementsByName(elements[i].name);
+        for (var l=0;l<radioButtons.length;l++) {
+          if (radioButtons[l].checked===true) {
+             this[elements[i].name]=radioButtons[l].value;
+          }
         }
-      }
-    } else if(elements[i].type==="number") {
-      this[elements[i].name] = document.getElementsByName(elements[i].name)[0].value;
-    } else if (elements[i].tagName==="SELECT") {
-      if (!elements[i].multiple) {
-        this[elements[i].id]=elements[i].value;
-      } else {
-        console.log(elements[i]);
-        this[elements[i].id] = [];
-        var options = elements[i].getElementsByTagName("option");
-        for (var x=0;x<options.length;x++) {
-          console.log(options[x]);
-          if (options[x].selected===true) {
-            this[elements[i].id].push(options[x].value);
+      } else if(elements[i].type==="number") {
+        this[elements[i].name] = document.getElementsByName(elements[i].name)[0].value;
+      } else if (elements[i].tagName==="SELECT") {
+        if (!elements[i].multiple) {
+          this[elements[i].id]=elements[i].value;
+        } else {
+          console.log(elements[i]);
+          this[elements[i].id] = [];
+          var options = elements[i].getElementsByTagName("option");
+          for (var x=0;x<options.length;x++) {
+            console.log(options[x]);
+            if (options[x].selected===true) {
+              this[elements[i].id].push(options[x].value);
+            }
           }
         }
       }
     }
+    if (urlData.edit) {
+      this.edit=true;
+      this.id=urlData.ptid
+      this.edit_link="https://script.google.com/macros/s/AKfycbz13TA6TRLjXeWWS4UzoZp0Si7VH0DV8Qjhco5ZG2FHe2y7j-Y/exec?edit=true&ptid="+urlData.ptid+"&instance="+encodeURIComponent(urlData.instance);
+    } else {
+      var id=getId(formdata.email.value.toString().slice(0,3));
+      this.id=id;
+      this.edit_link="https://script.google.com/macros/s/AKfycbz13TA6TRLjXeWWS4UzoZp0Si7VH0DV8Qjhco5ZG2FHe2y7j-Y/exec?edit=true&ptid="+id+"&instance="+encodeURIComponent(urlData.instance);
+    }
+    this.eventName=urlData.id+"-"+urlData.title;
+    this.eventId=urlData.id;
+    //this waitlist isn't determined by the # of regs in the event, it gets passed to the client when the page loads and is just the status that this registrant registered with on their initial sign up.
+    this.waitlist=urlData.rwl;
+    //this is the waitlist set by facilitators
+    this.wl=urlData.wl;
+    this.max=urlData.max;
+    if (urlData.dates) {
+      this.dates=urlData.dates.split(",").map(function(d) {return new Date(d).toString().slice(0,15)});
+    }
+    this.time=urlData.times;
+    this.otherInfo=urlData.info;
+    this.allFacilitators=urlData.facs;
+    this.title=urlData.title;
+    this.location=urlData.loc;
+    this.completed_sessions=urlData.completed_sessions;
+    this.event_creator=urlData.event_creator;
+    this.resource_folder=urlData.resource_folder;
+    //waitlistReg is gets added as a parameter to reqParameters when the regOk function runs
+    this.waitlist = urlData.waitlistReg;
+    //add the registrant to the waitlist if their dbn is not a member of this event's instance
+    if (reqParameters.instance !== 'Central PL System') {
+      if (dbns[reqParameters.instance].indexOf(this.dbn.toUpperCase()) === -1) {
+          this.waitlist = true;
+          this.outside_dbn = true;
+      }
+    }
   }
-  if (urlData.edit) {
-    this.edit=true;
-    this.id=urlData.ptid
-    this.edit_link="https://script.google.com/macros/s/AKfycbz13TA6TRLjXeWWS4UzoZp0Si7VH0DV8Qjhco5ZG2FHe2y7j-Y/exec?edit=true&ptid="+urlData.ptid+"&instance="+encodeURIComponent(urlData.instance);
-  } else {
-    var id=getId(formdata.email.value.toString().slice(0,3));
-    this.id=id;
-    this.edit_link="https://script.google.com/macros/s/AKfycbz13TA6TRLjXeWWS4UzoZp0Si7VH0DV8Qjhco5ZG2FHe2y7j-Y/exec?edit=true&ptid="+id+"&instance="+encodeURIComponent(urlData.instance);
-  }
-  this.eventName=urlData.id+"-"+urlData.title;
-  this.eventId=urlData.id;
-  //this waitlist isn't determined by the # of regs in the event, it gets passed to the client when the page loads and is just the status that this registrant registered with on their initial sign up.
-  this.waitlist=urlData.rwl;
-  //this is the waitlist set by facilitators
-  this.wl=urlData.wl;
-  this.max=urlData.max;
-  if (urlData.dates) {
-    this.dates=urlData.dates.split(",").map(function(d) {return new Date(d).toString().slice(0,15)});
-  }
-  this.time=urlData.times;
-  this.otherInfo=urlData.info;
-  this.allFacilitators=urlData.facs;
-  this.title=urlData.title;
-  this.location=urlData.loc;
-  this.completed_sessions=urlData.completed_sessions;
-  this.event_creator=urlData.event_creator;
-  this.resource_folder=urlData.resource_folder;
-  //waitlistReg is gets added as a parameter to reqParameters when the regOk function runs
-  this.waitlist = urlData.waitlistReg;
-  //add the registrant to the waitlist if their dbn is not a member of this event's instance
-  if (dbns[reqParameters.instance].indexOf(this.dbn.toUpperCase()) === -1 && reqParameters.instance !== 'Central PL System') {
-        this.waitlist = true;
-        this.outside_dbn = true;
-  }
-}
-</script>
+  </script>

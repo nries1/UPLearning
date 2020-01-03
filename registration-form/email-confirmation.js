@@ -57,7 +57,7 @@ Thank you for your patience.<br><br>Sincerely,<br>Professional Learning Support<
 New York City Department of Education";  
  }
  var remainingQuota = MailApp.getRemainingDailyQuota();
- if (remainingQuota<=100) {MailApp.sendEmail("nries@schools.nyc.gov", "Less than 100 registration emails left", "The account professionallearning@strongschools.nyc has sent 1400 emails today. One hundred emails remaining.")}
+ //if (remainingQuota<=100) {MailApp.sendEmail("nries@schools.nyc.gov", "Less than 100 registration emails left", "The account professionallearning@strongschools.nyc has sent 1400 emails today. One hundred emails remaining.")}
  if (remainingQuota<=15) {
    var overflowEmailStatus = UrlFetchApp.fetch("https://script.google.com/macros/s/AKfycbwjZW5CX3l3jqDHqxU5xVG6AKZvHAJPlfYVGFCcKJkRN8rAld4/exec?regInfo="+encodeURIComponent(JSON.stringify(regInfo))+"&instance="+encodeURIComponent(instance));
    Logger.log("email overflow status: ");
@@ -95,4 +95,3 @@ you think you have entered your email address incorrectly, you can edit your reg
  }
  return returnObj;
  }
- 
